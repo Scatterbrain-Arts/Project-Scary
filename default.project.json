@@ -1,0 +1,32 @@
+{
+  "name": "Project-Scary",
+  "globIgnorePaths": [ "**/.package-lock.json" ],
+  "tree": {
+    "$className": "DataModel",
+
+    "ServerScriptService": {
+      "NevermoreEngine": {
+        "$className": "Folder",
+        
+        "game": {
+          "$path": "src/modules"
+        },
+        "packages": {
+          "$path": "node_modules"
+        }
+      },
+
+      "Main": {
+        "$path": "src/scripts/server"
+      }
+    },
+    
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "Main": {
+          "$path": "src/scripts/client"
+        }
+      }
+    }
+  }
+}

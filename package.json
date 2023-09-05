@@ -1,0 +1,16 @@
+{
+  "name": "project-scary",
+  "version": "0.0",
+  "description": "Roblox scary game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Scatterbrain Arts",
+  "license": "ISC",
+  "dependencies": {
+    "@quenty/loader": "^6.3.0",
+    "@quenty/servicebag": "^6.9.0"
+  }
+}
