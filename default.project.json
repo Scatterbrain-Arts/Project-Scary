@@ -20,6 +20,12 @@
         "$path": "src/scripts/server"
       }
     },
+
+    "ServerStorage": {
+      "TreeTasks": {
+        "$path": "src/tasks"
+      }
+    },
     
     "StarterPlayer": {
       "StarterPlayerScripts": {
