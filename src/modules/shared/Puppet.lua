@@ -22,7 +22,12 @@ function Puppet.new(puppetInstance)
 
 	self.character = puppetInstance
 	self.humanoid = puppetInstance:FindFirstChild("Humanoid")
-	--self.root = puppetInstance:FindFirstChild("HumanoidRootPart")
+	self.root = puppetInstance:FindFirstChild("HumanoidRootPart")
+	
+	self.stats = {
+		sightRange = 50,
+		attackRange = 15,
+	}
 
     self.maid = Maid.new()
 
@@ -37,6 +42,9 @@ function Puppet.new(puppetInstance)
 			reached = nil,
 		}
 	}
+
+	self:CreateDebugPart("sight", self.stats.sightRange, Color3.fromRGB(0,255,0))
+	self:CreateDebugPart("attack", self.stats.attackRange,  Color3.fromRGB(255,0,0))
 
 	self.btIsRunning = false
 	self.btRoot = BehaviorTreeCreator:Create(ServerStorage.BehaviorTrees.MOB_Start)
@@ -54,33 +62,27 @@ function Puppet.new(puppetInstance)
     return self
 end
 
--- local function OnIndexBlocked(blockedIndex, self, targetLocation)
--- 	if blockedIndex >= self.navigation.nextIndex then
--- 		self.navigation.connections.blocked:Disconnect()
--- 		self:FindPath(targetLocation)
--- 	end
--- end
 
-local function OnIndexReached(reachedIndex, self)
-	if not reachedIndex then
-		error("reachedIndex is nil...")
-	end
+function Puppet:CreateDebugPart(name, size, color)
+	local part = Instance.new("Part", self.character)
+	part.Shape = Enum.PartType.Ball
+	part.CanCollide = false
+	part.CanTouch = false
+	part.CanQuery = false
+	part.Position = self.root.Position
+	part.Transparency = 0.5
+	part.CastShadow = false
+	part.Name = name
+	part.Size = Vector3.new(size*2, size*2, size*2)
+	part.Color = color
 
-	print("currentIndex" .. self.navigation.currentIndex)
-	print("nextIndex" .. self.navigation.nextIndex)
-	print("reachedIndex: " .. reachedIndex)
-
-	self.navigation.currentIndex = reachedIndex
-	if self.navigation.nextIndex < #self.navigation.waypoints then
-		self.navigation.nextIndex += 1
-	end
-
-	self.navigation.connections.reached:Disconnect()
+	local weld = Instance.new("Weld", part)
+	weld.Part0 = part
+	weld.Part1 = self.root
 end
 
 
 function Puppet:FindPath(targetLocation)
-    -- Compute the path
     local success, errorMessage = pcall(function()
         self.navigation.path:ComputeAsync(self.character.PrimaryPart.Position, targetLocation)
     end)
@@ -104,30 +106,7 @@ function Puppet:MoveToNextIndex()
 		return
 	end
 
-	
-
-	-- print("MOVETO: currentIndex " .. self.navigation.currentIndex)
-	-- print("MOVETO: nextIndex " .. self.navigation.nextIndex)
 	self.humanoid:MoveTo(self.navigation.waypoints[self.navigation.nextIndex].Position)
-	--self.navigation.running = true
-	-- self.navigation.connections.reached = self.humanoid.MoveToFinished:Connect(function(reachedIndex)
-	-- 	if not reachedIndex then
-	-- 		error("reachedIndex is ...")
-	-- 	end
-
-		
-	-- 	print("REACHED: " .. self.navigation.nextIndex)
-
-	-- 	self.navigation.currentIndex = self.navigation.nextIndex
-	-- 	if self.navigation.nextIndex < #self.navigation.waypoints then
-	-- 		self.navigation.nextIndex += 1
-	-- 		--self.navigation.running = true
-	-- 		self:MoveToNextIndex()
-	-- 	else
-	-- 		--self.navigation.running = false
-	-- 		self.navigation.connections.reached:Disconnect()
-	-- 	end
-	-- end)
 end
 
 
