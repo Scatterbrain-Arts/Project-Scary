@@ -23,7 +23,17 @@
 
     "ServerStorage": {
       "TreeTasks": {
-        "$path": "src/tasks"
+        "$className": "Folder",
+
+        "Idle": {
+          "$path": "src/tasks/idle"
+        },
+        "Move": {
+          "$path": "src/tasks/move"
+        },
+        "Attack": {
+          "$path": "src/tasks/attack"
+        }
       }
     },
     

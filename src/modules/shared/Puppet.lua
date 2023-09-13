@@ -26,7 +26,9 @@ function Puppet.new(puppetInstance)
 	
 	self.stats = {
 		sightRange = 50,
-		attackRange = 15,
+		attackRange = 10,
+		attackDamage = 25,
+		attackCooldown = 2,
 	}
 
     self.maid = Maid.new()
@@ -49,13 +51,11 @@ function Puppet.new(puppetInstance)
 	self.btIsRunning = false
 	self.btRoot = BehaviorTreeCreator:Create(ServerStorage.BehaviorTrees.MOB_Start)
 	self.btState = {
-		MOB = self
+		self = self
 	}
 
 	RunService.Stepped:Connect(function(time, deltaTime)
-		if self.btIsRunning then return end
-		local result = self.btRoot:Run(self.btState)
-		self.btIsRunning = (result == 3)
+		self.btRoot:Run(self.btState)
 	end)
 
 
@@ -108,6 +108,19 @@ function Puppet:MoveToNextIndex()
 
 	self.humanoid:MoveTo(self.navigation.waypoints[self.navigation.nextIndex].Position)
 end
+
+
+function Puppet:Attack(target)
+	if not target.character then
+		warn("Not valid target to attack...")
+		return false
+	end
+
+	target.Character:FindFirstChild("Humanoid"):TakeDamage(self.stats.attackDamage)
+
+	return true
+end
+
 
 
 Puppet.BINDER = Binder.new(Puppet.TAG_NAME, Puppet)
