@@ -13,10 +13,7 @@ function btTask.start(obj)
 		Blackboard.isAttacking = self:Attack(nearestTarget)
 
 		task.spawn(function()
-			print("attack-animation-begin")
 			task.wait(self.stats.attackCooldown)
-			print("attack-animation-end")
-
 			Blackboard.isAttacking = false
 		end)
 	end
@@ -30,6 +27,7 @@ end
 
 
 function btTask.run(obj)
+	--print("AttackTarget-run")
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 

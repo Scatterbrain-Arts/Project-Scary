@@ -23,7 +23,7 @@ function Puppet.new(puppetInstance)
 	self.character = puppetInstance
 	self.humanoid = puppetInstance:FindFirstChild("Humanoid")
 	self.root = puppetInstance:FindFirstChild("HumanoidRootPart")
-	
+
 	self.stats = {
 		sightRange = 50,
 		attackRange = 10,
@@ -33,16 +33,18 @@ function Puppet.new(puppetInstance)
 
     self.maid = Maid.new()
 
-    self.navigation = {
+    self.navigationCurrent = {
 		path = PathfindingService:CreatePath(),
 		waypoints = {},
-		currentIndex = nil,
-		nextIndex = nil,
+		currentIndex = 1,
+		nextIndex = 2,
+	}
 
-		connections = {
-			blocked = nil,
-			reached = nil,
-		}
+	self.navigationNext = {
+		path = PathfindingService:CreatePath(),
+		waypoints = {},
+		currentIndex = 1,
+		nextIndex = 2,
 	}
 
 	self:CreateDebugPart("sight", self.stats.sightRange, Color3.fromRGB(0,255,0))
@@ -54,10 +56,9 @@ function Puppet.new(puppetInstance)
 		self = self
 	}
 
-	RunService.Stepped:Connect(function(time, deltaTime)
+	RunService.Heartbeat:Connect(function(time, deltaTime)
 		self.btRoot:Run(self.btState)
 	end)
-
 
     return self
 end
@@ -82,9 +83,9 @@ function Puppet:CreateDebugPart(name, size, color)
 end
 
 
-function Puppet:FindPath(targetLocation)
+function Puppet:FindPath(startLocation, targetLocation, navigation)
     local success, errorMessage = pcall(function()
-        self.navigation.path:ComputeAsync(self.character.PrimaryPart.Position, targetLocation)
+        navigation.path:ComputeAsync(startLocation, targetLocation)
     end)
 
 	if not success then
@@ -92,21 +93,30 @@ function Puppet:FindPath(targetLocation)
 		return false
 	end
 
-	self.navigation.waypoints = self.navigation.path:GetWaypoints()
-	self.navigation.currentIndex = 1
-	self.navigation.nextIndex = 2
+	navigation.waypoints = navigation.path:GetWaypoints()
+	navigation.currentIndex = 1
+	navigation.nextIndex = 2
 
 	return true
 end
 
 
 function Puppet:MoveToNextIndex()
-	if self.navigation.path.Status ~= Enum.PathStatus.Success then
-		warn("No path found...")
-		return
+	-- if self.navigationNext.path.Status ~= Enum.PathStatus.Success then
+	-- 	warn("No next path found...")
+	-- 	return
+	-- end
+
+	if #self.navigationNext.waypoints > 0 then
+		self.navigationCurrent.waypoints = self.navigationNext.waypoints
+		self.navigationCurrent.currentIndex = self.navigationNext.currentIndex
+		self.navigationCurrent.nextIndex = self.navigationNext.nextIndex
 	end
 
-	self.humanoid:MoveTo(self.navigation.waypoints[self.navigation.nextIndex].Position)
+	--print("NC: currentIndex: ", self.navigationCurrent.currentIndex, " - ", self.navigationCurrent.waypoints[self.navigationCurrent.currentIndex].Position)
+	--print("NC: nextIndex: ", self.navigationCurrent.nextIndex, " - ", self.navigationCurrent.waypoints[self.navigationCurrent.nextIndex].Position)
+
+	self.humanoid:MoveTo(self.navigationCurrent.waypoints[self.navigationCurrent.nextIndex].Position)
 end
 
 
@@ -116,11 +126,10 @@ function Puppet:Attack(target)
 		return false
 	end
 
-	target.Character:FindFirstChild("Humanoid"):TakeDamage(self.stats.attackDamage)
+	target.character:FindFirstChild("Humanoid"):TakeDamage(self.stats.attackDamage)
 
 	return true
 end
-
 
 
 Puppet.BINDER = Binder.new(Puppet.TAG_NAME, Puppet)

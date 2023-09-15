@@ -28,6 +28,7 @@ end
 
 
 function btTask.run(obj)
+	--print("IsNearTarget-run")
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
