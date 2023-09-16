@@ -1,19 +1,20 @@
 local CollectionService = game:GetService("CollectionService")
 local ServerStorage = game:GetService("ServerStorage")
 local PathfindingService = game:GetService("PathfindingService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local require = require(script.Parent.loader).load(script)
 
 local BehaviorTreeCreator = require("BehaviorTreeCreator")
+local GetRemoteEvent = require("GetRemoteEvent")
 local Maid = require("Maid")
+
+local PuppetManuelOverrideEvent = GetRemoteEvent("PuppetManuelOverrideEvent")
 
 local Puppet = {}
 Puppet.__index = Puppet
 Puppet.TAG_NAME = "Puppet"
-
-local targetLoc = game.Workspace:FindFirstChild("end").Position
-local targetHome = game.Workspace:FindFirstChild("home").Position
 
 function Puppet.new(puppetInstance, serviceBag)
     local self = {}
@@ -48,15 +49,14 @@ function Puppet.new(puppetInstance, serviceBag)
 		description = "next",
 	}
 
-	self.btIsRunning = false
-	self.btRoot = BehaviorTreeCreator:Create(ServerStorage.BehaviorTrees.MOB_Start)
-	self.btState = {
-		self = self
-	}
-
-	RunService.Heartbeat:Connect(function(time, deltaTime)
-		self.btRoot:Run(self.btState)
-	end)
+	self.manuelOverride = self.character:GetAttribute("ManuelOverride")
+	if self.manuelOverride  then
+		warn("Manuel Override enabled for", self.character.Name, "...")
+	elseif self.manuelOverride  == false then
+		warn("Manuel Override disabled for", self.character.Name, "...")
+	elseif self.manuelOverride  == nil then
+		warn("Create attribute \"ManuelOverride\" to enable overriding for", self.character.Name, "...")
+	end
 
 	self.isDebug = self.character:GetAttribute("Debug")
 	self.DebugService = serviceBag:GetService(require("DebugService"))
@@ -69,6 +69,28 @@ function Puppet.new(puppetInstance, serviceBag)
 	elseif self.isDebug == nil then
 		warn("Create attribute \"Debug\" to enable testing for", self.character.Name, "...")
 	end
+
+	self.btRoot = BehaviorTreeCreator:Create(ServerStorage.BehaviorTrees.MOB_Start)
+	self.btState = {
+		self = self
+	}
+
+	RunService.Heartbeat:Connect(function(time, deltaTime)
+		if not self.manuelOverride then
+			self.btRoot:Run(self.btState)
+		end
+	end)
+
+
+	PuppetManuelOverrideEvent.OnServerEvent:Connect(function()
+		self.manuelOverride = not self.manuelOverride
+		self.character:SetAttribute("ManuelOverride", self.manuelOverride)
+		if self.manuelOverride  then
+			warn("Manuel Override ENABLED for", self.character.Name, "...")
+		elseif self.manuelOverride  == false then
+			warn("Manuel Override DISABLED for", self.character.Name, "...")
+		end
+	end)
 
     return self
 end
@@ -97,19 +119,11 @@ end
 
 
 function Puppet:MoveToNextIndex()
-	-- if self.navigationNext.path.Status ~= Enum.PathStatus.Success then
-	-- 	warn("No next path found...")
-	-- 	return
-	-- end
-
 	if #self.navigationNext.waypoints > 0 then
 		self.navigationCurrent.waypoints = self.navigationNext.waypoints
 		self.navigationCurrent.currentIndex = self.navigationNext.currentIndex
 		self.navigationCurrent.nextIndex = self.navigationNext.nextIndex
 	end
-
-	--print("NC: currentIndex: ", self.navigationCurrent.currentIndex, " - ", self.navigationCurrent.waypoints[self.navigationCurrent.currentIndex].Position)
-	--print("NC: nextIndex: ", self.navigationCurrent.nextIndex, " - ", self.navigationCurrent.waypoints[self.navigationCurrent.nextIndex].Position)
 
 	self.humanoid:MoveTo(self.navigationCurrent.waypoints[self.navigationCurrent.nextIndex].Position)
 end
