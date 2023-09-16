@@ -7,7 +7,6 @@ local require = require(script.Parent.loader).load(script)
 
 local BehaviorTreeCreator = require("BehaviorTreeCreator")
 local Maid = require("Maid")
-local Binder = require("Binder")
 
 local Puppet = {}
 Puppet.__index = Puppet
@@ -16,7 +15,7 @@ Puppet.TAG_NAME = "Puppet"
 local targetLoc = game.Workspace:FindFirstChild("end").Position
 local targetHome = game.Workspace:FindFirstChild("home").Position
 
-function Puppet.new(puppetInstance)
+function Puppet.new(puppetInstance, serviceBag)
     local self = {}
     setmetatable(self, Puppet)
 
@@ -38,6 +37,7 @@ function Puppet.new(puppetInstance)
 		waypoints = {},
 		currentIndex = 1,
 		nextIndex = 2,
+		description = "current",
 	}
 
 	self.navigationNext = {
@@ -45,10 +45,8 @@ function Puppet.new(puppetInstance)
 		waypoints = {},
 		currentIndex = 1,
 		nextIndex = 2,
+		description = "next",
 	}
-
-	self:CreateDebugPart("sight", self.stats.sightRange, Color3.fromRGB(0,255,0))
-	self:CreateDebugPart("attack", self.stats.attackRange,  Color3.fromRGB(255,0,0))
 
 	self.btIsRunning = false
 	self.btRoot = BehaviorTreeCreator:Create(ServerStorage.BehaviorTrees.MOB_Start)
@@ -60,26 +58,19 @@ function Puppet.new(puppetInstance)
 		self.btRoot:Run(self.btState)
 	end)
 
+	self.isDebug = self.character:GetAttribute("Debug")
+	self.DebugService = serviceBag:GetService(require("DebugService"))
+	if self.isDebug then
+		warn("Debug enabled for", self.character.Name, "...")
+		self.DebugService:CreateRangeIndicator("sight", self.character, self.root, self.stats.sightRange, Color3.fromRGB(0,255,0))
+		self.DebugService:CreateRangeIndicator("attack", self.character, self.root, self.stats.attackRange,  Color3.fromRGB(255,0,0))
+	elseif self.isDebug == false then
+		warn("Debug is disabled for", self.character.Name, "...")
+	elseif self.isDebug == nil then
+		warn("Create attribute \"Debug\" to enable testing for", self.character.Name, "...")
+	end
+
     return self
-end
-
-
-function Puppet:CreateDebugPart(name, size, color)
-	local part = Instance.new("Part", self.character)
-	part.Shape = Enum.PartType.Ball
-	part.CanCollide = false
-	part.CanTouch = false
-	part.CanQuery = false
-	part.Position = self.root.Position
-	part.Transparency = 0.5
-	part.CastShadow = false
-	part.Name = name
-	part.Size = Vector3.new(size*2, size*2, size*2)
-	part.Color = color
-
-	local weld = Instance.new("Weld", part)
-	weld.Part0 = part
-	weld.Part1 = self.root
 end
 
 
@@ -96,6 +87,10 @@ function Puppet:FindPath(startLocation, targetLocation, navigation)
 	navigation.waypoints = navigation.path:GetWaypoints()
 	navigation.currentIndex = 1
 	navigation.nextIndex = 2
+
+	if self.isDebug then
+		self.DebugService:CreatePathIndicator(navigation.waypoints, navigation.description)
+	end
 
 	return true
 end
@@ -130,11 +125,6 @@ function Puppet:Attack(target)
 
 	return true
 end
-
-
-Puppet.BINDER = Binder.new(Puppet.TAG_NAME, Puppet)
-Puppet.BINDER:Start()
-
 
 
 
