@@ -20,6 +20,22 @@
         "$path": "src/scripts/server"
       }
     },
+
+    "ServerStorage": {
+      "TreeTasks": {
+        "$className": "Folder",
+
+        "Idle": {
+          "$path": "src/tasks/idle"
+        },
+        "Move": {
+          "$path": "src/tasks/move"
+        },
+        "Attack": {
+          "$path": "src/tasks/attack"
+        }
+      }
+    },
     
     "StarterPlayer": {
       "StarterPlayerScripts": {
