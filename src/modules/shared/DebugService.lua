@@ -5,6 +5,8 @@ local Maid = require("Maid")
 local DebugService = {}
 DebugService.ServiceName = "DebugService"
 
+DebugService.GROUND_OFFSET = 0.5
+
 function DebugService:Init(serviceBag)
 	assert(not self.serviceBag, "DebugService is already initialized...")
 	self.serviceBag = assert(serviceBag, "ServiceBag is nil...")
@@ -51,11 +53,47 @@ local function CreatePart(shape, size, color)
 	part.Transparency = 0
 	part.CastShadow = false
 	part.Anchored = true
-	part.Size = Vector3.new(size*2, size*2, size*2)
+	part.Size = size
 	part.Color = color
 
 	return part
 end
+
+
+function DebugService:CreateAgentIndicator(name, parent, root, width, height, color)
+	local part = CreatePart(Enum.PartType.Cylinder, Vector3.new(height, width*2, width*2), color)
+	part.Transparency = 0.5
+	part.Anchored = false
+	part.Parent = parent
+	part.Name = name
+
+	local weld = Instance.new("Weld", part)
+	weld.Part0 = part
+	weld.Part1 = root
+
+	part.Orientation = Vector3.new(0,0,90)
+	part.Position = root.Position - Vector3.new(0, parent.Humanoid.HipHeight/2 - DebugService.GROUND_OFFSET, 0)
+	self.maid:GiveTask(part)
+	self.maid:GiveTask(weld)
+end
+
+
+function DebugService:CreateRangeIndicator(name, parent, root, size, color)
+	local part = CreatePart(Enum.PartType.Ball, Vector3.new(size*2, size*2, size*2), color)
+	part.Transparency = 0.75
+	part.Anchored = false
+	part.Parent = parent
+	part.Position = root.Position
+	part.Name = name
+
+	local weld = Instance.new("Weld", part)
+	weld.Part0 = part
+	weld.Part1 = root
+
+	self.maid:GiveTask(part)
+	self.maid:GiveTask(weld)
+end
+
 
 
 function DebugService:CreatePathIndicator(waypoints, description)
@@ -73,7 +111,7 @@ function DebugService:CreatePathIndicator(waypoints, description)
 	end
 
 	for index, waypoint in waypoints do
-		local part = CreatePart(Enum.PartType.Ball, 0.25, color)
+		local part = CreatePart(Enum.PartType.Ball, Vector3.new(0.5, 0.5, 0.5), color)
 		part.Name = description .. "Index0" .. index
 		part.Parent = self.workspaceFolder.waypoints[description]
 		part.Position = Vector3.new(waypoint.Position.X, waypoint.Position.Y + 0.5, waypoint.Position.Z)
@@ -82,23 +120,6 @@ function DebugService:CreatePathIndicator(waypoints, description)
 
 		table.insert(self.waypointsRef[description], part)
 	end
-end
-
-
-function DebugService:CreateRangeIndicator(name, parent, root, size, color)
-	local part = CreatePart(Enum.PartType.Ball, size, color)
-	part.Transparency = 0.75
-	part.Anchored = false
-	part.Parent = parent
-	part.Position = root.Position
-	part.Name = name
-
-	local weld = Instance.new("Weld", part)
-	weld.Part0 = part
-	weld.Part1 = root
-
-	self.maid:GiveTask(part)
-	self.maid:GiveTask(weld)
 end
 
 
