@@ -7,16 +7,18 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	self:MoveToNextIndex()
+	Blackboard.isMoving = self:MoveToNextIndex(true)
 
 	self.maid:GiveTask(self.humanoid.MoveToFinished:Once(function()
 		Blackboard.isMoving = false
-		self:MoveToNextIndex()
+		self:MoveToNextIndex(false)
 	end))
 
-	Blackboard.isMoving = true
 	if Blackboard.nearestTarget.character then
-		self:FindPath(self.navigationCurrent.waypoints[self.navigationCurrent.nextIndex].Position, Blackboard.nearestTarget.character.PrimaryPart.Position, self.navigationNext)
+		self:FindPath(self.navigationCurrent.waypoints[self.navigationCurrent.currentIndex].Position, Blackboard.nearestTarget.character.PrimaryPart.Position, self.navigationNext)
+
+		self.navigationNext.currentIndex = 2
+		self.navigationNext.nextIndex = 3
 	end
 end
 

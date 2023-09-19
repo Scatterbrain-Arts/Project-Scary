@@ -33,7 +33,7 @@ function btTask.start(obj)
 	if Blackboard.nearestTarget then
 		local nearestTarget = Blackboard.players[tostring(Blackboard.nearestTarget.UserId)]
 		if nearestTarget.distance <= self.stats.sightRange then
-			Blackboard.isPath = self:FindPath(self.root.Position, nearestTarget.character.PrimaryPart.Position, self.navigationCurrent)
+			Blackboard.isPath = self:FindPath(self.root.Position, nearestTarget.character.PrimaryPart.Position, self.navigationNext)
 			self.DebugService:TargetAddIndicator(nearestTarget.player, nearestTarget.character.Head)
 		end
 	end

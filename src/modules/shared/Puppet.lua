@@ -152,7 +152,7 @@ function Puppet:FindPath(startLocation, targetLocation, navigation)
 	end
 
 	if navigation.path.Status ~= Enum.PathStatus.Success then
-		warn("No Path...")
+		warn(navigation.path.Status)
 		return false
 	end
 
@@ -161,22 +161,31 @@ function Puppet:FindPath(startLocation, targetLocation, navigation)
 	navigation.nextIndex = 2
 
 	if self.isDebug then
-		self.DebugService:CreatePathIndicator(navigation.waypoints, navigation.description)
+		self.DebugService:CreatePathNextIndicator(navigation.waypoints)
 	end
 
 	return true
 end
 
 
-function Puppet:MoveToNextIndex()
+function Puppet:MoveToNextIndex(isDrawing)
 
-	if #self.navigationNext.waypoints > 0 then
-		self.navigationCurrent.waypoints = self.navigationNext.waypoints
-		self.navigationCurrent.currentIndex = self.navigationNext.currentIndex
-		self.navigationCurrent.nextIndex = self.navigationNext.nextIndex
+	if #self.navigationNext.waypoints <= 0 then
+		warn("Navigation Next has no path...")
+		return false
 	end
 
+	self.navigationCurrent.waypoints = self.navigationNext.waypoints
+	self.navigationCurrent.currentIndex = self.navigationNext.currentIndex
+	self.navigationCurrent.nextIndex = self.navigationNext.nextIndex
+
 	self.humanoid:MoveTo(self.navigationCurrent.waypoints[self.navigationCurrent.nextIndex].Position)
+
+	if isDrawing and self.isDebug then
+		self.DebugService:CreatePathCurrentIndicator()
+	end
+
+	return true
 end
 
 

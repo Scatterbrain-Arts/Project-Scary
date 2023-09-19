@@ -96,30 +96,36 @@ end
 
 
 
-function DebugService:CreatePathIndicator(waypoints, description)
-	if #self.waypointsRef[description] > 0 then
-		for _, v in self.waypointsRef[description] do
-			v:Destroy()
-		end
-	end
-
-	local color
-	if description == "current" then
-		color = Color3.fromHex("006969")
-	else
-		color = Color3.fromHex("690069")
-	end
-
+function DebugService:CreatePathNextIndicator(waypoints)
 	for index, waypoint in waypoints do
-		local part = CreatePart(Enum.PartType.Ball, Vector3.new(0.5, 0.5, 0.5), color)
-		part.Name = description .. "Index0" .. index
-		part.Parent = self.workspaceFolder.waypoints[description]
+		local part = CreatePart(Enum.PartType.Ball, Vector3.new(0.5, 0.5, 0.5), Color3.fromHex("690069"))
+		part.Material = Enum.Material.Neon
+		part.Name = "nextIndex" .. index
+		part.Parent = self.workspaceFolder.waypoints.next
 		part.Position = Vector3.new(waypoint.Position.X, waypoint.Position.Y + 0.5, waypoint.Position.Z)
-	
+
 		self.maid:GiveTask(part)
 
-		table.insert(self.waypointsRef[description], part)
+		table.insert(self.waypointsRef.next, part)
 	end
+end
+
+function DebugService:CreatePathCurrentIndicator()
+	if #self.waypointsRef.current > 0 then
+		for _, waypointPart in self.waypointsRef.current do
+			waypointPart:Destroy()
+		end
+		self.waypointsRef.current = {}
+	end
+
+	for index, waypointPart in self.waypointsRef.next do
+		self.waypointsRef.current[index] = waypointPart
+		waypointPart.Name = "currentIndex" .. index
+		waypointPart.Color = Color3.fromHex("006969")
+		waypointPart.Parent = self.workspaceFolder.waypoints.current
+	end
+
+	self.waypointsRef.next = {}
 end
 
 
