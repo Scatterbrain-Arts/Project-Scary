@@ -23,6 +23,7 @@ function DebugService:Init(serviceBag)
 	}
 
 	self.workspaceFolder = nil
+	self.timer = nil
 end
 
 
@@ -41,6 +42,13 @@ function DebugService:Start()
 
 	local waypointsNextFolder = Instance.new("Folder", waypointsFolder)
 	waypointsNextFolder.Name = "next"
+
+	self.timer = os.clock()
+end
+
+
+function DebugService:Destroy()
+	self.maid:DoCleaning()
 end
 
 
@@ -95,7 +103,6 @@ function DebugService:CreateRangeIndicator(name, parent, root, size, color)
 end
 
 
-
 function DebugService:CreatePathNextIndicator(waypoints)
 	for index, waypoint in waypoints do
 		local part = CreatePart(Enum.PartType.Ball, Vector3.new(0.5, 0.5, 0.5), Color3.fromHex("690069"))
@@ -109,6 +116,7 @@ function DebugService:CreatePathNextIndicator(waypoints)
 		table.insert(self.waypointsRef.next, part)
 	end
 end
+
 
 function DebugService:CreatePathCurrentIndicator()
 	if #self.waypointsRef.current > 0 then
@@ -179,8 +187,12 @@ function DebugService:TargetRemoveIndicator()
 end
 
 
-function DebugService:Destroy()
-	self.maid:DoCleaning()
+function DebugService:StartTimer()
+	self.timer = os.clock()
+end
+
+function DebugService:PrintTimer()
+	print(os.clock() - self.timer)
 end
 
 
