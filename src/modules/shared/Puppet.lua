@@ -36,11 +36,13 @@ function Puppet.new(puppetInstance, serviceBag)
     local self = {}
     setmetatable(self, Puppet)
 
+	self.maid = Maid.new()
+
 	self.character = puppetInstance
 	self.humanoid = puppetInstance:FindFirstChild("Humanoid")
 	self.root = puppetInstance:FindFirstChild("HumanoidRootPart")
 
-	self.maid = Maid.new()
+	
 
 	self.isDebug = self:GetCondition(Puppet.STAT_NAMES.isDebug) or false
 	self.DebugService = serviceBag:GetService(require("DebugService"))
@@ -109,7 +111,18 @@ function Puppet.new(puppetInstance, serviceBag)
 		end
 	end)
 
+	self:SetNetworkOwner(nil)
+
     return self
+end
+
+function Puppet:SetNetworkOwner(owner)
+	owner = owner or nil
+	for _, part in pairs(self.character:GetChildren()) do
+		if part:IsA("BasePart") then
+			part:SetNetworkOwner(owner)
+		end
+	end
 end
 
 
