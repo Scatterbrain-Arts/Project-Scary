@@ -11,6 +11,7 @@ local GetRemoteEvent = require("GetRemoteEvent")
 local Maid = require("Maid")
 
 local PuppetManuelOverrideEvent = GetRemoteEvent("PuppetManuelOverrideEvent")
+local PlayerMoveSoundEvent = GetRemoteEvent("PlayerMoveSoundEvent")
 
 local Puppet = {}
 Puppet.__index = Puppet
@@ -109,6 +110,10 @@ function Puppet.new(puppetInstance, serviceBag)
 		elseif self.manuelOverride  == false then
 			warn("Manuel Override DISABLED for", self.character.Name, "...")
 		end
+	end)
+
+	PlayerMoveSoundEvent.OnServerEvent:Connect(function()
+		print("heared")
 	end)
 
 	self:SetNetworkOwner(nil)

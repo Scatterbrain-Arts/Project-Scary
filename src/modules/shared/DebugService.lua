@@ -1,3 +1,5 @@
+local ServerStorage = game:GetService("ServerStorage")
+
 local require = require(script.Parent.loader).load(script)
 
 local Maid = require("Maid")
@@ -32,7 +34,7 @@ function DebugService:Start()
 	self.workspaceFolder.Name = "Debug"
 
 	self.targetRef.billboard = self:CreateTargetIndicator()
-	self.targetRef.billboard.Parent = nil
+	self.targetRef.billboard.Parent = ServerStorage
 
 	local waypointsFolder = Instance.new("Folder", self.workspaceFolder)
 	waypointsFolder.Name = "waypoints"
@@ -183,7 +185,7 @@ function DebugService:TargetRemoveIndicator()
 
 	self.targetRef.target = nil
 	self.targetRef.billboard.Adornee = nil
-	self.targetRef.billboard.Parent = nil
+	self.targetRef.billboard.Parent = ServerStorage
 end
 
 
