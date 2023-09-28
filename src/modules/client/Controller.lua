@@ -11,7 +11,8 @@ Controller.__index = Controller
 function Controller.new()
 	local self = setmetatable({}, Controller)
 	self.moveVector = ZERO_VECTOR3
-	self.isJumping = false
+	self.isRunPressed = false
+	self.isSneaking = false
 
 	self.forwardValue = 0
 	self.backwardValue = 0
@@ -21,17 +22,34 @@ function Controller.new()
 	return self
 end
 
-function Controller:OnRenderStepped(dt: number)
-	-- By default, nothing to do
-end
 
-function Controller:GetMoveVector(): Vector3
+function Controller:GetMoveVector()
 	return self.moveVector
 end
 
-function Controller:GetIsJumping(): boolean
-	return self.isJumping
+
+function Controller:GetIsSneaking()
+	return self.isSneaking
 end
+
+
+function Controller:GetIsRunPressed()
+	if self.isRunPressed then
+		self.isRunPressed = false
+		return true
+	end
+	return false
+end
+
+
+function Controller:UpdateMovement(inputState)
+	if inputState == Enum.UserInputState.Cancel then
+		self.moveVector = ZERO_VECTOR3
+	else
+		self.moveVector = Vector3.new(self.leftValue + self.rightValue, 0, self.forwardValue + self.backwardValue)
+	end
+end
+
 
 function Controller:BindActions()
 	local function handleMoveForward(actionName, inputState, inputObject)
@@ -58,19 +76,24 @@ function Controller:BindActions()
 		return Enum.ContextActionResult.Pass
 	end
 
-	ContextActionService:BindActionAtPriority("moveFowardAction", handleMoveForward, false, 1, Enum.KeyCode.W)
+	local function handleSneakMove(actionName, inputState, inputObject)
+		self.isSneaking = inputState == Enum.UserInputState.Begin
+		return Enum.ContextActionResult.Pass
+	end
+
+	local function handleRunMove(actionName, inputState, inputObject)
+		self.isRunPressed = inputState == Enum.UserInputState.Begin
+		return Enum.ContextActionResult.Pass
+	end
+
+	ContextActionService:BindActionAtPriority("runAction", handleRunMove, false, 2, Enum.KeyCode.Space)
+	ContextActionService:BindActionAtPriority("sneakAction", handleSneakMove, false, 2, Enum.KeyCode.LeftShift)
+	ContextActionService:BindActionAtPriority("moveForwardAction", handleMoveForward, false, 1, Enum.KeyCode.W)
 	ContextActionService:BindActionAtPriority("moveBackwardAction", handleMoveBackward, false, 1, Enum.KeyCode.S)
 	ContextActionService:BindActionAtPriority("moveLeftAction", handleMoveLeft, false, 1, Enum.KeyCode.A)
 	ContextActionService:BindActionAtPriority("moveRightAction", handleMoveRight, false, 1, Enum.KeyCode.D)
 end
 
-function Controller:UpdateMovement(inputState)
-	if inputState == Enum.UserInputState.Cancel then
-		self.moveVector = ZERO_VECTOR3
-	else
-		self.moveVector = Vector3.new(self.leftValue + self.rightValue, 0, self.forwardValue + self.backwardValue)
-	end
-end
 
 
 

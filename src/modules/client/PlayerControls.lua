@@ -22,14 +22,33 @@ local MovementLinearSpring = Spring.new(0)
 MovementLinearSpring.Damper = 1
 MovementLinearSpring.Speed = 10
 
-local MaxSpeed = 16
+local RunSpeed = 21
+local WalkSpeed = 14
+local SneakSpeed = 7
+
+local IsRunning = false
 
 local lastDirection = ZERO_VECTOR
+local lastRunRequest = tick()
+local RunTimer = 0.25
 
 Humanoid.WalkSpeed = 0
+
+local function GetMaxSpeed()
+	return Controller:GetIsSneaking() and SneakSpeed or WalkSpeed
+end
+
+
 local function move(deltaTime)
+	IsRunning = (tick() - lastRunRequest) < RunTimer
+
 	if Controller:GetMoveVector() ~= ZERO_VECTOR then
-		MovementLinearSpring.Target = MaxSpeed
+		if Controller:GetIsRunPressed() then
+			IsRunning = true
+			lastRunRequest = tick()
+		end
+
+		MovementLinearSpring.Target = IsRunning and RunSpeed or GetMaxSpeed()
 
 		local currentDirection = Controller:GetMoveVector()
 
