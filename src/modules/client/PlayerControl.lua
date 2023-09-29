@@ -20,7 +20,7 @@ Controller:BindActions()
 
 local MovementLinearSpring = Spring.new(0)
 MovementLinearSpring.Damper = 1
-MovementLinearSpring.Speed = 10
+MovementLinearSpring.Speed = 8
 
 local RunSpeed = 21
 local WalkSpeed = 14
@@ -65,7 +65,14 @@ local function move(deltaTime)
 end
 
 
+
 RunService:BindToRenderStep("move", Enum.RenderPriority.Input.Value, move)
+
+LocalPlayer.CharacterAdded:Connect(function(character)
+	Character = character
+	Humanoid = Character:WaitForChild("Humanoid")
+	Root = Character:WaitForChild("HumanoidRootPart")
+end)
 
 
 return PlayerControls

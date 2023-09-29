@@ -13,8 +13,3 @@ local Puppet = require(Packages.Puppet)
 
 Puppet.BINDER = Binder.new(Puppet.TAG_NAME, Puppet, ServiceBag)
 Puppet.BINDER:Start()
-
-
-local StarterPlayer = game:GetService("StarterPlayer")
-StarterPlayer.DevComputerMovementMode = Enum.DevComputerMovementMode.Scriptable
-StarterPlayer.DevComputerCameraMovementMode = Enum.DevComputerCameraMovementMode.Orbital
