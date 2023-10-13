@@ -160,13 +160,13 @@ function DebugService:CreateTargetIndicator()
 end
 
 
-function DebugService:TargetAddIndicator(player, adornee)
+function DebugService:TargetAddIndicator(adornee)
 	if not self.targetRef.billboard then
 		warn("BillboardGui is nil...")
 		return
 	end
 
-	self.targetRef.target = player
+	--self.targetRef.target = player
 	self.targetRef.billboard.Adornee = adornee
 	self.targetRef.billboard.Parent = adornee
 end
@@ -183,7 +183,7 @@ function DebugService:TargetRemoveIndicator()
 		return
 	end
 
-	self.targetRef.target = nil
+	--self.targetRef.target = nil
 	self.targetRef.billboard.Adornee = nil
 	self.targetRef.billboard.Parent = ServerStorage
 end

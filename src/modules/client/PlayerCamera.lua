@@ -37,10 +37,10 @@ local CameraCFrame
 local RotateSpeed = 0.08
 local OverShoulderOffset = Vector3.new(-3, 0, 2)
 
-
-local mask = Character:WaitForChild("Mask")
-if mask then
-	mask:Destroy()
+for i, v in pairs(Character:GetChildren()) do
+	if v:IsA("Accessory") then
+		v:Destroy()
+	end
 end
 
 
@@ -103,6 +103,12 @@ LocalPlayer.CharacterAdded:Connect(function(character)
 	Humanoid = Character:WaitForChild("Humanoid")
 	Root = Character:WaitForChild("HumanoidRootPart")
 	Head = Character:WaitForChild("Head")
+
+	for i, v in pairs(Character:GetChildren()) do
+		if v:IsA("Accessory") then
+			v:Destroy()
+		end
+	end
 end)
 
 

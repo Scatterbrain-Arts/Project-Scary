@@ -11,7 +11,15 @@ local GetRemoteEvent = require("GetRemoteEvent")
 local Maid = require("Maid")
 
 local PuppetManuelOverrideEvent = GetRemoteEvent("PuppetManuelOverrideEvent")
-local PlayerMoveSoundEvent = GetRemoteEvent("PlayerMoveSoundEvent")
+
+local PatrolPoints = {}
+for _, point in workspace:FindFirstChild("PatrolPoints"):GetChildren() do
+	table.insert(PatrolPoints, {
+		object = point,
+		position = point.Position,
+		isSearched = false,
+	})
+end
 
 local Puppet = {}
 Puppet.__index = Puppet
@@ -43,7 +51,7 @@ function Puppet.new(puppetInstance, serviceBag)
 	self.humanoid = puppetInstance:FindFirstChild("Humanoid")
 	self.root = puppetInstance:FindFirstChild("HumanoidRootPart")
 
-	
+	self.AIService = serviceBag:GetService(require("AIService"))
 
 	self.isDebug = self:GetCondition(Puppet.STAT_NAMES.isDebug) or false
 	self.DebugService = serviceBag:GetService(require("DebugService"))
@@ -84,9 +92,18 @@ function Puppet.new(puppetInstance, serviceBag)
 		description = "next",
 	}
 
+	self.currentPatrolPoint = nil
 	self.btRoot = BehaviorTreeCreator:Create(ServerStorage.BehaviorTrees.MOB_Start)
 	self.btState = {
-		self = self
+		self = self,
+		Blackboard = {
+			target = {
+				isActive = false,
+				object = nil,
+				position = Vector3.zero,
+			},
+			state = "IDLE",
+		}
 	}
 
 	RunService.Heartbeat:Connect(function(time, deltaTime)
@@ -112,8 +129,8 @@ function Puppet.new(puppetInstance, serviceBag)
 		end
 	end)
 
-	PlayerMoveSoundEvent.OnServerEvent:Connect(function()
-		print("heared")
+	self.AIService.moveAISignal:Connect(function()
+		print("hi")
 	end)
 
 	self:SetNetworkOwner(nil)
@@ -197,7 +214,9 @@ function Puppet:MoveToNextIndex(isDrawing)
 	self.navigationCurrent.currentIndex = self.navigationNext.currentIndex
 	self.navigationCurrent.nextIndex = self.navigationNext.nextIndex
 
-	self.humanoid:MoveTo(self.navigationCurrent.waypoints[self.navigationCurrent.nextIndex].Position)
+	if self.navigationCurrent.waypoints[self.navigationCurrent.nextIndex] then
+		self.humanoid:MoveTo(self.navigationCurrent.waypoints[self.navigationCurrent.nextIndex].Position)
+	end
 
 	if isDrawing and self.isDebug then
 		self.DebugService:CreatePathCurrentIndicator()
@@ -218,6 +237,23 @@ function Puppet:Attack(target)
 	return true
 end
 
+function Puppet:GetPatrolPoint()
+	local rnd = 0
+	local tries = 0
+	repeat
+		tries += 1
+		rnd = math.random(1, #PatrolPoints)
+	until not PatrolPoints[rnd].isSearched or tries > 10
 
+	if tries > 10 then
+		rnd = math.random(1, #PatrolPoints)
+	end
+	self.currentPatrolPoint  = PatrolPoints[rnd]
+	return PatrolPoints[rnd]
+end
+
+function Puppet:ConcludeSearch()
+	self.currentPatrolPoint.isSearched = true
+end
 
 return Puppet

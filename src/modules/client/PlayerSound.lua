@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
+
 local require = require(script.Parent.loader).load(script)
 
 local GetRemoteEvent = require("GetRemoteEvent")
@@ -12,19 +13,18 @@ local Root = Character:WaitForChild("HumanoidRootPart")
 
 local PlayerMoveSoundEvent = GetRemoteEvent("PlayerMoveSoundEvent")
 
-local Step = 3
+local RunIsLoud = 12
+
+local Step = 2
 local StepLast = tick()
 
 
---RunService.Heartbeat:Connect(function(deltaTime)
-	-- if tick() - StepLast > Step then
-	-- 	StepLast = tick()
-	-- 	PlayerMoveSoundEvent:FireServer()
-	-- end
---end)
-
-Humanoid.Running:Connect(function(speed)
-	print(speed)
+RunService.Heartbeat:Connect(function(deltaTime)
+	if Humanoid.WalkSpeed > RunIsLoud and (tick() - StepLast > Step) then
+		StepLast = tick()
+		PlayerMoveSoundEvent:FireServer({position = Root.Position})
+		print("fire")
+	end
 end)
 
 

@@ -4,6 +4,7 @@ local Packages = require(Loader).bootstrapGame(ServerScriptService.NevermoreEngi
 
 local ServiceBag = require(Packages.ServiceBag).new()
 ServiceBag:GetService(Packages.DebugService)
+ServiceBag:GetService(Packages.AIService)
 
 ServiceBag:Init()
 ServiceBag:Start()

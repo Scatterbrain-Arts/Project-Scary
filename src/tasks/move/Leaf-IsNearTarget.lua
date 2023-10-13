@@ -7,12 +7,10 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	local nearestTarget = Blackboard.players[tostring(Blackboard.nearestTarget.UserId)]
+	if Blackboard.target.isActive then
+		local distance = (self.root.Position - Blackboard.target.positionKnown).Magnitude
 
-	if nearestTarget.character then
-		nearestTarget.distance = (self.root.Position - nearestTarget.character.PrimaryPart.Position).Magnitude
-
-		if nearestTarget.distance <= self.stats.attackRange then
+		if distance <= self.stats.attackRange then
 			Blackboard.isNear = true
 		else
 			Blackboard.isNear = false
