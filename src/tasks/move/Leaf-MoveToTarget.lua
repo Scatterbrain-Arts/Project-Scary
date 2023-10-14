@@ -14,7 +14,7 @@ function btTask.start(obj)
 		self:MoveToNextIndex(false)
 	end))
 
-	if Blackboard.target.isActive then
+	if Blackboard.target.positionKnown then
 		self:FindPath(self.navigationCurrent.waypoints[self.navigationCurrent.currentIndex].Position, Blackboard.target.positionKnown, self.navigationNext)
 
 		self.navigationNext.currentIndex = 2

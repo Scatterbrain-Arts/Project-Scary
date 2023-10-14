@@ -37,8 +37,8 @@
         "Search": {
           "$path": "src/tasks/search"
         },
-        "Select": {
-          "$path": "src/tasks/select"
+        "Find": {
+          "$path": "src/tasks/find"
         }
       }
     },

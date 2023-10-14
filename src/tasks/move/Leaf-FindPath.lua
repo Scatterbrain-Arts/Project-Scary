@@ -8,12 +8,8 @@ function btTask.start(obj)
 	local self = obj.self
 
 
-	if Blackboard.target.isActive then
+	if Blackboard.target.positionKnown then
 		Blackboard.isPath = self:FindPath(self.root.Position, Blackboard.target.positionKnown, self.navigationNext)
-
-		if self.isDebug then
-			self.DebugService:TargetAddIndicator(Blackboard.target.object)
-		end
 	end
 end
 

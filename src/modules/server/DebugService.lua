@@ -36,6 +36,9 @@ function DebugService:Start()
 	self.targetRef.billboard = self:CreateTargetIndicator()
 	self.targetRef.billboard.Parent = ServerStorage
 
+	local targetFolder = Instance.new("Folder", self.workspaceFolder)
+	targetFolder.Name = "target"
+
 	local waypointsFolder = Instance.new("Folder", self.workspaceFolder)
 	waypointsFolder.Name = "waypoints"
 
@@ -140,11 +143,15 @@ end
 
 
 function DebugService:CreateTargetIndicator()
-	local billboard = Instance.new("BillboardGui")
+	local part = CreatePart(Enum.PartType.Ball, Vector3.new(1,1,1), Color3.fromRGB(255,0,0))
+	part.Transparency = 1
+
+	local billboard = Instance.new("BillboardGui", part)
 	billboard.Size = UDim2.fromScale(2,0.5)
 	billboard.ExtentsOffset = Vector3.new(0,2,0)
 	billboard.AlwaysOnTop = true
 	billboard.Name = "TargetBillboard"
+	billboard.Adornee = part
 
 	local textBox = Instance.new("TextBox", billboard)
 	textBox.Size = UDim2.fromScale(1,1)
@@ -153,22 +160,28 @@ function DebugService:CreateTargetIndicator()
 	textBox.TextScaled = true
 	textBox.Text = "Target"
 
+	self.maid:GiveTask(part)
 	self.maid:GiveTask(billboard)
 	self.maid:GiveTask(textBox)
 
-	return billboard
+	return part
 end
 
 
-function DebugService:TargetAddIndicator(adornee)
+function DebugService:TargetAddIndicator(position, parent)
 	if not self.targetRef.billboard then
 		warn("BillboardGui is nil...")
 		return
 	end
 
-	--self.targetRef.target = player
-	self.targetRef.billboard.Adornee = adornee
-	self.targetRef.billboard.Parent = adornee
+	self.targetRef.billboard.Parent = self.workspaceFolder.target
+	self.targetRef.billboard.Position = position
+
+	if parent then
+		local weld = Instance.new("Weld", parent)
+		weld.Part0 = parent
+		weld.Part1 = self.targetRef.billboard
+	end
 end
 
 
@@ -183,8 +196,6 @@ function DebugService:TargetRemoveIndicator()
 		return
 	end
 
-	--self.targetRef.target = nil
-	self.targetRef.billboard.Adornee = nil
 	self.targetRef.billboard.Parent = ServerStorage
 end
 
