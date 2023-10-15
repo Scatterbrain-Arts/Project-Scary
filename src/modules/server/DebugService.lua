@@ -72,6 +72,16 @@ local function CreatePart(shape, size, color)
 	return part
 end
 
+local function WeldTo(weldRef, folder, attachRoot, attachTo)
+	weldRef = weldRef or Instance.new("Weld")
+
+	weldRef.Parent = folder
+	weldRef.Part0 = attachRoot
+	weldRef.Part1 = attachTo
+
+	return weldRef
+end
+
 
 function DebugService:CreateAgentIndicator(name, parent, root, width, height, color)
 	local part = CreatePart(Enum.PartType.Cylinder, Vector3.new(height, width*2, width*2), color)
@@ -80,9 +90,8 @@ function DebugService:CreateAgentIndicator(name, parent, root, width, height, co
 	part.Parent = parent
 	part.Name = name
 
-	local weld = Instance.new("Weld", part)
-	weld.Part0 = part
-	weld.Part1 = root
+	local weld = nil
+	weld = WeldTo(weld, part, part, root)
 
 	part.Orientation = Vector3.new(0,0,90)
 	part.Position = root.Position - Vector3.new(0, parent.Humanoid.HipHeight/2 - DebugService.GROUND_OFFSET, 0)
@@ -99,9 +108,8 @@ function DebugService:CreateRangeIndicator(name, parent, root, size, color)
 	part.Position = root.Position
 	part.Name = name
 
-	local weld = Instance.new("Weld", part)
-	weld.Part0 = part
-	weld.Part1 = root
+	local weld = nil
+	weld = WeldTo(weld, part, part, root)
 
 	self.maid:GiveTask(part)
 	self.maid:GiveTask(weld)
@@ -160,9 +168,13 @@ function DebugService:CreateTargetIndicator()
 	textBox.TextScaled = true
 	textBox.Text = "Target"
 
+	local weld = nil
+	weld = WeldTo(weld, part, part, nil)
+
 	self.maid:GiveTask(part)
 	self.maid:GiveTask(billboard)
 	self.maid:GiveTask(textBox)
+	self.maid:GiveTask(weld)
 
 	return part
 end
@@ -178,9 +190,8 @@ function DebugService:TargetAddIndicator(position, parent)
 	self.targetRef.billboard.Position = position
 
 	if parent then
-		local weld = Instance.new("Weld", parent)
-		weld.Part0 = parent
-		weld.Part1 = self.targetRef.billboard
+		local weld = self.targetRef.billboard:FindFirstChild("Weld")
+		weld = WeldTo(weld, self.targetRef.billboard, self.targetRef.billboard, parent)
 	end
 end
 
@@ -197,6 +208,11 @@ function DebugService:TargetRemoveIndicator()
 	end
 
 	self.targetRef.billboard.Parent = ServerStorage
+	
+	local weld = self.targetRef.billboard:FindFirstChild("Weld")
+	if weld then
+		weld = WeldTo(weld, self.targetRef.billboard, self.targetRef.billboard, nil)
+	end
 end
 
 
