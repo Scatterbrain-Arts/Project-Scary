@@ -10,7 +10,7 @@ function btTask.start(obj)
 	local self = obj.self
 
 
-	local targetData = self:FindTarget()
+	local targetData = self.mind:FindTarget()
 
 	Blackboard.target.priority = targetData.priority
 	Blackboard.target.sense = targetData.sense
@@ -19,8 +19,8 @@ function btTask.start(obj)
 	Blackboard.target.isSearched = targetData.isSearched
 	Blackboard.target.object = targetData.object
 
-	if self.isDebug then
-		self.DebugService:TargetAddIndicator(Blackboard.target.positionKnown, Blackboard.target.object)
+	if self.config["entity"].isDebug then
+		self.debug:TargetAddIndicator(Blackboard.target.positionKnown, Blackboard.target.object)
 	end
 end
 

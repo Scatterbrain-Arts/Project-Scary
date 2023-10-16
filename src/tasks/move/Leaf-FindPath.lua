@@ -9,7 +9,7 @@ function btTask.start(obj)
 
 
 	if Blackboard.target.positionKnown then
-		Blackboard.isPath = self:FindPath(self.root.Position, Blackboard.target.positionKnown, self.navigationNext)
+		Blackboard.isPath = self.body:FindPath(self.root.Position, Blackboard.target.positionKnown, self.body.navigationNext)
 	end
 end
 

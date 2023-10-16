@@ -7,18 +7,18 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	Blackboard.isMoving = self:MoveToNextIndex(true)
+	Blackboard.isMoving = self.body:MoveToNextIndex(true)
 
 	self.maid:GiveTask(self.humanoid.MoveToFinished:Once(function()
 		Blackboard.isMoving = false
-		self:MoveToNextIndex(false)
+		self.body:MoveToNextIndex(false)
 	end))
 
 	if Blackboard.target.positionKnown then
-		self:FindPath(self.navigationCurrent.waypoints[self.navigationCurrent.currentIndex].Position, Blackboard.target.positionKnown, self.navigationNext)
+		self.body:FindPath(self.body.navigationCurrent.waypoints[self.body.navigationCurrent.currentIndex].Position, Blackboard.target.positionKnown, self.body.navigationNext)
 
-		self.navigationNext.currentIndex = 2
-		self.navigationNext.nextIndex = 3
+		self.body.navigationNext.currentIndex = 2
+		self.body.navigationNext.nextIndex = 3
 	end
 end
 
@@ -30,7 +30,6 @@ end
 
 
 function btTask.run(obj)
-	--print("MoveToTarget-run")
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
@@ -39,7 +38,7 @@ function btTask.run(obj)
 		return FAIL
 	end
 
-	if self.navigationCurrent.currentIndex == #self.navigationCurrent.waypoints then
+	if self.body.navigationCurrent.currentIndex == #self.body.navigationCurrent.waypoints then
 		warn("MoveToTarget Task: Reached end of path...")
 		return FAIL
 	end

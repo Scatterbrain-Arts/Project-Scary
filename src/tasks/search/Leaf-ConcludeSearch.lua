@@ -8,7 +8,7 @@ function btTask.start(obj)
 	local self = obj.self
 
 	task.wait(2)
-	self:ConcludeSearch()
+	self.mind:ConcludeSearch()
 end
 
 

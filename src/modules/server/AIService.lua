@@ -4,15 +4,15 @@ local GetRemoteEvent = require("GetRemoteEvent")
 local Signal = require("Signal")
 local Maid = require("Maid")
 
-local AIService = {}
-AIService.ServiceName = "AIService"
+local AiService = {}
+AiService.ServiceName = "AiService"
 
 local PlayerMoveSoundEvent = GetRemoteEvent("PlayerMoveSoundEvent")
 local MoveAISignal = Signal.new()
 
 local PRIORITY_HIGH, PRIORITY_MED, PRIORITY_LOW = 3, 2, 1
 
-function AIService:Init(serviceBag)
+function AiService:Init(serviceBag)
 	assert(not self.serviceBag, "AIService is already initialized...")
 	self.serviceBag = assert(serviceBag, "ServiceBag is nil...")
 	self.maid = Maid.new()
@@ -20,11 +20,11 @@ function AIService:Init(serviceBag)
 	self.moveAISignal = MoveAISignal
 end
 
-function AIService:Start(serviceBag)
+function AiService:Start(serviceBag)
 	
 end
 
-function AIService:Move(payload)
+function AiService:Move(payload)
 	MoveAISignal:Fire(payload)
 end
 
@@ -32,14 +32,13 @@ end
 PlayerMoveSoundEvent.OnServerEvent:Connect(function(player, payload)
 	local data = {
 		priority = PRIORITY_MED,
-		sense = "sound",
 		position = payload.position,
 		isPlayer = true,
 		isSearched = false,
 		object = nil,
 	}
 
-	AIService:Move(data)
+	AiService:Move(data)
 end)
 
-return AIService
+return AiService
