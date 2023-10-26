@@ -7,8 +7,8 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	if Blackboard.target.positionKnown then
-		local distance = (self.root.Position - Blackboard.target.positionKnown).Magnitude
+	if self.mind.objective.positionKnown then
+		local distance = (self.root.Position - self.mind.objective.positionKnown).Magnitude
 
 		if distance <= self.config["body"].attackRange then
 			Blackboard.isNear = true

@@ -1,21 +1,31 @@
+local RunService = game:GetService("RunService")
+
 local require = require(script.Parent.loader).load(script)
 
 local AiComponentMind = {}
 AiComponentMind.__index = AiComponentMind
 
-local PRIORITY_HIGH, PRIORITY_MED, PRIORITY_LOW = 3, 2, 1
+local PRIORITY_HIGH, PRIORITY_MED, PRIORITY_LOW, PRIORITY_ZERO = 3, 2, 1, 0
+local ALERT, CAUIOUS, CALM = 3, 2, 1
+
+local function CreateObjective(priority, attention, position, instance)
+	return {
+		priority = priority,
+		positionKnown = position,
+		object = instance,
+		isSearched = false,
+		isAttention = attention,
+		startTime = tick(),
+	}
+end
+
 
 local PatrolPoints = {}
 for _, point in workspace:FindFirstChild("PatrolPoints"):GetChildren() do
-	table.insert(PatrolPoints, {
-		priority = PRIORITY_LOW,
-		position = point.Position,
-
-		object = point,
-		isSearched = false,
-		isPlayer = false,
-	})
+	table.insert(PatrolPoints, CreateObjective(PRIORITY_ZERO, false, point.Position, point))
 end
+
+
 
 
 function AiComponentMind.new(entity, serviceBag)
@@ -28,80 +38,128 @@ function AiComponentMind.new(entity, serviceBag)
     self.AIService = serviceBag:GetService(require("AiService"))
     self.currentTarget = nil
 
-    self.memoryQueue = {
+	self.memoryForgetTime = 3
+	self.memory = {
 		[PRIORITY_HIGH] = {},
 		[PRIORITY_MED] = {},
 		[PRIORITY_LOW] = {},
 	}
+	self.objective = nil
 
-	for _, point in PatrolPoints do
-		point.index = #self.memoryQueue[point.priority] + 1
-		table.insert(self.memoryQueue[point.priority], point)
-	end
-
-
+	self.needAttention = false
+	self.searchTimer = 5
+	self.searchStartTime = nil
     self.AIService.moveAISignal:Connect(function(payload)
-		payload.startTime = tick()
-		payload.index = #self.memoryQueue[payload.priority] + 1
-		table.insert(self.memoryQueue[payload.priority], payload)
+		local priority = ( (self.entity.root.Position - payload.positionKnown).Magnitude <= 50 ) and PRIORITY_HIGH or PRIORITY_MED
+		self:AddObjective(CreateObjective(priority, true, payload.positionKnown, payload.object))
+	end)
+
+	self.cycleLock = false
+	self.cycleRefresh = 3
+	self.cycleStartTime = tick()
+	RunService.Heartbeat:Connect(function(deltaTime)
+		if tick() - self.cycleStartTime >= self.cycleRefresh then
+			self:UpdateMemory()
+			self.cycleStartTime = tick()
+		end
 	end)
 
 	return self
 end
 
+function AiComponentMind:AddObjective(objective)
+	table.insert(self.memory[objective.priority], objective)
+	if objective.isAttention then
+		warn("New Task needs attention...")
+		self.needAttention = true
+	end
+end
 
-local function GetRandomInMemoryQueue(queue)
+
+function AiComponentMind:UpdateMemory()
+	if self.cycleLock then
+		return
+	end
+
+	self.cycleLock = true
+
+	for priorityLevel, prioritizedMemory in self.memory do
+		for index, objective in prioritizedMemory do
+
+			if self.objective == objective or tick() - objective.startTime > self.memoryForgetTime then
+				self.memory[priorityLevel][index] = nil
+			end
+		end
+	end
+
+	local isSearchedCount = 0
+	for _, objective in PatrolPoints do
+		if objective.isSearched then
+			isSearchedCount += 1
+		end
+	end
+
+	if isSearchedCount == #PatrolPoints then
+		for _, objective in PatrolPoints do
+			objective.isSearched = false
+		end
+	end
+
+	self.cycleLock = false
+end
+
+
+function AiComponentMind:SearchStart()
+	self.searchStartTime = tick()
+	print("Here", self.searchStartTime)
+end
+
+function AiComponentMind:SearchEnd()
+	self.objective.isSearched = true
+	self:UpdateMemory()
+
+	self.searchStartTime = nil
+end
+
+
+local function GetRandomPatrolNotSearched()
 	local rnd = 0
 	repeat
-		rnd = math.random(1, #queue)
-	until not queue[rnd].isSearched
+		rnd = math.random(1, #PatrolPoints)
+	until not PatrolPoints[rnd].isSearched
 
-	return queue[rnd]
+	return PatrolPoints[rnd]
 end
 
-function AiComponentMind:UpdateMemoryQueue()
-	for priority, prioritizedMemory in self.memoryQueue do
-		local isSearchedCount = 0
-
-		for index, targetData in prioritizedMemory do
-			if priority == PRIORITY_LOW and targetData.isSearched then
-				isSearchedCount += 1
-			end
-
-			if priority >= PRIORITY_MED then
-				if self.currentTarget == targetData or tick() - targetData.startTime > 2 then
-					self.memoryQueue[priority][index] = nil
-				end
-			end
-		end
-
-		if isSearchedCount == #self.memoryQueue[PRIORITY_LOW] then
-			for _, targetData in self.memoryQueue[PRIORITY_LOW] do
-				targetData.isSearched = false
-			end
-		end
-	end
-end
-
-function AiComponentMind:ConcludeSearch()
-	self.currentTarget.isSearched = true
-
-	self:UpdateMemoryQueue()
-end
 
 function AiComponentMind:FindTarget()
-	if #self.memoryQueue[PRIORITY_HIGH] >= 1 then
-		self.currentTarget = self.memoryQueue[PRIORITY_HIGH][#self.memoryQueue[PRIORITY_HIGH]]
-	elseif #self.memoryQueue[PRIORITY_MED] >= 1 then
-		self.currentTarget = self.memoryQueue[PRIORITY_MED][#self.memoryQueue[PRIORITY_MED]]
-	elseif #self.memoryQueue[PRIORITY_LOW] >= 1 then
-		self.currentTarget = GetRandomInMemoryQueue(self.memoryQueue[PRIORITY_LOW])
-	else
-		warn("AiComponentBody:FindTarget: Unexpected fail...")
+	if self.needAttention then
+		warn("something needs attention")
+		self.needAttention = false
 	end
 
 
-	return self.currentTarget
+	if #self.memory[PRIORITY_HIGH] >= 1 then
+		self.objective = self.memory[PRIORITY_HIGH][#self.memory[PRIORITY_HIGH]]
+
+	elseif #self.memory[PRIORITY_MED] >= 1 then
+		self.objective = self.memory[PRIORITY_MED][#self.memory[PRIORITY_MED]]
+
+	elseif #self.memory[PRIORITY_LOW] >= 1 then
+		self.objective = self.memory[PRIORITY_LOW][#self.memory[PRIORITY_LOW]]
+
+	else
+		self.objective = GetRandomPatrolNotSearched()
+	end
+
+	if self.objective and self.entity.config["entity"].isDebug then
+		self.entity.debug:TargetAddIndicator(self.objective.positionKnown, self.objective.object)
+	end
+
+	print("did i get it?  ->", self.objective.isAttention)
+
+	return self.objective and true or false
 end
+
 
 return AiComponentMind

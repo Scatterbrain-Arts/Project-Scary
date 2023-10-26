@@ -4,18 +4,19 @@ local SUCCESS,FAIL,RUNNING = 1,2,3
 
 
 function btTask.start(obj)
+	--print("movestart")
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
 	Blackboard.isMoving = self.body:MoveToNextIndex(true)
 
-	self.maid:GiveTask(self.humanoid.MoveToFinished:Once(function()
+	self.body.maid:GiveTask(self.humanoid.MoveToFinished:Once(function()
 		Blackboard.isMoving = false
 		self.body:MoveToNextIndex(false)
 	end))
 
-	if Blackboard.target.positionKnown then
-		self.body:FindPath(self.body.navigationCurrent.waypoints[self.body.navigationCurrent.currentIndex].Position, Blackboard.target.positionKnown, self.body.navigationNext)
+	if self.mind.objective.positionKnown then
+		self.body:FindPath(self.body.navigationCurrent.waypoints[self.body.navigationCurrent.currentIndex].Position, self.mind.objective.positionKnown, self.body.navigationNext)
 
 		self.body.navigationNext.currentIndex = 2
 		self.body.navigationNext.nextIndex = 3
@@ -26,12 +27,22 @@ end
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+
+	if status == FAIL then
+		self.body:StopPathing()
+	end
+	
 end
 
 
 function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+
+	if self.mind.needAttention then
+		warn("MoveToTarget Task: Attention needed else where...")
+		return FAIL
+	end
 
 	if not Blackboard.isPath then
 		warn("MoveToTarget Task: No path...")

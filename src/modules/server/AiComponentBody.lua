@@ -112,6 +112,20 @@ function AiComponentBody:MoveToNextIndex(isDrawing)
 	return true
 end
 
+function AiComponentBody:StopPathing()
+	self.maid:DoCleaning()
+
+	self.navigationCurrent.waypoints = {}
+	self.navigationCurrent.currentIndex = 1
+	self.navigationCurrent.nextIndex = 2
+
+	self.navigationNext.waypoints = {}
+	self.navigationNext.currentIndex = 1
+	self.navigationNext.nextIndex = 2
+
+	self.entity.humanoid:MoveTo(self.entity.root.Position)
+end
+
 
 function AiComponentBody:Attack(target)
 	if not target.character then

@@ -31,10 +31,7 @@ end
 
 PlayerMoveSoundEvent.OnServerEvent:Connect(function(player, payload)
 	local data = {
-		priority = PRIORITY_MED,
-		position = payload.position,
-		isPlayer = true,
-		isSearched = false,
+		positionKnown = payload.position,
 		object = nil,
 	}
 
