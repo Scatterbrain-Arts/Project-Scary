@@ -8,13 +8,14 @@ AiComponentMind.__index = AiComponentMind
 local PRIORITY_HIGH, PRIORITY_MED, PRIORITY_LOW, PRIORITY_ZERO = 3, 2, 1, 0
 local ALERT, CAUIOUS, CALM = 3, 2, 1
 
-local function CreateObjective(priority, attention, position, instance)
+local function CreateObjective(priority, needsAttention, position, instance, isPlayer)
 	return {
 		priority = priority,
 		positionKnown = position,
 		object = instance,
 		isSearched = false,
-		isAttention = attention,
+		isAttention = needsAttention or false,
+		isPlayer = isPlayer or false,
 		startTime = tick(),
 	}
 end
@@ -22,7 +23,7 @@ end
 
 local PatrolPoints = {}
 for _, point in workspace:FindFirstChild("PatrolPoints"):GetChildren() do
-	table.insert(PatrolPoints, CreateObjective(PRIORITY_ZERO, false, point.Position, point))
+	table.insert(PatrolPoints, CreateObjective(PRIORITY_ZERO, false, point.Position, point, false))
 end
 
 
@@ -51,7 +52,7 @@ function AiComponentMind.new(entity, serviceBag)
 	self.searchStartTime = nil
     self.AIService.moveAISignal:Connect(function(payload)
 		local priority = ( (self.entity.root.Position - payload.positionKnown).Magnitude <= 50 ) and PRIORITY_HIGH or PRIORITY_MED
-		self:AddObjective(CreateObjective(priority, true, payload.positionKnown, payload.object))
+		self:AddObjective(CreateObjective(priority, true, payload.positionKnown, payload.object, false))
 	end)
 
 	self.cycleLock = false
@@ -66,6 +67,7 @@ function AiComponentMind.new(entity, serviceBag)
 
 	return self
 end
+
 
 function AiComponentMind:AddObjective(objective)
 	table.insert(self.memory[objective.priority], objective)
@@ -114,6 +116,7 @@ function AiComponentMind:SearchStart()
 	print("Here", self.searchStartTime)
 end
 
+
 function AiComponentMind:SearchEnd()
 	self.objective.isSearched = true
 	self:UpdateMemory()
@@ -153,10 +156,10 @@ function AiComponentMind:FindTarget()
 	end
 
 	if self.objective and self.entity.config["entity"].isDebug then
-		self.entity.debug:TargetAddIndicator(self.objective.positionKnown, self.objective.object)
+		self.entity.debug:AddTargetIndicator(self.objective.positionKnown, self.objective.object)
 	end
 
-	print("did i get it?  ->", self.objective.isAttention)
+	--print("did i get it?  ->", self.objective.isAttention)
 
 	return self.objective and true or false
 end

@@ -36,7 +36,7 @@ function btTask.start(obj)
 			Blackboard.isPath = self:FindPath(self.root.Position, nearestTarget.character.PrimaryPart.Position, self.navigationNext)
 
 			if self.isDebug then
-				self.DebugService:TargetAddIndicator(nearestTarget.player, nearestTarget.character.Head)
+				self.DebugService:AddTargetIndicator(nearestTarget.player, nearestTarget.character.Head)
 			end
 		end
 	end

@@ -4,7 +4,6 @@ local SUCCESS,FAIL,RUNNING = 1,2,3
 
 
 function btTask.start(obj)
-	--print("movestart")
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 

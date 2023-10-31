@@ -25,7 +25,6 @@ function AiEntity.new(aiInstance, serviceBag)
 
 	self.name = "Pepe"
 	self.maid = Maid.new()
-	self.debug = AiDebug.new(self.name)
 
 	self.character = aiInstance or warn("No instance found for ", self.name, "...")
 	self.humanoid = aiInstance:FindFirstChild("Humanoid") or warn("No humanoid found for", self.name, "...")
@@ -38,13 +37,18 @@ function AiEntity.new(aiInstance, serviceBag)
 		},
 	}
 
+	if self.config["entity"].isDebug then
+		self.debug = AiDebug.new(self, true)
+	end
+
 	self.body = AiComponentBody.new(self, serviceBag)
 	self.mind = AiComponentMind.new(self, serviceBag)
 	self.soul = AiComponentSoul.new(self, serviceBag)
 
 	AiHelper:SetNetworkOwner(self.character, nil)
 
-	self.btRoot = BehaviorTreeCreator:Create(ServerStorage.BehaviorTrees.MOB_Start)
+
+	self.btRoot = BehaviorTreeCreator:Create(ServerStorage.BehaviorTrees.MOB_Start, self)
 	self.btState = {
 		self = self,
 		Blackboard = {
@@ -55,13 +59,17 @@ function AiEntity.new(aiInstance, serviceBag)
     RunService.Heartbeat:Connect(function(time, deltaTime)
 		if not self.config["entity"].isOverride then
 			self.btRoot:Run(self.btState)
+
+			if self.config["entity"].isDebug then
+				self.debug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name)
+			end
 		end
 	end)
 
 	PuppetManuelOverrideEvent.OnServerEvent:Connect(function()
 		self.config["entity"].isOverride = not self.config["entity"].isOverride
 
-		self.character:SetAttribute("_OVERRIDE", not self.config["entity"].isOverride)
+		self.character:SetAttribute("_OVERRIDE", self.config["entity"].isOverride)
 		if self.config["entity"].isOverride then
 			warn("Manuel Override ENABLED for", self.name, "...")
 		elseif self.config["entity"].isOverride == false then

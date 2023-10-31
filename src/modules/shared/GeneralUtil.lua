@@ -15,7 +15,26 @@ function GeneralUtil:CreatePart(shape, size, color)
 	return part
 end
 
-function GeneralUtil:WeldTo(weld, source, target)
+function GeneralUtil:CreateBillboard(size, offset)
+	local billboard = Instance.new("BillboardGui")
+	billboard.Size = size
+	billboard.ExtentsOffset = offset
+	billboard.AlwaysOnTop = true
+
+	return billboard
+end
+
+function GeneralUtil:CreateTextBox(size, bgColor, txtColor)
+	local textBox = Instance.new("TextBox")
+	textBox.Size = size
+	textBox.BackgroundColor3 = bgColor
+	textBox.TextColor3 = txtColor
+	textBox.TextScaled = true
+
+	return textBox
+end
+
+function GeneralUtil:WeldTo(source, target, weld)
 	weld = weld or Instance.new("Weld")
 
 	weld.Parent = source

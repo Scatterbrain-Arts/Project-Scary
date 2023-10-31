@@ -534,7 +534,7 @@ function TreeProto:run(obj,...)
 	if data.running then
 		-- warn(debug.traceback("Tried to run BehaviorTree while it was already running"))
 		return
-	end		
+	end
 
 	-- Get entity blackboard
 	local blackboard = obj.Blackboard
@@ -571,6 +571,7 @@ function TreeProto:run(obj,...)
 			if didResume then
 				didResume = false
 			elseif node.start then
+				blackboard.node = node.nodefolder
 				node.start(obj,...)
 			end
 
@@ -706,10 +707,11 @@ TreeProto.Abort = TreeProto.abort
 
 ------- TREE CONSTRUCTOR -------
 
-function BehaviorTree:new(params)
+function BehaviorTree:new(params, entity)
 	local tree = params.tree
 	local nodes = {}
 	local DataLookup = {}
+	--local entity = entity
 
 	ProcessNode({type = "root", tree = tree, params = {}}, nodes)
 
@@ -717,6 +719,7 @@ function BehaviorTree:new(params)
 		nodes = nodes,
 		DataLookup = DataLookup,
 		folder = params.treeFolder,
+		entity = entity,
 	}, { __index = TreeProto })
 end
 

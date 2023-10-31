@@ -8,9 +8,8 @@ function btTask.start(obj)
 	local self = obj.self
 
 
-	local nearestTarget = Blackboard.nearestTarget
-	if not Blackboard.isAttacking then
-		Blackboard.isAttacking = self:Attack(nearestTarget)
+	if self.mind.objective.isPlayer then
+		Blackboard.isAttacking = self.body:Attack()
 
 		task.spawn(function()
 			task.wait(self.stats.attackCooldown)

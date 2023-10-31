@@ -47,13 +47,15 @@ local function InitFolders(entityName)
 end
 
 
-function AiDebug.new(entityName, serviceBag)
+function AiDebug.new(entity, isPrint)
 	local self = {}
 	setmetatable(self, AiDebug)
 
 	self.maid = Maid.new()
-	self.entityName = entityName
-	self.storageFolder, self.workspaceFolder = InitFolders(entityName)
+	self.entity = entity
+	self.storageFolder, self.workspaceFolder = InitFolders(entity.name)
+	self.isPrint = isPrint
+
 
 	self.waypoints = {
 		current = {},
@@ -63,6 +65,12 @@ function AiDebug.new(entityName, serviceBag)
 	self.target = {
 		indicator = self:CreateTargetIndicator(),
 		object = nil,
+		weld = nil,
+	}
+
+	self.behaviorTree = {
+		indicator = self:CreateBehaviorTreeIndicator(true),
+		currentTask = "",
 	}
 
 	self.timer = os.clock()
@@ -72,31 +80,31 @@ end
 
 
 
-function AiDebug:CreateAgentCylinder(name, parent, root, width, height, color)
+function AiDebug:CreateAgentCylinder(name, root, width, height, color)
 	local cylinder = GeneralUtil:CreatePart(Enum.PartType.Cylinder, Vector3.new(height, width*2, width*2), color)
 	cylinder.Transparency = 0.5
 	cylinder.Anchored = false
-	cylinder.Parent = parent
+	cylinder.Parent = root.Parent
 	cylinder.Name = name
 
-	GeneralUtil:WeldTo(nil, cylinder, root)
+	GeneralUtil:WeldTo(cylinder, root)
 
 	cylinder.Orientation = Vector3.new(0,0,90)
-	cylinder.Position = root.Position - Vector3.new(0, parent.Humanoid.HipHeight/2 - AiDebug.GROUND_OFFSET, 0)
+	cylinder.Position = root.Position - Vector3.new(0, root.Parent.Humanoid.HipHeight/2 - AiDebug.GROUND_OFFSET, 0)
 
 	self.maid:GiveTask(cylinder)
 end
 
 
-function AiDebug:CreateRangeSphere(name, parent, root, size, color)
+function AiDebug:CreateRangeSphere(name, root, size, color)
 	local sphere = GeneralUtil:CreatePart(Enum.PartType.Ball, Vector3.new(size*2, size*2, size*2), color)
 	sphere.Transparency = 0.75
 	sphere.Anchored = false
-	sphere.Parent = parent
+	sphere.Parent = root.Parent
 	sphere.Position = root.Position
 	sphere.Name = name
 
-	GeneralUtil:WeldTo(nil, sphere, root)
+	GeneralUtil:WeldTo(sphere, root)
 
 	self.maid:GiveTask(sphere)
 end
@@ -142,20 +150,15 @@ function AiDebug:CreateTargetIndicator()
 	block.Parent = self.storageFolder
 	block.Name = "TargetIndicator"
 
-	local billboard = Instance.new("BillboardGui", block)
-	billboard.Size = UDim2.fromScale(2,0.5)
-	billboard.ExtentsOffset = Vector3.new(0,2,0)
-	billboard.AlwaysOnTop = true
+	local billboard = GeneralUtil:CreateBillboard(UDim2.fromScale(2,0.5), Vector3.new(0,2,0))
+	billboard.Parent = block
 	billboard.Adornee = block
 
-	local textBox = Instance.new("TextBox", billboard)
-	textBox.Size = UDim2.fromScale(1,1)
-	textBox.BackgroundColor3 = Color3.fromRGB(255,0,0)
-	textBox.TextColor3 = Color3.fromRGB(255,255,255)
-	textBox.TextScaled = true
+	local textBox = GeneralUtil:CreateTextBox(UDim2.fromScale(1,1), Color3.fromRGB(255,0,0), Color3.fromRGB(255,255,255))
+	textBox.Parent = billboard
 	textBox.Text = "Target"
 
-	GeneralUtil:WeldTo(nil, block, nil)
+	GeneralUtil:WeldTo(block)
 
 	self.maid:GiveTask(block)
 
@@ -163,7 +166,7 @@ function AiDebug:CreateTargetIndicator()
 end
 
 
-function AiDebug:TargetAddIndicator(position, object)
+function AiDebug:AddTargetIndicator(position, object)
 	if not self.target.indicator then
 		warn("Target indicator is nil for ", self.entityName, "...")
 		return
@@ -172,20 +175,58 @@ function AiDebug:TargetAddIndicator(position, object)
 	self.target.indicator.Parent = self.workspaceFolder.target
 	self.target.indicator.Position = position
 
-	GeneralUtil:WeldTo(self.target.indicator:FindFirstChild("Weld"), self.target.indicator, object)
+	self.target.weld = self.target.weld or self.target.indicator:FindFirstChild("Weld")
+	GeneralUtil:WeldTo(self.target.indicator, object, self.target.weld)
 end
 
 
-function AiDebug:TargetRemoveIndicator()
+function AiDebug:RemoveTargetIndicator()
 	if not self.target.indicator then
 		warn("Target indicator is nil for ", self.entityName, "...")
 		return
 	end
 
 	self.target.indicator.Parent = self.storageFolder
-	GeneralUtil:WeldTo(self.target.indicator:FindFirstChild("Weld"), self.target.indicator, nil)
+
+	self.target.weld = self.target.weld or self.target.indicator:FindFirstChild("Weld")
+	GeneralUtil:WeldTo(self.target.indicator, nil, self.target.weld)
 end
 
+function AiDebug:CreateBehaviorTreeIndicator()
+	local block = GeneralUtil:CreatePart(Enum.PartType.Block , Vector3.new(1,1,1), Color3.fromRGB(255, 255, 0))
+	block.Transparency = 1
+	block.Parent = self.entity.character
+	block.Anchored = false
+	block.Name = "BehaviorTreeIndicator"
+
+	local billboard = GeneralUtil:CreateBillboard(UDim2.fromScale(10,2.5), Vector3.new(0,2,0))
+	billboard.Parent = block
+	billboard.Adornee = block
+
+	local textBox = GeneralUtil:CreateTextBox(UDim2.fromScale(1,1), Color3.fromRGB(0, 255, 157), Color3.fromRGB(0, 0, 0))
+	textBox.Parent = billboard
+	textBox.Text = ""
+
+	GeneralUtil:WeldTo(block, self.entity.character.Head)
+
+	self.maid:GiveTask(block)
+
+	return block
+end
+
+function AiDebug:UpdateBehaviorTreeIndicator(updatedText)
+	if not self.behaviorTree.indicator then
+		warn("Behavior Tree indicator is nil for ", self.entityName, "...")
+		return
+	end
+
+	if self.behaviorTree.indicator.BillboardGui.TextBox.Text ~= updatedText then
+		self.behaviorTree.indicator.BillboardGui.TextBox.Text = updatedText
+
+		if self.isPrint then print(updatedText) end
+	end
+
+end
 
 function AiDebug:StartTimer()
 	self.timer = os.clock()
