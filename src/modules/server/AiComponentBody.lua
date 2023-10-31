@@ -33,8 +33,6 @@ function AiComponentBody.new(entity, serviceBag)
 		attackRange = AiHelper:GetValue(self.entity.character, "statAttackRange", self.entity.config["entity"].isDebug) or 10,
 		attackDamage = AiHelper:GetValue(self.entity.character, "statAttackDamage", self.entity.config["entity"].isDebug) or 25,
 		attackCooldown = AiHelper:GetValue(self.entity.character, "statAttackCooldown", self.entity.config["entity"].isDebug) or 2,
-		soundSearchRange = AiHelper:GetValue(self.entity.character, "statSoundSearchRange", self.entity.config["entity"].isDebug) or 100,
-		soundFoundRange = AiHelper:GetValue(self.entity.character, "statSoundFoundRange", self.entity.config["entity"].isDebug) or 50,
 	}
 
     self.navigationCurrent = {
@@ -54,8 +52,7 @@ function AiComponentBody.new(entity, serviceBag)
 	}
 
 	if self.entity.config["entity"].isDebug then
-		self.entity.debug:CreateRangeSphere("soundSearchRange", self.entity.root, self.entity.config["body"].soundSearchRange, Color3.fromRGB(0,255,0))
-		self.entity.debug:CreateRangeSphere("soundFoundRange", self.entity.root, self.entity.config["body"].soundFoundRange, Color3.fromRGB(71, 130, 133))
+		
 		self.entity.debug:CreateRangeSphere("attack", self.entity.root, self.entity.config["body"].attackRange,  Color3.fromRGB(255,0,0))
 		self.entity.debug:CreateAgentCylinder("agent", self.entity.root, self.entity.config["body"].navigation.AgentRadius,
 											self.entity.config["body"].navigation.AgentHeight, Color3.fromRGB(255, 255, 0))
