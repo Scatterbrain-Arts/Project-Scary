@@ -31,7 +31,7 @@ end
 
 PlayerMoveSoundEvent.OnServerEvent:Connect(function(player, payload)
 	local data = {
-		positionKnown = payload.position,
+		position = payload.position,
 		object = nil,
 	}
 

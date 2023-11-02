@@ -8,8 +8,8 @@ function btTask.start(obj)
 	local self = obj.self
 
 
-	if self.mind.objective.positionKnown then
-		Blackboard.isPath = self.body:FindPath(self.root.Position, self.mind.objective.positionKnown, self.body.navigationNext)
+	if Blackboard.isObjective then
+		Blackboard.isPath = self.body:FindPath(self.root.Position, self.mind.objective.position, self.body.navigationNext)
 	end
 end
 
@@ -29,7 +29,7 @@ function btTask.run(obj)
 	elseif not Blackboard.isPath then
 		return FAIL
 	else
-		warn("FindPath Task: Unexpected fail...")
+		warn("Unexpected fail: Leaf-FindPath...")
 		return FAIL
 	end
 end

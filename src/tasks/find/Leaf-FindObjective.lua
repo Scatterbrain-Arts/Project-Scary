@@ -9,8 +9,7 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	self.mind:FindTarget()
-	task.wait(0.1)
+	Blackboard.isObjective = self.mind:FindTarget()
 end
 
 
@@ -24,7 +23,14 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	return self.mind.objective and SUCCESS or FAIL
+	if Blackboard.isObjective then
+		return SUCCESS
+	elseif not Blackboard.isObjective then
+		return FAIL
+	else
+		warn("Unexpected Error: Leaf-FindObjective...")
+		return FAIL
+	end
 end
 
 

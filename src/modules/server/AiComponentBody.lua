@@ -128,12 +128,12 @@ end
 
 
 function AiComponentBody:Attack()
-	if not self.objective.object.character then
+	if not self.entity.playerHumanoid then
 		warn("Not valid target to attack...")
 		return false
 	end
 
-	self.objective.object.character:FindFirstChild("Humanoid"):TakeDamage(self.entity.config["body"].attackDamage)
+	self.entity.playerHumanoid:TakeDamage(self.entity.config["body"].attackDamage)
 
 	return true
 end

@@ -4,7 +4,6 @@ local SUCCESS,FAIL,RUNNING = 1,2,3
 
 
 function btTask.start(obj)
-	print("search")
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
@@ -16,7 +15,7 @@ function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	--self.mind:SearchEnd()
+	self.mind:SearchEnd()
 end
 
 

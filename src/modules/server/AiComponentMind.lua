@@ -7,26 +7,19 @@ local AiHelper = require("AiHelper")
 local AiComponentMind = {}
 AiComponentMind.__index = AiComponentMind
 
-local PRIORITY_HIGH, PRIORITY_MED, PRIORITY_LOW, PRIORITY_ZERO = 3, 2, 1, 0
-local ALERT, CAUIOUS, CALM = 3, 2, 1
+local PRIORITY_HIGH, PRIORITY_MED, PRIORITY_LOW = 3, 2, 1
+local STATUS_HOSTILE, STATUS_ALERT, STATUS_CALM = 3, 2, 1
 
-local function CreateObjective(priority, position, instance)
+local function CreateObjective(priority, position, instance, isPlayer)
 	return {
 		priority = priority,
-		positionKnown = position,
+		position = position,
 		object = instance,
+		isPlayer = isPlayer or false,
 		isSearched = false,
 		startTime = tick(),
 	}
 end
-
-
-local PatrolPoints = {}
-for _, point in workspace:FindFirstChild("PatrolPoints"):GetChildren() do
-	table.insert(PatrolPoints, CreateObjective(PRIORITY_LOW, point.Position, point))
-end
-
-
 
 
 function AiComponentMind.new(entity, serviceBag)
@@ -40,17 +33,23 @@ function AiComponentMind.new(entity, serviceBag)
 	}
 
     self.AIService = serviceBag:GetService(require("AiService"))
-    self.currentTarget = nil
 
+	self.hostileTime = 0
 	self.memoryForgetTime = 3
 	self.memory = {
 		[PRIORITY_HIGH] = {},
 		[PRIORITY_MED] = {},
 		[PRIORITY_LOW] = {},
 	}
-	self.objective = nil
 
+	for _, point in workspace:FindFirstChild("PatrolPoints"):GetChildren() do
+		self:AddObjective(CreateObjective(PRIORITY_LOW, point.Position, point))
+	end
+
+	self.objective = nil
 	self.needAttention = false
+	self.status = STATUS_CALM
+
 	self.searchTimer = 5
 	self.searchStartTime = nil
     self.AIService.moveAISignal:Connect(function(sound) self:SoundRecieved(sound) end)
@@ -62,6 +61,10 @@ function AiComponentMind.new(entity, serviceBag)
 		if tick() - self.cycleStartTime >= self.cycleRefresh then
 			self:UpdateMemory()
 			self.cycleStartTime = tick()
+
+			if self.status == STATUS_HOSTILE and tick() - self.hostileTime > 10 then
+				self:UpdateStatus(STATUS_CALM, true)
+			end
 		end
 	end)
 
@@ -75,7 +78,7 @@ end
 
 
 function AiComponentMind:SoundRecieved(sound)
-	local distance = (self.entity.root.Position - sound.positionKnown).Magnitude
+	local distance = (self.entity.root.Position - sound.position).Magnitude
 
 	if distance > self.entity.config["mind"].soundSearchRange then
 		print("Sound Not Heard...", " Distance is ", distance, "...")
@@ -84,9 +87,9 @@ function AiComponentMind:SoundRecieved(sound)
 	
 	local objective
 	if distance <= self.entity.config["mind"].soundFoundRange then
-		objective = CreateObjective(PRIORITY_HIGH, sound.positionKnown, sound.object)
+		objective = CreateObjective(PRIORITY_HIGH, sound.position, sound.object)
 	elseif distance <= self.entity.config["mind"].soundSearchRange then
-		objective = CreateObjective(PRIORITY_MED, sound.positionKnown, sound.object)
+		objective = CreateObjective(PRIORITY_MED, sound.position, sound.object)
 	else
 		warn("Unexpected Error: AiComponentMind-MoveAISignal...")
 		return
@@ -98,8 +101,24 @@ end
 
 function AiComponentMind:AddObjective(objective)
 	table.insert(self.memory[objective.priority], objective)
-	if objective.priority == PRIORITY_HIGH then
+	if objective.priority >= PRIORITY_MED then
 		self.needAttention = true
+
+		self:UpdateStatus(STATUS_ALERT)
+
+		if objective.priority == PRIORITY_HIGH and self.status == STATUS_ALERT then
+			self:UpdateStatus(STATUS_HOSTILE)
+			self.hostileTime = tick()
+		end
+	end
+end
+
+function AiComponentMind:UpdateStatus(status, forceUpdate)
+	forceUpdate = forceUpdate or false
+	status = math.clamp(status, STATUS_CALM, STATUS_HOSTILE)
+
+	if self.status < status or forceUpdate then
+		self.status = status
 	end
 end
 
@@ -111,24 +130,31 @@ function AiComponentMind:UpdateMemory()
 
 	self.cycleLock = true
 
-	for priorityLevel, prioritizedMemory in self.memory do
-		for index, objective in prioritizedMemory do
-
-			if self.objective == objective or tick() - objective.startTime > self.memoryForgetTime then
-				self.memory[priorityLevel][index] = nil
-			end
+	-- High Priority Check
+	for index, objective in self.memory[PRIORITY_HIGH] do
+		if tick() - objective.startTime > self.memoryForgetTime then
+			table.remove(self.memory[PRIORITY_HIGH], index)
 		end
 	end
 
+	-- Med Priority Check
+	for index, objective in self.memory[PRIORITY_MED] do
+		if tick() - objective.startTime > self.memoryForgetTime then
+			table.remove(self.memory[PRIORITY_MED], index)
+		end
+	end
+
+	-- Low Priority Check
 	local isSearchedCount = 0
-	for _, objective in PatrolPoints do
+	for _, objective in self.memory[PRIORITY_LOW] do
 		if objective.isSearched then
 			isSearchedCount += 1
 		end
 	end
 
-	if isSearchedCount == #PatrolPoints then
-		for _, objective in PatrolPoints do
+	-- Low Priority Reset
+	if isSearchedCount == #self.memory[PRIORITY_LOW] then
+		for _, objective in self.memory[PRIORITY_LOW] do
 			objective.isSearched = false
 		end
 	end
@@ -139,7 +165,7 @@ end
 
 function AiComponentMind:SearchStart()
 	self.searchStartTime = tick()
-	print("Here", self.searchStartTime)
+	--print("Here", self.searchStartTime)
 end
 
 
@@ -151,43 +177,41 @@ function AiComponentMind:SearchEnd()
 end
 
 
-local function GetRandomPatrolNotSearched()
+local function GetRandomNotSearched(table)
 	local rnd = 0
 	repeat
-		rnd = math.random(1, #PatrolPoints)
-	until not PatrolPoints[rnd].isSearched
+		rnd = math.random(1, #table)
+	until not table[rnd].isSearched
 
-	return PatrolPoints[rnd]
+	return table[rnd]
 end
+
+
 
 
 function AiComponentMind:FindTarget()
 	if self.needAttention then
-		warn("something needs attention")
 		self.needAttention = false
 	end
 
-
-	if #self.memory[PRIORITY_HIGH] >= 1 then
-		self.objective = self.memory[PRIORITY_HIGH][#self.memory[PRIORITY_HIGH]]
-
+	if self.status == STATUS_HOSTILE then
+		self.objective = CreateObjective(PRIORITY_HIGH, self.entity.playerRoot.Position, self.entity.playerCharacter.Head, true)
+	elseif #self.memory[PRIORITY_HIGH] >= 1 then
+		self.objective = table.remove(self.memory[PRIORITY_HIGH])
 	elseif #self.memory[PRIORITY_MED] >= 1 then
-		self.objective = self.memory[PRIORITY_MED][#self.memory[PRIORITY_MED]]
-
+		self.objective = table.remove(self.memory[PRIORITY_MED])
 	elseif #self.memory[PRIORITY_LOW] >= 1 then
-		self.objective = self.memory[PRIORITY_LOW][#self.memory[PRIORITY_LOW]]
-
+		self.objective = GetRandomNotSearched(self.memory[PRIORITY_LOW])
 	else
-		self.objective = GetRandomPatrolNotSearched()
+		warn("Unexpected Error: AiComponentMind-FindTarget...")
+		return false
 	end
 
-	if self.objective and self.entity.config["entity"].isDebug then
-		self.entity.debug:AddTargetIndicator(self.objective.positionKnown, self.objective.object)
+	if self.entity.config["entity"].isDebug then
+		self.entity.debug:AddTargetIndicator(self.objective.position, self.objective.object, self.objective.isPlayer)
 	end
 
-	--print("did i get it?  ->", self.objective.isAttention)
-
-	return self.objective and true or false
+	return true
 end
 
 

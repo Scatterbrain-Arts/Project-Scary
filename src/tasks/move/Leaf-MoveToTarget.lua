@@ -14,8 +14,8 @@ function btTask.start(obj)
 		self.body:MoveToNextIndex(false)
 	end))
 
-	if self.mind.objective.positionKnown then
-		self.body:FindPath(self.body.navigationCurrent.waypoints[self.body.navigationCurrent.currentIndex].Position, self.mind.objective.positionKnown, self.body.navigationNext)
+	if Blackboard.isObjective then
+		self.body:FindPath(self.body.navigationCurrent.waypoints[self.body.navigationCurrent.currentIndex].Position, self.mind.objective.position, self.body.navigationNext)
 
 		self.body.navigationNext.currentIndex = 2
 		self.body.navigationNext.nextIndex = 3
@@ -29,8 +29,8 @@ function btTask.finish(obj, status)
 
 	if status == FAIL then
 		self.body:StopPathing()
+		Blackboard.isMoving = false
 	end
-	
 end
 
 

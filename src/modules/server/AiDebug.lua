@@ -166,12 +166,13 @@ function AiDebug:CreateTargetIndicator()
 end
 
 
-function AiDebug:AddTargetIndicator(position, object)
+function AiDebug:AddTargetIndicator(position, object, isPlayer)
 	if not self.target.indicator then
 		warn("Target indicator is nil for ", self.entityName, "...")
 		return
 	end
 
+	self.target.indicator.Anchored = not isPlayer
 	self.target.indicator.Parent = self.workspaceFolder.target
 	self.target.indicator.Position = position
 

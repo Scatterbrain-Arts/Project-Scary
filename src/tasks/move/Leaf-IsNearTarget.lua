@@ -7,14 +7,9 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	if self.mind.objective.positionKnown then
-		local distance = (self.root.Position - self.mind.objective.positionKnown).Magnitude
-
-		if distance <= self.config["body"].attackRange then
-			Blackboard.isNear = true
-		else
-			Blackboard.isNear = false
-		end
+	if Blackboard.isObjective then
+		local distance = (self.root.Position - self.mind.objective.position).Magnitude
+		Blackboard.isNear = distance <= self.config["body"].attackRange and true or false
 	end
 end
 
@@ -34,7 +29,7 @@ function btTask.run(obj)
 	elseif not Blackboard.isNear then
 		return FAIL
 	else
-		warn("IsNearTarget Task: Unexpected fail...")
+		warn("Unexpected fail: Leaf-IsNearTarget...")
 		return FAIL
 	end
 end

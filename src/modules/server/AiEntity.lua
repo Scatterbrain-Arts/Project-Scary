@@ -1,5 +1,6 @@
 local ServerStorage = game:GetService("ServerStorage")
 local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
 
 local require = require(script.Parent.loader).load(script)
 
@@ -38,7 +39,7 @@ function AiEntity.new(aiInstance, serviceBag)
 	}
 
 	if self.config["entity"].isDebug then
-		self.debug = AiDebug.new(self, true)
+		self.debug = AiDebug.new(self, false)
 	end
 
 	self.body = AiComponentBody.new(self, serviceBag)
@@ -52,7 +53,11 @@ function AiEntity.new(aiInstance, serviceBag)
 	self.btState = {
 		self = self,
 		Blackboard = {
-			target = {}
+			isObjective = false,
+			isPath = false,
+			isNear = false,
+			isMoving = false,
+			isAttacking = false,
 		},
 	}
 
@@ -75,6 +80,19 @@ function AiEntity.new(aiInstance, serviceBag)
 		elseif self.config["entity"].isOverride == false then
 			warn("Manuel Override DISABLED for", self.name, "...")
 		end
+	end)
+
+	self.player = nil
+	self.playerCharacter = nil
+	self.playerHumanoid = nil
+	self.playerRoot = nil
+	Players.PlayerAdded:Connect(function(player)
+		self.player = player
+		player.CharacterAdded:Connect(function(character)
+			self.playerCharacter = character
+			self.playerHumanoid = character:WaitForChild("Humanoid")
+			self.playerRoot = character:WaitForChild("HumanoidRootPart")
+		end)
 	end)
 
 	return self
