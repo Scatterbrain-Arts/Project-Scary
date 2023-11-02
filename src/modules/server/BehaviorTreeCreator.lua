@@ -152,7 +152,7 @@ function TreeCreator:_buildNode(folder)
 end
 
 
-function TreeCreator:_createTree(treeFolder)
+function TreeCreator:_createTree(treeFolder, entity)
 	print("Attempt create tree: ",treeFolder)
 	local nodes = treeFolder.Nodes
 	local RootFolder = nodes:FindFirstChild("Root")
@@ -161,7 +161,7 @@ function TreeCreator:_createTree(treeFolder)
 
 	local firstNodeFolder = RootFolder.Outputs:GetChildren()[1].Value
 	local root = self:_buildNode(firstNodeFolder)
-	local Tree = BehaviorTree3:new({tree=root,treeFolder = treeFolder})
+	local Tree = BehaviorTree3:new({tree=root,treeFolder = treeFolder}, entity)
 	Trees[treeFolder] = Tree
 	TreeIDs[treeFolder.Name] = Tree
 	return Tree	

@@ -33,6 +33,12 @@
         },
         "Attack": {
           "$path": "src/tasks/attack"
+        },
+        "Search": {
+          "$path": "src/tasks/search"
+        },
+        "Find": {
+          "$path": "src/tasks/find"
         }
       }
     },
