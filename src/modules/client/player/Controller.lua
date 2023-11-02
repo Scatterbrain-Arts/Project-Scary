@@ -13,6 +13,7 @@ function Controller.new()
 	self.moveVector = ZERO_VECTOR3
 	self.isRunPressed = false
 	self.isSneaking = false
+	self.isBreath = false
 
 	self.forwardValue = 0
 	self.backwardValue = 0
@@ -27,11 +28,13 @@ function Controller:GetMoveVector()
 	return self.moveVector
 end
 
-
 function Controller:GetIsSneaking()
 	return self.isSneaking
 end
 
+function Controller:SetIsSneaking(bool)
+	self.isSneaking = bool
+end
 
 function Controller:GetIsRunPressed()
 	if self.isRunPressed then
@@ -41,6 +44,9 @@ function Controller:GetIsRunPressed()
 	return false
 end
 
+function Controller:GetIsBreath()
+	return self.isBreath
+end
 
 function Controller:UpdateMovement(inputState)
 	if inputState == Enum.UserInputState.Cancel then
@@ -77,7 +83,9 @@ function Controller:BindActions()
 	end
 
 	local function handleSneakMove(actionName, inputState, inputObject)
-		self.isSneaking = inputState == Enum.UserInputState.Begin
+		if inputState == Enum.UserInputState.Begin then
+			self.isSneaking = not self.isSneaking
+		end
 		return Enum.ContextActionResult.Pass
 	end
 
@@ -86,8 +94,14 @@ function Controller:BindActions()
 		return Enum.ContextActionResult.Pass
 	end
 
+	local function handleBreathHold(actionName, inputState, inputObject)
+		self.isBreath = inputState == Enum.UserInputState.Begin
+		return Enum.ContextActionResult.Pass
+	end
+
+	ContextActionService:BindActionAtPriority("breathAction", handleBreathHold, false, 2, Enum.KeyCode.LeftShift)
 	ContextActionService:BindActionAtPriority("runAction", handleRunMove, false, 2, Enum.KeyCode.Space)
-	ContextActionService:BindActionAtPriority("sneakAction", handleSneakMove, false, 2, Enum.KeyCode.LeftShift)
+	ContextActionService:BindActionAtPriority("sneakAction", handleSneakMove, false, 2, Enum.KeyCode.C)
 	ContextActionService:BindActionAtPriority("moveForwardAction", handleMoveForward, false, 1, Enum.KeyCode.W)
 	ContextActionService:BindActionAtPriority("moveBackwardAction", handleMoveBackward, false, 1, Enum.KeyCode.S)
 	ContextActionService:BindActionAtPriority("moveLeftAction", handleMoveLeft, false, 1, Enum.KeyCode.A)

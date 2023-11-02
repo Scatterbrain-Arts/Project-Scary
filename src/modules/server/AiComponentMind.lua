@@ -113,6 +113,7 @@ function AiComponentMind:AddObjective(objective)
 	end
 end
 
+
 function AiComponentMind:UpdateStatus(status, forceUpdate)
 	forceUpdate = forceUpdate or false
 	status = math.clamp(status, STATUS_CALM, STATUS_HOSTILE)
