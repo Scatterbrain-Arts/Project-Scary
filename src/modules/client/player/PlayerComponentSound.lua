@@ -62,6 +62,10 @@ local function FireSound(deltaTime)
 		Decibel = (Sounds.move.value * Sounds.move.modifier) + (Sounds.breath.value * Sounds.breath.modifier * Sounds.stamina.modifier)
 
 		SoundGuiText.Text = Decibel
+		PlayerMoveSoundEvent:FireServer({
+			position = Root.position,
+			decibel = Decibel,
+		})
 	end
 end
 

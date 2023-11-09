@@ -10,12 +10,13 @@ AiComponentMind.__index = AiComponentMind
 local PRIORITY_HIGH, PRIORITY_MED, PRIORITY_LOW = 3, 2, 1
 local STATUS_HOSTILE, STATUS_ALERT, STATUS_CALM = 3, 2, 1
 
-local function CreateObjective(priority, position, instance, isPlayer)
+local function CreateObjective(priority, position, instance, isPlayer, decibel)
 	return {
 		priority = priority,
 		position = position,
 		object = instance,
 		isPlayer = isPlayer or false,
+		decibel = decibel or 0,
 		isSearched = false,
 		startTime = tick(),
 	}
@@ -80,21 +81,26 @@ end
 function AiComponentMind:SoundRecieved(sound)
 	local distance = (self.entity.root.Position - sound.position).Magnitude
 
-	if distance > self.entity.config["mind"].soundSearchRange then
+	--distance = 1 / math.pow(distance,2)
+	
+
+	if sound.decibel < distance then
 		print("Sound Not Heard...", " Distance is ", distance, "...")
 		return
 	end
 	
 	local objective
 	if distance <= self.entity.config["mind"].soundFoundRange then
-		objective = CreateObjective(PRIORITY_HIGH, sound.position, sound.object)
+		print("High")
+		objective = CreateObjective(PRIORITY_HIGH, sound.position, sound.object, sound.decibel)
 	elseif distance <= self.entity.config["mind"].soundSearchRange then
-		objective = CreateObjective(PRIORITY_MED, sound.position, sound.object)
+		print("med")
+		objective = CreateObjective(PRIORITY_MED, sound.position, sound.object, sound.decibel)
 	else
 		warn("Unexpected Error: AiComponentMind-MoveAISignal...")
 		return
 	end
-
+	print("--------")
 	self:AddObjective(objective)
 end
 
