@@ -55,13 +55,16 @@ local function SetMaxSpeed()
 	if IsRunning then
 		MaxSpeed = Config.speedRun
 		MoveState = STATE_RUN
+		ComponentSound:Update("move", 1.5)
 	else
 		if IsSneaking then
 			MaxSpeed = Config.speedSneak
 			MoveState = STATE_SNEAK
+			ComponentSound:Update("move", 0.75)
 		else
 			MaxSpeed = Config.speedWalk
 			MoveState = STATE_WALK
+			ComponentSound:Update("move", 1)
 		end
 	end
 end
@@ -85,6 +88,7 @@ local function handleMove(deltaTime)
 	else
 		MovementLinearSpring.Target = 0
 		MoveState = STATE_IDLE
+		ComponentSound:Update("move", 0)
 	end
 
 	if IsDebug then
@@ -94,6 +98,8 @@ local function handleMove(deltaTime)
 	Humanoid:Move(MoveVectorPrevious, true)
 	Humanoid.WalkSpeed = MovementLinearSpring.Position
 end
+
+
 
 local function handleRun(deltaTime)
 	IsRunning = IsRunning and (tick() - lastRunRequest) < Config.runTapSpeed
@@ -105,6 +111,7 @@ local function handleRun(deltaTime)
 	end
 end
 
+
 local function handleSneak(deltaTime)
 	if ComponentController:GetIsSneakToggle() then
 		IsSneaking = true
@@ -112,7 +119,6 @@ local function handleSneak(deltaTime)
 		IsSneaking = false
 	end
 end
-
 
 
 local function handleBreath(deltaTime)
@@ -123,8 +129,8 @@ local function handleBreath(deltaTime)
 	end
 
 	ComponentBreath:Toggle(IsBreathing)
+	ComponentSound:Update("breath", IsBreathing and 1 or 0)
 end
-
 
 
 local function OnCharacterAdded(newCharacter)
@@ -132,9 +138,6 @@ local function OnCharacterAdded(newCharacter)
 	Humanoid = newCharacter:WaitForChild("Humanoid")
 	Root = newCharacter:WaitForChild("HumanoidRootPart")
 end
-
-
-
 
 
 local function Init()
