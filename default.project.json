@@ -36,9 +36,6 @@
         },
         "Search": {
           "$path": "src/tasks/search"
-        },
-        "Find": {
-          "$path": "src/tasks/find"
         }
       }
     },
@@ -46,7 +43,13 @@
     "StarterPlayer": {
       "StarterPlayerScripts": {
         "Main": {
-          "$path": "src/scripts/client"
+          "$path": "src/scripts/client/player"
+        }
+      },
+
+      "StarterCharacterScripts": {
+        "Main": {
+          "$path": "src/scripts/client/character"
         }
       }
     }

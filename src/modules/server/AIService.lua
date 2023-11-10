@@ -32,6 +32,7 @@ end
 PlayerMoveSoundEvent.OnServerEvent:Connect(function(player, payload)
 	local data = {
 		position = payload.position,
+		decibel = payload.decibel,
 		object = nil,
 	}
 
