@@ -6,25 +6,28 @@ local RunService = game:GetService("RunService")
 local require = require(script.Parent.loader).load(script)
 
 local GetRemoteEvent = require("GetRemoteEvent")
+local GeneralUtil = require("GeneralUtil")
+
+local PlayerMoveSoundEvent = GetRemoteEvent("PlayerMoveSoundEvent")
 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local Root = Character:WaitForChild("HumanoidRootPart")
 
-local PlayerGui = LocalPlayer.PlayerGui
-local SoundGui = PlayerGui:FindFirstChild("sound")
+local SoundGui = LocalPlayer.PlayerGui:FindFirstChild("sound")
 local SoundGuiText = SoundGui.Frame.TextLabel
 
+local ConfigFolder = GeneralUtil:Get(Character, "config", "Folder")
+local SoundConfig = GeneralUtil:Get(ConfigFolder, "sound", "Configuration")
 
-local PlayerMoveSoundEvent = GetRemoteEvent("PlayerMoveSoundEvent")
+local IsDebug = GeneralUtil:GetBool(SoundConfig, "_DEBUG", true)
+local CONFIG = {
+	intervalLength = GeneralUtil:GetNumber(SoundConfig, "interval length", 1, IsDebug),
+	weightBreath = GeneralUtil:GetNumber(SoundConfig, "weight breath", 30, IsDebug),
+	weightMove = GeneralUtil:GetNumber(SoundConfig, "weight move", 70, IsDebug),
+}
 
-
-local UpdatePeriod = 0.5
-local UpdateTimeStart = tick()
-local UpdateTimeElapsed = tick() - UpdateTimeStart
-
-local IntervalPeriod = 1
 local IntervalTimeStart = tick()
 local IntervalTimeElapsed = tick() - IntervalTimeStart
 local Decibel = 0
@@ -36,27 +39,22 @@ PlayerSound.names = {
 
 local Sounds = {
 	["breath"] = {
-		value = 30,
+		value = CONFIG.weightBreath.Value,
 		modifier = 1,
 	},
 	["stamina"] = {
 		modifier = 1,
 	},
 	["move"] = {
-		value = 70,
+		value = CONFIG.weightMove.Value,
 		modifier = 1,
 	}
 }
 
-PlayerSound.test = 1
-function PlayerSound:Test()
-	PlayerSound.test = 1.5
-end
-
 
 local function FireSound(deltaTime)
 	IntervalTimeElapsed = tick() - IntervalTimeStart
-	if IntervalTimeElapsed > IntervalPeriod then
+	if IntervalTimeElapsed > CONFIG.intervalLength.Value then
 		IntervalTimeStart = tick()
 
 		Decibel = (Sounds.move.value * Sounds.move.modifier) + (Sounds.breath.value * Sounds.breath.modifier * Sounds.stamina.modifier)

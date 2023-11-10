@@ -1,3 +1,4 @@
+local SocialService = game:GetService("SocialService")
 local GeneralUtil = {}
 
 
@@ -76,6 +77,81 @@ function GeneralUtil:GetCondition(entity, attributeName)
 	end
 
 	return isAttribute
+end
+
+
+function GeneralUtil:GetNumber(instance, name, defaultValue, isDebug)
+	assert(instance ~= nil, "instance is nil for", name)
+	local number = instance:FindFirstChild(name)
+
+	if not number then
+		number = Instance.new("NumberValue")
+		number.Name = name
+		number.Value = defaultValue or 0
+		number.Parent = instance
+		warn(name, "was not found, created new with default value", number.Value, "...")
+	end
+
+	if isDebug then
+		warn("[", name, "] is set to ", number.Value)
+	end
+
+	return number
+end
+
+
+
+function GeneralUtil:GetVector(instance, name, defaultValue, isDebug)
+	assert(instance ~= nil, "instance is nil for", name)
+	local vector = instance:FindFirstChild(name)
+
+	if vector == nil then
+		vector = Instance.new("Vector3Value")
+		vector.Name = name
+		vector.Value = defaultValue or Vector3.zero
+		vector.Parent = instance
+		warn(name, "was not found...")
+	end
+
+	if isDebug then
+		warn("[", name, "] is set to ", vector.Value)
+	end
+
+	return vector
+end
+
+function GeneralUtil:GetBool(instance, name, defaultValue, isDebug)
+	assert(instance ~= nil, "instance is nil for", name)
+	local bool = instance:FindFirstChild(name)
+
+	if bool == nil then
+		bool = Instance.new("BoolValue")
+		bool.Name = name
+		bool.Value = defaultValue or false
+		bool.Parent = instance
+		warn(name, "was not found...")
+	end
+
+	if isDebug then
+		warn("[", name, "] is set to ", bool.Value)
+	end
+
+	return bool
+end
+
+
+function GeneralUtil:Get(instance, name, defaultClass)
+	assert(instance ~= nil, "instance is nil for", name)
+	local folder = instance:FindFirstChild(name)
+
+	if not folder then
+		folder = Instance.new(defaultClass)
+		folder.Parent = instance
+		folder.Name = name
+		warn(name, "was not found...")
+	end
+
+	return folder
 end
 
 

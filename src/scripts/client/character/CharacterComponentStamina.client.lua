@@ -1,85 +1,94 @@
-local Stamina = {}
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
 local packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
+local GeneralUtil = require(packages.GeneralUtil)
 
 local SignalUpdateStamina = require(packages.PlayerEntity).stamina
 local ComponentSound = require(packages.PlayerComponentSound)
 
-Stamina.COST_RUNNING = 50
-Stamina.COST_BREATH_HOLD = 25
-
-local STAMINA_MAX = 100
-local STAMINA_MIN = 0
-local STAMINA_NAME = "stamina"
-local STAMINA_REGEN = 25
+local STATE_MIN, STATE_LOW, STATE_MED, STATE_HIGH, STATE_MAX = 1, 2, 3, 4, 5
+local STATES = { STATE_MIN, STATE_LOW, STATE_MED , STATE_HIGH, STATE_MAX }
 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
-local Root = Character:WaitForChild("HumanoidRootPart")
 
-local PlayerGui = LocalPlayer.PlayerGui
-local StaminaGUi = PlayerGui:FindFirstChild(STAMINA_NAME)
-local StaminaText = StaminaGUi.Frame.TextLabel
+local ConfigFolder = GeneralUtil:Get(Character, "config", "Folder")
+local StatusFolder = GeneralUtil:Get(Character, "status", "Folder")
 
-local StatusFolder = Character:FindFirstChild("status") or Instance.new("Folder", Character)
-StatusFolder.Name = "status"
+local StaminaConfig = GeneralUtil:Get(ConfigFolder, "stamina", "Configuration")
+local SoundConfig = GeneralUtil:Get(ConfigFolder, "sound", "Configuration")
 
-local STATE_MIN, STATE_LOW, STATE_MED, STATE_HIGH, STATE_MAX = 1, 2, 3, 4, 5
-local STATES = { STATE_MIN, STATE_LOW, STATE_MED , STATE_HIGH, STATE_MAX }
+local IsDebugStamina = GeneralUtil:GetBool(StaminaConfig, "_DEBUG", true)
+local IsDebugSound = GeneralUtil:GetBool(SoundConfig, "_DEBUG", true)
+
+local CONFIG = {
+	costRun = GeneralUtil:GetNumber(StaminaConfig, "cost run", 50, IsDebugStamina),
+	costHoldBreath = GeneralUtil:GetNumber(StaminaConfig, "cost hold breath", 25, IsDebugStamina),
+	regenAmount = GeneralUtil:GetNumber(StaminaConfig, "regen amount", 25, IsDebugStamina),
+	regenDelay = GeneralUtil:GetNumber(StaminaConfig, "regen delay", 4, IsDebugStamina),
+	staminaMax = GeneralUtil:GetNumber(StaminaConfig, "stamina max", 100, IsDebugStamina),
+	staminaMin = GeneralUtil:GetNumber(StaminaConfig, "stamina min", 0, IsDebugStamina),
+
+	rangeLow = GeneralUtil:GetVector(StaminaConfig, "range low", Vector3.new(1,34,0), IsDebugStamina),
+	rangeMed = GeneralUtil:GetVector(StaminaConfig, "range med", Vector3.new(35,69,0), IsDebugStamina),
+	rangeHigh = GeneralUtil:GetVector(StaminaConfig, "range high", Vector3.new(70,99,0), IsDebugStamina),
+
+	modifierStaminaMin = GeneralUtil:GetNumber(SoundConfig, "modifier stamina min", 2, IsDebugSound),
+	modifierStaminaLow = GeneralUtil:GetNumber(SoundConfig, "modifier stamina low", 1.6, IsDebugSound),
+	modifierStaminaMed = GeneralUtil:GetNumber(SoundConfig, "modifier stamina med", 1.3, IsDebugSound),
+	modifierStaminaHigh = GeneralUtil:GetNumber(SoundConfig, "modifier stamina high", 1, IsDebugSound),
+	modifierStaminaMax = GeneralUtil:GetNumber(SoundConfig, "modifier stamina max", 0.7, IsDebugSound),
+}
+
 local RANGES = {
 	[STATE_MIN] = {
-		MIN = 0,
-		MAX = 0,
-		MODIFIER = 2,
+		min = 0,
+		max = 0,
+		MODIFIER = CONFIG.modifierStaminaMin.Value,
 	},
 	[STATE_LOW] = {
-		MIN = 1,
-		MAX = 34,
-		MODIFIER = 1.6,
+		min = CONFIG.rangeLow.Value.X,
+		max = CONFIG.rangeLow.Value.Y,
+		MODIFIER = CONFIG.modifierStaminaLow.Value,
 	},
 	[STATE_MED] = {
-		MIN =35,
-		MAX = 69,
-		MODIFIER = 1.3,
+		min = CONFIG.rangeMed.Value.X,
+		max = CONFIG.rangeMed.Value.Y,
+		MODIFIER = CONFIG.modifierStaminaMed.Value,
 	},
 	[STATE_HIGH] = {
-		MIN = 70,
-		MAX = 99,
-		MODIFIER = 1,
+		min = CONFIG.rangeHigh.Value.X,
+		max = CONFIG.rangeHigh.Value.Y,
+		MODIFIER = CONFIG.modifierStaminaHigh.Value,
 	},
 	[STATE_MAX] = {
-		MIN = 100,
-		MAX = 100,
-		MODIFIER = 0.7,
+		min = 100,
+		max = 100,
+		MODIFIER = CONFIG.modifierStaminaMax.Value,
 	},
 }
 
+local StaminaGUi = LocalPlayer.PlayerGui:FindFirstChild("stamina")
+local StaminaText = StaminaGUi.Frame.TextLabel
 
-local LastTick = tick()
-local TimeToRegen = 4
-
+local Stamina = GeneralUtil:GetNumber(StatusFolder, "stamina", CONFIG.staminaMax)
+Stamina.Value = CONFIG.staminaMax.Value
+StaminaText.Text = Stamina.Value
 
 local State = STATE_MAX
-local StaminaValue = StatusFolder:FindFirstChild("stamina") or Instance.new("NumberValue")
-StaminaValue.Name = "stamina"
-
-StaminaValue.Value = STAMINA_MAX
-StaminaText.Text = StaminaValue.Value
-
+local LastTick = tick()
 
 local function Increase(value)
-	if StaminaValue.Value == STAMINA_MAX then
+	if Stamina.Value == CONFIG.staminaMax.Value then
 		return false
 	end
 
-	StaminaValue.Value = math.clamp(StaminaValue.Value+value, STAMINA_MIN, STAMINA_MAX)
-	StaminaText.Text = StaminaValue.Value
+	Stamina.Value = math.clamp(Stamina.Value+value, CONFIG.staminaMin.Value, CONFIG.staminaMax.Value)
+	StaminaText.Text = Stamina.Value
 
 	for i = State, STATE_MAX, 1 do
-		if StaminaValue.Value >= RANGES[i].MIN and StaminaValue.Value <= RANGES[i].MAX then
+		if Stamina.Value >= RANGES[i].min and Stamina.Value <= RANGES[i].max then
 			State = STATES[i]
 			ComponentSound:Update("stamina", RANGES[State].MODIFIER)
 			break
@@ -91,25 +100,25 @@ end
 
 
 local function Update(deltaTime)
-	if tick() - LastTick > TimeToRegen then
-		if StaminaValue.Value ~= STAMINA_MAX then
-			Increase(STAMINA_REGEN*deltaTime)
+	if tick() - LastTick > CONFIG.regenDelay.Value then
+		if Stamina.Value ~= CONFIG.staminaMax.Value then
+			Increase(CONFIG.regenAmount.Value*deltaTime)
 		end
 	end
 end
 
 
 local function Decrease(value)
-	if StaminaValue.Value - value < STAMINA_MIN then
+	if Stamina.Value - value < CONFIG.staminaMin.Value then
 		return false
 	end
 
-	StaminaValue.Value -= value
-	StaminaText.Text = StaminaValue.Value
+	Stamina.Value -= value
+	StaminaText.Text = Stamina.Value
 	LastTick = tick()
 
 	for i = State, STATE_MIN, -1 do
-		if StaminaValue.Value >= RANGES[i].MIN and StaminaValue.Value <= RANGES[i].MAX then
+		if Stamina.Value >= RANGES[i].min and Stamina.Value <= RANGES[i].max then
 			State = STATES[i]
 			ComponentSound:Update("stamina", RANGES[State].MODIFIER)
 			break
@@ -125,11 +134,5 @@ local function OnStaminaSignal(value)
 end
 
 
-local function Init()
-	Character = Players.LocalPlayer.Character or Players.LocalPlayer.CharacterAdded:Wait()
-
-
-	RunService.Heartbeat:Connect(Update)
-	SignalUpdateStamina:Connect(OnStaminaSignal)
-end
-Init()
+RunService.Heartbeat:Connect(Update)
+SignalUpdateStamina:Connect(OnStaminaSignal)

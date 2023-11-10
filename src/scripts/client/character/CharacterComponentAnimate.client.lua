@@ -3,6 +3,7 @@ local RunService = game:GetService("RunService")
 
 local packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
 
+local GeneralUtil = require(packages.GeneralUtil)
 local SignalUpdateAnimate = require(packages.PlayerEntity).animate
 
 local STATE_IDLE, STATE_IDLE_SNEAK, STATE_WALK_SNEAK, STATE_WALK, STATE_RUN = "idle", "idle_sneak", "walk", "walk_sneak", "run"
@@ -10,6 +11,7 @@ local STATE_IDLE, STATE_IDLE_SNEAK, STATE_WALK_SNEAK, STATE_WALK, STATE_RUN = "i
 local Character = nil
 local Humanoid = nil
 
+local IsDebug = false
 local State = nil
 local Animations = {}
 local CurrentAnimation = nil
@@ -74,14 +76,12 @@ local function ConfigureAnimations()
 		end
 	end
 
-	local configFolder = Character:FindFirstChild("config") or Instance.new("Folder")
-	configFolder.Name = "config"
-	assert(configFolder ~= nil, "Config folder not found...")
+	local configFolder = GeneralUtil:Get(Character, "config", "Folder")
+	local animateConfig = GeneralUtil:Get(configFolder, "animate", "Configuration")
 
-	local animations = configFolder.Animations:GetChildren()
-	assert(animations ~= nil, "Animations not found...")
+	IsDebug = GeneralUtil:GetBool(animateConfig, "_DEBUG", true)
 
-	for _, animation in animations do
+	for _, animation in animateConfig:GetChildren() do
 		if animation:IsA("Animation") then
 			local track = animator:LoadAnimation(animation)
 			track.Priority = Enum.AnimationPriority.Core
@@ -91,6 +91,10 @@ local function ConfigureAnimations()
 			Animations[animation.Name].animation = animation
 			Animations[animation.Name].id = animation.AnimationId
 			Animations[animation.Name].weight = animation.weight or 1
+
+			if IsDebug then
+				warn("animation: [", animation.Name, "] added...")
+			end
 		end
 	end
 
