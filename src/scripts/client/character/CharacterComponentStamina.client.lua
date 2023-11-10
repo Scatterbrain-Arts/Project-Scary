@@ -1,11 +1,11 @@
 local Stamina = {}
-
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
-local require = require(script.Parent.loader).load(script)
+local packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
 
-local ComponentSound = require("PlayerComponentSound")
+local SignalUpdateStamina = require(packages.PlayerEntity).stamina
+local ComponentSound = require(packages.PlayerComponentSound)
 
 Stamina.COST_RUNNING = 50
 Stamina.COST_BREATH_HOLD = 25
@@ -24,8 +24,8 @@ local PlayerGui = LocalPlayer.PlayerGui
 local StaminaGUi = PlayerGui:FindFirstChild(STAMINA_NAME)
 local StaminaText = StaminaGUi.Frame.TextLabel
 
-local ConfigFolder = Character:FindFirstChild("config") or Instance.new("Folder", Character)
-ConfigFolder.Name = "config"
+local StatusFolder = Character:FindFirstChild("status") or Instance.new("Folder", Character)
+StatusFolder.Name = "status"
 
 local STATE_MIN, STATE_LOW, STATE_MED, STATE_HIGH, STATE_MAX = 1, 2, 3, 4, 5
 local STATES = { STATE_MIN, STATE_LOW, STATE_MED , STATE_HIGH, STATE_MAX }
@@ -63,38 +63,23 @@ local TimeToRegen = 4
 
 
 local State = STATE_MAX
-local StaminaValue = STAMINA_MAX
-StaminaText.Text = StaminaValue
+local StaminaValue = StatusFolder:FindFirstChild("stamina") or Instance.new("NumberValue")
+StaminaValue.Name = "stamina"
 
-RunService.Heartbeat:Connect(function(deltaTime)
-	if tick() - LastTick > TimeToRegen then
-		if StaminaValue ~= STAMINA_MAX then
-			Stamina:Increase(STAMINA_REGEN*deltaTime)
-		end
-	end
-end)
+StaminaValue.Value = STAMINA_MAX
+StaminaText.Text = StaminaValue.Value
 
 
-function Stamina:Can(value)
-	return StaminaValue - value > STAMINA_MIN
-end
-
-
-function Stamina:Get()
-	return StaminaValue
-end
-
-
-function Stamina:Increase(value)
-	if StaminaValue == STAMINA_MAX then
+local function Increase(value)
+	if StaminaValue.Value == STAMINA_MAX then
 		return false
 	end
 
-	StaminaValue = math.clamp(StaminaValue+value, STAMINA_MIN, STAMINA_MAX)
-	StaminaText.Text = StaminaValue
+	StaminaValue.Value = math.clamp(StaminaValue.Value+value, STAMINA_MIN, STAMINA_MAX)
+	StaminaText.Text = StaminaValue.Value
 
 	for i = State, STATE_MAX, 1 do
-		if StaminaValue >= RANGES[i].MIN and StaminaValue <= RANGES[i].MAX then
+		if StaminaValue.Value >= RANGES[i].MIN and StaminaValue.Value <= RANGES[i].MAX then
 			State = STATES[i]
 			ComponentSound:Update("stamina", RANGES[State].MODIFIER)
 			break
@@ -105,17 +90,26 @@ function Stamina:Increase(value)
 end
 
 
-function Stamina:Decrease(value)
-	if StaminaValue - value < STAMINA_MIN then
+local function Update(deltaTime)
+	if tick() - LastTick > TimeToRegen then
+		if StaminaValue.Value ~= STAMINA_MAX then
+			Increase(STAMINA_REGEN*deltaTime)
+		end
+	end
+end
+
+
+local function Decrease(value)
+	if StaminaValue.Value - value < STAMINA_MIN then
 		return false
 	end
 
-	StaminaValue -= value
-	StaminaText.Text = StaminaValue
+	StaminaValue.Value -= value
+	StaminaText.Text = StaminaValue.Value
 	LastTick = tick()
 
 	for i = State, STATE_MIN, -1 do
-		if StaminaValue >= RANGES[i].MIN and StaminaValue <= RANGES[i].MAX then
+		if StaminaValue.Value >= RANGES[i].MIN and StaminaValue.Value <= RANGES[i].MAX then
 			State = STATES[i]
 			ComponentSound:Update("stamina", RANGES[State].MODIFIER)
 			break
@@ -126,4 +120,16 @@ function Stamina:Decrease(value)
 end
 
 
-return Stamina
+local function OnStaminaSignal(value)
+	Decrease(value)
+end
+
+
+local function Init()
+	Character = Players.LocalPlayer.Character or Players.LocalPlayer.CharacterAdded:Wait()
+
+
+	RunService.Heartbeat:Connect(Update)
+	SignalUpdateStamina:Connect(OnStaminaSignal)
+end
+Init()
