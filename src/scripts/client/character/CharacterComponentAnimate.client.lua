@@ -92,7 +92,7 @@ local function ConfigureAnimations()
 			Animations[animation.Name].id = animation.AnimationId
 			Animations[animation.Name].weight = animation.weight or 1
 
-			if IsDebug then
+			if IsDebug.Value then
 				warn("animation: [", animation.Name, "] added...")
 			end
 		end

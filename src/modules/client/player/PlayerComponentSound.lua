@@ -7,6 +7,7 @@ local require = require(script.Parent.loader).load(script)
 
 local GetRemoteEvent = require("GetRemoteEvent")
 local GeneralUtil = require("GeneralUtil")
+local Signal = require("Signal")
 
 local PlayerMoveSoundEvent = GetRemoteEvent("PlayerMoveSoundEvent")
 
@@ -23,9 +24,9 @@ local SoundConfig = GeneralUtil:Get(ConfigFolder, "sound", "Configuration")
 
 local IsDebug = GeneralUtil:GetBool(SoundConfig, "_DEBUG", true)
 local CONFIG = {
-	intervalLength = GeneralUtil:GetNumber(SoundConfig, "interval length", 1, IsDebug),
-	weightBreath = GeneralUtil:GetNumber(SoundConfig, "weight breath", 30, IsDebug),
-	weightMove = GeneralUtil:GetNumber(SoundConfig, "weight move", 70, IsDebug),
+	intervalLength = GeneralUtil:GetNumber(SoundConfig, "interval length", 1, IsDebug.Value),
+	weightBreath = GeneralUtil:GetNumber(SoundConfig, "weight breath", 30, IsDebug.Value),
+	weightMove = GeneralUtil:GetNumber(SoundConfig, "weight move", 70, IsDebug.Value  ),
 }
 
 local IntervalTimeStart = tick()
@@ -86,8 +87,22 @@ function PlayerSound:Update(type, modifier)
 	Sounds[type].modifier = modifier or Sounds[type].modifier
 end
 
+function PlayerSound:UpdateBreath(modifier, state)
+	Sounds["breath"].modifier = modifier or Sounds["breath"].modifier
 
+	PlayerSound.Signals.playHoldBreath:Fire(state)
+end
 
+function PlayerSound:UpdateStamina(modifier, value, state)
+	Sounds["stamina"].modifier = modifier or Sounds["stamina"].modifier
+
+	PlayerSound.Signals.playBreathing:Fire(value, state)
+end
+
+PlayerSound.Signals = {
+	playBreathing = Signal.new(),
+	playHoldBreath = Signal.new()
+}
 
 
 return PlayerSound

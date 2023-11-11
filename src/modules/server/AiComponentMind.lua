@@ -91,16 +91,16 @@ function AiComponentMind:SoundRecieved(sound)
 	
 	local objective
 	if distance <= self.entity.config["mind"].soundFoundRange then
-		print("High")
+		--print("High")
 		objective = CreateObjective(PRIORITY_HIGH, sound.position, sound.object, sound.decibel)
 	elseif distance <= self.entity.config["mind"].soundSearchRange then
-		print("med")
+		--print("med")
 		objective = CreateObjective(PRIORITY_MED, sound.position, sound.object, sound.decibel)
 	else
 		warn("Unexpected Error: AiComponentMind-MoveAISignal...")
 		return
 	end
-	print("--------")
+	--print("--------")
 	self:AddObjective(objective)
 end
 

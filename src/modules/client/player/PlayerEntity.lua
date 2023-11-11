@@ -17,7 +17,7 @@ local Debug = require("PlayerDebug")
 local ZERO_VECTOR = Vector3.new(0,0,0)
 local STATE_IDLE, STATE_IDLE_SNEAK, STATE_WALK_SNEAK, STATE_WALK, STATE_RUN = "idle", "idle_sneak", "walk_sneak", "walk", "run"
 
-local Signals = { animate = nil, stamina = nil, }
+local Signals = { animate = nil, stamina = nil}
 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
@@ -37,24 +37,24 @@ local IsDebugStamina = GeneralUtil:GetBool(StaminaConfig, "_DEBUG", true)
 local IsDebugSound = GeneralUtil:GetBool(SoundConfig, "_DEBUG", true)
 
 local CONFIG = {
-	speedRun = GeneralUtil:GetNumber(MoveConfig, "speed run", 21, IsDebugMove),
-	speedWalk = GeneralUtil:GetNumber(MoveConfig, "speed walk", 14, IsDebugMove),
-	speedSneak = GeneralUtil:GetNumber(MoveConfig, "speed sneak", 7, IsDebugMove),
+	speedRun = GeneralUtil:GetNumber(MoveConfig, "speed run", 21, IsDebugMove.Value),
+	speedWalk = GeneralUtil:GetNumber(MoveConfig, "speed walk", 14, IsDebugMove.Value),
+	speedSneak = GeneralUtil:GetNumber(MoveConfig, "speed sneak", 7, IsDebugMove.Value),
 
-	runTapdelay = GeneralUtil:GetNumber(MoveConfig, "run tap delay", 0.25, IsDebugMove),
+	runTapdelay = GeneralUtil:GetNumber(MoveConfig, "run tap delay", 0.25, IsDebugMove.Value),
 
-	springDamper = GeneralUtil:GetNumber(MoveConfig, "spring damper", 1, IsDebugMove),
-	springSpeed = GeneralUtil:GetNumber(MoveConfig, "spring speed", 8, IsDebugMove),
-	springTurnMultiplier = GeneralUtil:GetNumber(MoveConfig, "spring turn multiplier", 0.5, IsDebugMove),
+	springDamper = GeneralUtil:GetNumber(MoveConfig, "spring damper", 1, IsDebugMove.Value),
+	springSpeed = GeneralUtil:GetNumber(MoveConfig, "spring speed", 8, IsDebugMove.Value),
+	springTurnMultiplier = GeneralUtil:GetNumber(MoveConfig, "spring turn multiplier", 0.5, IsDebugMove.Value),
 
-	costRun = GeneralUtil:GetNumber(StaminaConfig, "cost run", 50, IsDebugStamina),
-	costHoldBreath = GeneralUtil:GetNumber(StaminaConfig, "cost hold breath", 25, IsDebugStamina),
+	costRun = GeneralUtil:GetNumber(StaminaConfig, "cost run", 50, IsDebugStamina.Value),
+	costHoldBreath = GeneralUtil:GetNumber(StaminaConfig, "cost hold breath", 25, IsDebugStamina.Value),
 
-	modifierRun = GeneralUtil:GetNumber(SoundConfig, "modifier run", 1.5, IsDebugSound),
-	modifierWalk = GeneralUtil:GetNumber(SoundConfig, "modifier walk", 1, IsDebugSound),
-	modifierSneak = GeneralUtil:GetNumber(SoundConfig, "modifier sneak", 0.75, IsDebugSound),
-	modifierIdle = GeneralUtil:GetNumber(SoundConfig, 'modifier idle', 0, IsDebugSound),
-	modifierHoldBreath = GeneralUtil:GetNumber(SoundConfig, "modifier hold breath", 0,IsDebugSound)
+	modifierRun = GeneralUtil:GetNumber(SoundConfig, "modifier run", 1.5, IsDebugSound.Value),
+	modifierWalk = GeneralUtil:GetNumber(SoundConfig, "modifier walk", 1, IsDebugSound.Value),
+	modifierSneak = GeneralUtil:GetNumber(SoundConfig, "modifier sneak", 0.75, IsDebugSound.Value),
+	modifierIdle = GeneralUtil:GetNumber(SoundConfig, 'modifier idle', 0, IsDebugSound.Value),
+	modifierHoldBreath = GeneralUtil:GetNumber(SoundConfig, "modifier hold breath", 0,IsDebugSound.Value)
 }
 
 
@@ -84,7 +84,6 @@ end
 local function UpdateStamina(value)
 	Signals.stamina:Fire(value)
 end
-
 
 
 local function SetMaxSpeed()
@@ -178,7 +177,8 @@ local function handleBreath(deltaTime)
 	end
 
 	ComponentBreath:Toggle(IsBreathing)
-	ComponentSound:Update("breath", IsBreathing and 1 or CONFIG.modifierHoldBreath.Value)
+	ComponentSound:UpdateBreath(IsBreathing and 1 or CONFIG.modifierHoldBreath.Value, IsBreathing)
+
 end
 
 
