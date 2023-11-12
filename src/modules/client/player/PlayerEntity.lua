@@ -14,84 +14,97 @@ local ComponentBreath = require("PlayerComponentBreath")
 
 local Debug = require("PlayerDebug")
 
-local ZERO_VECTOR = Vector3.new(0,0,0)
-local STATE_IDLE, STATE_IDLE_SNEAK, STATE_WALK_SNEAK, STATE_WALK, STATE_RUN = "idle", "idle_sneak", "walk_sneak", "walk", "run"
-
-local Signals = { animate = nil, stamina = nil}
-
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local Root = Character:WaitForChild("HumanoidRootPart")
 
-local StatusFolder = Character:FindFirstChild("status")
-local StaminaInstance = StatusFolder:FindFirstChild("stamina")
-
 local ConfigFolder = GeneralUtil:Get(Character, "config", "Folder")
-local MoveConfig = GeneralUtil:Get(ConfigFolder, "move", "Configuration")
-local StaminaConfig = GeneralUtil:Get(ConfigFolder, "stamina", "Configuration")
-local SoundConfig = GeneralUtil:Get(ConfigFolder, "sound", "Configuration")
+local ConfigMove = GeneralUtil:Get(ConfigFolder, "move", "Configuration")
+local ConfigStamina = GeneralUtil:Get(ConfigFolder, "stamina", "Configuration")
+local ConfigSound = GeneralUtil:Get(ConfigFolder, "sound", "Configuration")
 
-local IsDebugMove = GeneralUtil:GetBool(MoveConfig, "_DEBUG", true)
-local IsDebugStamina = GeneralUtil:GetBool(StaminaConfig, "_DEBUG", true)
-local IsDebugSound = GeneralUtil:GetBool(SoundConfig, "_DEBUG", true)
+local IsDebugMove = GeneralUtil:GetBool(ConfigMove, "_DEBUG", true)
+local IsDebugStamina = GeneralUtil:GetBool(ConfigStamina, "_DEBUG", true)
+local IsDebugSound = GeneralUtil:GetBool(ConfigSound, "_DEBUG", true)
 
 local CONFIG = {
-	speedRun = GeneralUtil:GetNumber(MoveConfig, "speed run", 21, IsDebugMove.Value),
-	speedWalk = GeneralUtil:GetNumber(MoveConfig, "speed walk", 14, IsDebugMove.Value),
-	speedSneak = GeneralUtil:GetNumber(MoveConfig, "speed sneak", 7, IsDebugMove.Value),
+	speedRun = GeneralUtil:GetNumber(ConfigMove, "speed run", IsDebugMove.Value),
+	speedWalk = GeneralUtil:GetNumber(ConfigMove, "speed walk", IsDebugMove.Value),
+	speedSneak = GeneralUtil:GetNumber(ConfigMove, "speed sneak", IsDebugMove.Value),
 
-	runTapdelay = GeneralUtil:GetNumber(MoveConfig, "run tap delay", 0.25, IsDebugMove.Value),
+	runTapdelay = GeneralUtil:GetNumber(ConfigMove, "run tap delay", IsDebugMove.Value),
 
-	springDamper = GeneralUtil:GetNumber(MoveConfig, "spring damper", 1, IsDebugMove.Value),
-	springSpeed = GeneralUtil:GetNumber(MoveConfig, "spring speed", 8, IsDebugMove.Value),
-	springTurnMultiplier = GeneralUtil:GetNumber(MoveConfig, "spring turn multiplier", 0.5, IsDebugMove.Value),
+	springDamper = GeneralUtil:GetNumber(ConfigMove, "spring damper", IsDebugMove.Value),
+	springSpeed = GeneralUtil:GetNumber(ConfigMove, "spring speed", IsDebugMove.Value),
+	springTurnMultiplier = GeneralUtil:GetNumber(ConfigMove, "spring turn multiplier", IsDebugMove.Value),
 
-	costRun = GeneralUtil:GetNumber(StaminaConfig, "cost run", 50, IsDebugStamina.Value),
-	costHoldBreath = GeneralUtil:GetNumber(StaminaConfig, "cost hold breath", 25, IsDebugStamina.Value),
+	costRun = GeneralUtil:GetNumber(ConfigStamina, "cost run", IsDebugStamina.Value),
+	costHoldBreath = GeneralUtil:GetNumber(ConfigStamina, "cost hold breath", IsDebugStamina.Value),
 
-	modifierRun = GeneralUtil:GetNumber(SoundConfig, "modifier run", 1.5, IsDebugSound.Value),
-	modifierWalk = GeneralUtil:GetNumber(SoundConfig, "modifier walk", 1, IsDebugSound.Value),
-	modifierSneak = GeneralUtil:GetNumber(SoundConfig, "modifier sneak", 0.75, IsDebugSound.Value),
-	modifierIdle = GeneralUtil:GetNumber(SoundConfig, 'modifier idle', 0, IsDebugSound.Value),
-	modifierHoldBreath = GeneralUtil:GetNumber(SoundConfig, "modifier hold breath", 0,IsDebugSound.Value)
+	modifierRun = GeneralUtil:GetNumber(ConfigSound, "modifier run", IsDebugSound.Value),
+	modifierWalk = GeneralUtil:GetNumber(ConfigSound, "modifier walk", IsDebugSound.Value),
+	modifierSneak = GeneralUtil:GetNumber(ConfigSound, "modifier sneak", IsDebugSound.Value),
+	modifierIdle = GeneralUtil:GetNumber(ConfigSound, 'modifier idle', IsDebugSound.Value),
+	modifierHoldBreath = GeneralUtil:GetNumber(ConfigSound, "modifier hold breath", IsDebugSound.Value)
 }
 
+local StatusFolder = GeneralUtil:Get(Character, "status", "Folder")
+
+local STATUS = {
+	isBreathing = GeneralUtil:GetBool(StatusFolder, "isBreathing", IsDebugMove.Value),
+	isIdle = GeneralUtil:GetBool(StatusFolder, "isIdle", IsDebugMove.Value),
+	isSneaking = GeneralUtil:GetBool(StatusFolder, "isSneaking", IsDebugMove.Value),
+	isRunning = GeneralUtil:GetBool(StatusFolder, "isRunning", IsDebugMove.Value),
+	requestHoldBreath = GeneralUtil:GetBool(StatusFolder, "request hold breath", IsDebugMove.Value),
+	requestRun = GeneralUtil:GetBool(StatusFolder, "request run", IsDebugMove.Value),
+	isTappingRun = GeneralUtil:GetBool(StatusFolder, "isTappingRun", IsDebugMove.Value),
+
+	stamina = GeneralUtil:GetNumber(StatusFolder, "stamina", IsDebugMove.Value),
+	moveState = GeneralUtil:GetNumber(StatusFolder, "move state", IsDebugMove.Value),
+}
+
+local ZERO_VECTOR = Vector3.new(0,0,0)
+local STATE_IDLE, STATE_IDLE_SNEAK, STATE_WALK_SNEAK, STATE_WALK, STATE_RUN = 1, 2, 3, 4, 5
+
+
+local Signals = {
+	animate = nil,
+}
 
 local MovementLinearSpring = Spring.new(0)
 MovementLinearSpring.Damper = CONFIG.springDamper.Value
 MovementLinearSpring.Speed = CONFIG.springSpeed.Value
 
-local IsRunning = false
-local IsSneaking = false
-local IsBreathing = true
-
 local lastRunRequest = tick()
-
 local MaxSpeed = CONFIG.speedWalk.Value
 local MoveVectorCurrent = ZERO_VECTOR
 local MoveVectorPrevious = ZERO_VECTOR
-local MoveState = STATE_IDLE
+
 
 local function CanStaminaDecrease(value)
-	return StaminaInstance.Value - value > 0
+	return STATUS.stamina.Value - value > 0
 end
 
 local function UpdateAnimate(state)
 	Signals.animate:Fire(state)
 end
 
-local function UpdateStamina(value)
-	Signals.stamina:Fire(value)
+local function RequestRun(value)
+	STATUS.requestRun.Value = value
+end
+
+local function RequestHoldBreath(value)
+	STATUS.requestHoldBreath.Value = value
 end
 
 
 local function SetMaxSpeed()
-	if IsRunning then
+	if STATUS.isRunning.Value then
 		MaxSpeed = CONFIG.speedRun.Value
 		ComponentSound:Update("move", CONFIG.modifierRun.Value)
 	else
-		if IsSneaking then
+		if STATUS.isSneaking.Value then
 			MaxSpeed = CONFIG.speedSneak.Value
 			ComponentSound:Update("move", CONFIG.modifierSneak.Value)
 		else
@@ -109,16 +122,18 @@ local function handleMove(deltaTime)
 	if MoveVectorCurrent ~= ZERO_VECTOR then
 		MovementLinearSpring.Target = MaxSpeed
 
-		if IsRunning then
-			MoveState = STATE_RUN
-			UpdateAnimate(MoveState)
-			UpdateStamina(CONFIG.costRun.Value * deltaTime)
-		elseif IsSneaking then
-			MoveState = STATE_WALK_SNEAK
-			UpdateAnimate(MoveState)
+		if STATUS.isTappingRun.Value then
+			STATUS.moveState.Value = STATE_RUN
+			UpdateAnimate(STATUS.moveState.Value)
+			RequestRun(true)
+		elseif STATUS.isSneaking.Value then
+			STATUS.moveState.Value = STATE_WALK_SNEAK
+			UpdateAnimate(STATUS.moveState.Value)
+			RequestRun(false)
 		else
-			MoveState = STATE_WALK
-			UpdateAnimate(MoveState)
+			STATUS.moveState.Value = STATE_WALK
+			UpdateAnimate(STATUS.moveState.Value)
+			RequestRun(false)
 		end
 
 		if MoveVectorCurrent:Dot(MoveVectorPrevious) == -1 then
@@ -129,17 +144,19 @@ local function handleMove(deltaTime)
 		MovementLinearSpring.Target = 0
 		ComponentSound:Update("move", CONFIG.modifierIdle.Value)
 		
-		if IsSneaking then
-			MoveState = STATE_IDLE_SNEAK
-			UpdateAnimate(MoveState)
+		if STATUS.isSneaking.Value then
+			STATUS.moveState.Value = STATE_IDLE_SNEAK
+			UpdateAnimate(STATUS.moveState.Value)
 		else
-			MoveState = STATE_IDLE
-			UpdateAnimate(MoveState)
+			STATUS.moveState.Value = STATE_IDLE
+			UpdateAnimate(STATUS.moveState.Value)
 		end
+
+		RequestRun(false)
 	end
 
 	if IsDebugMove then
-		Debug:SetInputState(MoveState)
+		Debug:SetInputState(STATUS.moveState.Value)
 	end
 
 	Humanoid:Move(MoveVectorPrevious, true)
@@ -149,10 +166,10 @@ end
 
 
 local function handleRun(deltaTime)
-	IsRunning = IsRunning and (tick() - lastRunRequest) < CONFIG.runTapdelay.Value
+	STATUS.isTappingRun.Value = STATUS.isTappingRun.Value and (tick() - lastRunRequest) <= CONFIG.runTapdelay.Value
 
-	if ComponentController:GetIsRunPressed() and CanStaminaDecrease(CONFIG.costRun.Value * deltaTime) then
-		IsRunning = true
+	if ComponentController:GetIsRunPressed() then
+		STATUS.isTappingRun.Value = true
 		lastRunRequest = tick()
 		ComponentController:CancelSneakToggle()
 	end
@@ -161,23 +178,22 @@ end
 
 local function handleSneak(deltaTime)
 	if ComponentController:GetIsSneakToggle() then
-		IsSneaking = true
+		STATUS.isSneaking.Value = true
 	else
-		IsSneaking = false
+		STATUS.isSneaking.Value = false
 	end
 end
 
 
 local function handleBreath(deltaTime)
 	if ComponentController:GetIsBreathHeld() and CanStaminaDecrease(CONFIG.costHoldBreath.Value * deltaTime) then
-		UpdateStamina(CONFIG.costHoldBreath.Value * deltaTime)
-		IsBreathing = false
+		RequestHoldBreath(true)
 	else
-		IsBreathing = true
+		RequestHoldBreath(false)
 	end
 
-	ComponentBreath:Toggle(IsBreathing)
-	ComponentSound:UpdateBreath(IsBreathing and 1 or CONFIG.modifierHoldBreath.Value, IsBreathing)
+	ComponentBreath:Toggle(STATUS.isBreathing.Value)
+	ComponentSound:UpdateBreath(STATUS.isBreathing.Value and 1 or CONFIG.modifierHoldBreath.Value, STATUS.isBreathing.Value)
 
 end
 
@@ -191,7 +207,10 @@ end
 
 local function Init()
 	Humanoid.WalkSpeed = CONFIG.speedWalk.Value
-	MoveState = STATE_IDLE
+	STATUS.moveState.Value = STATE_IDLE
+	STATUS.isRunning.Value = false
+	STATUS.isSneaking.Value = false
+	STATUS.isBreathing.Value = true
 
 	RunService:BindToRenderStep("bindMove", Enum.RenderPriority.Input.Value, handleMove)
 	RunService:BindToRenderStep("bindRun", Enum.RenderPriority.Input.Value, handleRun)

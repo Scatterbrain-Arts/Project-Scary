@@ -80,14 +80,14 @@ function GeneralUtil:GetCondition(entity, attributeName)
 end
 
 
-function GeneralUtil:GetNumber(instance, name, defaultValue, isDebug)
+function GeneralUtil:GetNumber(instance, name, isDebug)
 	assert(instance ~= nil, "instance is nil for", name)
 	local number = instance:FindFirstChild(name)
 
 	if not number then
 		number = Instance.new("NumberValue")
 		number.Name = name
-		number.Value = defaultValue or 0
+		number.Value = 1
 		number.Parent = instance
 		warn(name, "was not found, created new with default value", number.Value, "...")
 	end
@@ -100,15 +100,35 @@ function GeneralUtil:GetNumber(instance, name, defaultValue, isDebug)
 end
 
 
+function GeneralUtil:GetString(instance, name, isDebug)
+	assert(instance ~= nil, "instance is nil for", name)
+	local string = instance:FindFirstChild(name)
 
-function GeneralUtil:GetVector(instance, name, defaultValue, isDebug)
+	if string == nil then
+		string = Instance.new("StringValue")
+		string.Name = name
+		string.Value = ""
+		string.Parent = instance
+		warn(name, "was not found...")
+	end
+
+	if isDebug then
+		warn("[", name, "] is set to ", string.Value)
+	end
+
+	return string
+end
+
+
+
+function GeneralUtil:GetVector(instance, name, isDebug)
 	assert(instance ~= nil, "instance is nil for", name)
 	local vector = instance:FindFirstChild(name)
 
 	if vector == nil then
 		vector = Instance.new("Vector3Value")
 		vector.Name = name
-		vector.Value = defaultValue or Vector3.zero
+		vector.Value = Vector3.zero
 		vector.Parent = instance
 		warn(name, "was not found...")
 	end
@@ -120,14 +140,14 @@ function GeneralUtil:GetVector(instance, name, defaultValue, isDebug)
 	return vector
 end
 
-function GeneralUtil:GetBool(instance, name, defaultValue, isDebug)
+function GeneralUtil:GetBool(instance, name, isDebug)
 	assert(instance ~= nil, "instance is nil for", name)
 	local bool = instance:FindFirstChild(name)
 
 	if bool == nil then
 		bool = Instance.new("BoolValue")
 		bool.Name = name
-		bool.Value = defaultValue or false
+		bool.Value = false
 		bool.Parent = instance
 		warn(name, "was not found...")
 	end

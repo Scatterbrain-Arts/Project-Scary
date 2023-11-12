@@ -4,47 +4,68 @@ local RunService = game:GetService("RunService")
 local packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
 local GeneralUtil = require(packages.GeneralUtil)
 
-local SignalUpdateStamina = require(packages.PlayerEntity).stamina
+local PlayerEntitySignals = require(packages.PlayerEntity)
 local ComponentSound = require(packages.PlayerComponentSound)
-
-local STATE_STAMINA_MIN, STATE_STAMINA_LOW, STATE_STAMINA_MED, STATE_STAMINA_HIGH, STATE_STAMINA_MAX = 1, 2, 3, 4, 5
-local STATES = { STATE_STAMINA_MIN, STATE_STAMINA_LOW, STATE_STAMINA_MED , STATE_STAMINA_HIGH, STATE_STAMINA_MAX }
+local Math = require(packages.Math)
 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
 local ConfigFolder = GeneralUtil:Get(Character, "config", "Folder")
-local StatusFolder = GeneralUtil:Get(Character, "status", "Folder")
 
-local StaminaConfig = GeneralUtil:Get(ConfigFolder, "stamina", "Configuration")
-local SoundConfig = GeneralUtil:Get(ConfigFolder, "sound", "Configuration")
+local ConfigStamina = GeneralUtil:Get(ConfigFolder, "stamina", "Configuration")
+local ConfigSound = GeneralUtil:Get(ConfigFolder, "sound", "Configuration")
 
-local IsDebugStamina = GeneralUtil:GetBool(StaminaConfig, "_DEBUG", true)
-local IsDebugSound = GeneralUtil:GetBool(SoundConfig, "_DEBUG", true)
+local IsDebugStamina = GeneralUtil:GetBool(ConfigStamina, "_DEBUG", true)
 
 local CONFIG = {
-	costRun = GeneralUtil:GetNumber(StaminaConfig, "cost run", 50, IsDebugStamina.Value),
-	costHoldBreath = GeneralUtil:GetNumber(StaminaConfig, "cost hold breath", 25, IsDebugStamina.Value),
-	regenAmount = GeneralUtil:GetNumber(StaminaConfig, "regen amount", 25, IsDebugStamina.Value),
-	regenDelay = GeneralUtil:GetNumber(StaminaConfig, "regen delay", 4, IsDebugStamina.Value),
-	staminaMax = GeneralUtil:GetNumber(StaminaConfig, "stamina max", 100, IsDebugStamina.Value),
-	staminaMin = GeneralUtil:GetNumber(StaminaConfig, "stamina min", 0, IsDebugStamina.Value),
+	costRun = GeneralUtil:GetNumber(ConfigStamina, "cost run", IsDebugStamina.Value),
+	costHoldBreath = GeneralUtil:GetNumber(ConfigStamina, "cost hold breath", IsDebugStamina.Value),
+	regenAmount = GeneralUtil:GetNumber(ConfigStamina, "regen amount", IsDebugStamina.Value),
+	regenDelay = GeneralUtil:GetNumber(ConfigStamina, "regen delay", IsDebugStamina.Value),
+	staminaMax = GeneralUtil:GetNumber(ConfigStamina, "stamina max", IsDebugStamina.Value),
+	staminaMin = GeneralUtil:GetNumber(ConfigStamina, "stamina min", IsDebugStamina.Value),
 
-	rangeLow = GeneralUtil:GetVector(StaminaConfig, "range low", Vector3.new(1,34,0), IsDebugStamina.Value),
-	rangeMed = GeneralUtil:GetVector(StaminaConfig, "range med", Vector3.new(35,69,0), IsDebugStamina.Value),
-	rangeHigh = GeneralUtil:GetVector(StaminaConfig, "range high", Vector3.new(70,99,0), IsDebugStamina.Value),
+	rangeLow = GeneralUtil:GetVector(ConfigStamina, "range low", IsDebugStamina.Value),
+	rangeMed = GeneralUtil:GetVector(ConfigStamina, "range med", IsDebugStamina.Value),
+	rangeHigh = GeneralUtil:GetVector(ConfigStamina, "range high", IsDebugStamina.Value),
 
-	modifierStaminaMin = GeneralUtil:GetNumber(SoundConfig, "modifier stamina min", 2, IsDebugSound.Value),
-	modifierStaminaLow = GeneralUtil:GetNumber(SoundConfig, "modifier stamina low", 1.6, IsDebugSound.Value),
-	modifierStaminaMed = GeneralUtil:GetNumber(SoundConfig, "modifier stamina med", 1.3, IsDebugSound.Value),
-	modifierStaminaHigh = GeneralUtil:GetNumber(SoundConfig, "modifier stamina high", 1, IsDebugSound.Value),
-	modifierStaminaMax = GeneralUtil:GetNumber(SoundConfig, "modifier stamina max", 0.7, IsDebugSound.Value),
+	modifierStaminaMin = GeneralUtil:GetNumber(ConfigSound, "modifier stamina min", IsDebugStamina.Value),
+	modifierStaminaLow = GeneralUtil:GetNumber(ConfigSound, "modifier stamina low",  IsDebugStamina.Value),
+	modifierStaminaMed = GeneralUtil:GetNumber(ConfigSound, "modifier stamina med", IsDebugStamina.Value),
+	modifierStaminaHigh = GeneralUtil:GetNumber(ConfigSound, "modifier stamina high", IsDebugStamina.Value),
+	modifierStaminaMax = GeneralUtil:GetNumber(ConfigSound, "modifier stamina max", IsDebugStamina.Value),
 }
+
+local StatusFolder = GeneralUtil:Get(Character, "status", "Folder")
+
+local STATUS = {
+	isInhale = GeneralUtil:GetBool(StatusFolder, "isInhale", IsDebugStamina.Value),
+	isExhale = GeneralUtil:GetBool(StatusFolder, "isExhale", IsDebugStamina.Value),
+	isInhaleToHoldBreath = GeneralUtil:GetBool(StatusFolder, "isExhale", IsDebugStamina.Value),
+
+	isBreathing = GeneralUtil:GetBool(StatusFolder, "isBreathing", IsDebugStamina.Value),
+	isIdle = GeneralUtil:GetBool(StatusFolder, "isIdle", IsDebugStamina.Value),
+	isSneaking = GeneralUtil:GetBool(StatusFolder, "isSneaking", IsDebugStamina.Value),
+	isRunning = GeneralUtil:GetBool(StatusFolder, "isRunning", IsDebugStamina.Value),
+	requestHoldBreath = GeneralUtil:GetBool(StatusFolder, "request hold breath", IsDebugStamina.Value),
+	requestRun = GeneralUtil:GetBool(StatusFolder, "request run", IsDebugStamina.Value),
+
+	breathState = GeneralUtil:GetNumber(StatusFolder, "breath state", IsDebugStamina.Value),
+	moveState = GeneralUtil:GetNumber(StatusFolder, "move state", IsDebugStamina.Value),
+	stamina = GeneralUtil:GetNumber(StatusFolder, "stamina", IsDebugStamina.Value),
+	staminaState = GeneralUtil:GetNumber(StatusFolder, "stamina state",IsDebugStamina.Value),
+}
+
+
+local STATE_STAMINA_MIN, STATE_STAMINA_LOW, STATE_STAMINA_MED, STATE_STAMINA_HIGH, STATE_STAMINA_MAX = 1, 2, 3, 4, 5
+local STATES = { STATE_STAMINA_MIN, STATE_STAMINA_LOW, STATE_STAMINA_MED , STATE_STAMINA_HIGH, STATE_STAMINA_MAX }
+local STATE_BREATH_INHALE, STATE_BREATH_INHALE_TO_HOLD_BREATH, STATE_BREATH_EXHALE = 1,2,3
 
 local RANGES = {
 	[STATE_STAMINA_MIN] = {
-		min = 0,
-		max = 0,
+		min = CONFIG.staminaMin.Value,
+		max = CONFIG.staminaMin.Value,
 		MODIFIER = CONFIG.modifierStaminaMin.Value,
 	},
 	[STATE_STAMINA_LOW] = {
@@ -63,8 +84,8 @@ local RANGES = {
 		MODIFIER = CONFIG.modifierStaminaHigh.Value,
 	},
 	[STATE_STAMINA_MAX] = {
-		min = 100,
-		max = 100,
+		min = CONFIG.staminaMax.Value,
+		max = CONFIG.staminaMax.Value,
 		MODIFIER = CONFIG.modifierStaminaMax.Value,
 	},
 }
@@ -72,110 +93,158 @@ local RANGES = {
 local StaminaGUi = LocalPlayer.PlayerGui:FindFirstChild("stamina")
 local StaminaText = StaminaGUi.Frame.TextLabel
 
-local Stamina = GeneralUtil:GetNumber(StatusFolder, "stamina", CONFIG.staminaMax)
-Stamina.Value = CONFIG.staminaMax.Value
-StaminaText.Text = Stamina.Value
+STATUS.staminaState.Value = STATE_STAMINA_MIN
+STATUS.stamina.Value = CONFIG.staminaMin.Value
+StaminaText.Text = STATUS.stamina.Value
 
-local State = STATE_STAMINA_MAX
-local LastTick = tick()
 
-local function Increase(value)
-	if Stamina.Value == CONFIG.staminaMax.Value then
-		return false
-	end
+local TickLastBreath = tick()
+local BreathLength = 1.8
+local StaminaAdd = 0
+local StaminaRemove = 0
+local StaminaBonus = 5
+local OverrideHoldBreath = 0
 
-	Stamina.Value = math.clamp(Stamina.Value+value, CONFIG.staminaMin.Value, CONFIG.staminaMax.Value)
-	StaminaText.Text = Stamina.Value
 
-	for i = State, STATE_STAMINA_MAX, 1 do
-		if Stamina.Value >= RANGES[i].min and Stamina.Value <= RANGES[i].max then
-			State = STATES[i]
-			ComponentSound:UpdateStamina(RANGES[State].MODIFIER, State, Stamina.Value)
-			break
+local function Inhale()
+	StaminaAdd += CONFIG.regenAmount.Value
+	STATUS.breathState.Value = STATE_BREATH_INHALE
+end
+
+local function Exhale()
+	StaminaRemove -= CONFIG.regenAmount.Value / 2
+	STATUS.breathState.Value = STATE_BREATH_EXHALE
+end
+
+
+local function InhaleToHoldBreath()
+	StaminaAdd += CONFIG.regenAmount.Value
+	STATUS.breathState.Value = STATE_BREATH_INHALE_TO_HOLD_BREATH
+
+	STATUS.isBreathing.Value = false
+end
+
+
+local function CheckStaminaState(isIncrease)
+	if isIncrease then
+		for i = STATUS.staminaState.Value, STATE_STAMINA_MAX, 1 do
+			if STATUS.stamina.Value >= RANGES[i].min and STATUS.stamina.Value <= RANGES[i].max then
+				STATUS.staminaState.Value = STATES[i]
+				ComponentSound:UpdateStamina(RANGES[STATUS.staminaState.Value].MODIFIER, STATUS.staminaState.Value, STATUS.stamina.Value)
+				break
+			end
+		end
+	else
+		for i = STATUS.staminaState.Value, STATE_STAMINA_MIN, -1 do
+			if STATUS.stamina.Value >= RANGES[i].min and STATUS.stamina.Value <= RANGES[i].max then
+				STATUS.staminaState.Value = STATES[i]
+				ComponentSound:UpdateStamina(RANGES[STATUS.staminaState.Value].MODIFIER, STATUS.staminaState.Value, STATUS.stamina.Value)
+				break
+			end
 		end
 	end
-
-	return true
 end
 
 
-local function Update(deltaTime)
-	if tick() - LastTick > CONFIG.regenDelay.Value then
-		if Stamina.Value ~= CONFIG.staminaMax.Value then
-			Increase(CONFIG.regenAmount.Value*deltaTime)
-		end
+local function Breathe()
+	STATUS.isInhale.Value = STATUS.isExhale.Value
+	STATUS.isExhale.Value = not STATUS.isInhale.Value
+
+	local staminaTotal = StaminaAdd - StaminaRemove + StaminaBonus
+	STATUS.stamina.Value = math.clamp(STATUS.stamina.Value+staminaTotal, CONFIG.staminaMin.Value, CONFIG.staminaMax.Value)
+	StaminaText.Text = STATUS.stamina.Value
+
+	--print("Breathe Total:", staminaTotal)
+	CheckStaminaState(staminaTotal >= 0)
+
+	StaminaAdd, StaminaRemove = 0, 0
+	TickLastBreath = tick()
+end
+
+
+
+local function BeginHoldBreath(deltaTime)
+	if (STATUS.stamina.Value - CONFIG.costHoldBreath.Value * deltaTime)  >= CONFIG.staminaMin.Value then
+		OverrideHoldBreath = BreathLength
+
+		STATUS.isInhale.Value = true
+		STATUS.isExhale.Value = false
 	end
 end
 
+local function EndHoldBreath()
+	STATUS.isBreathing.Value = true
+	STATUS.isInhale.Value = false
+	STATUS.isExhale.Value = true
 
-local function Decrease(value)
-	if Stamina.Value - value < CONFIG.staminaMin.Value then
-		return false
-	end
-
-	Stamina.Value -= value
-	StaminaText.Text = Stamina.Value
-	LastTick = tick()
-
-	for i = State, STATE_STAMINA_MIN, -1 do
-		if Stamina.Value >= RANGES[i].min and Stamina.Value <= RANGES[i].max then
-			State = STATES[i]
-			ComponentSound:UpdateStamina(RANGES[State].MODIFIER, State, Stamina.Value)
-			break
-		end
-	end
-
-	return true
+	OverrideHoldBreath = 0
 end
 
 
-local function OnStaminaSignal(value)
-	Decrease(value)
+local function BeginRun(deltaTime)
+	if (STATUS.stamina.Value - CONFIG.costRun.Value * deltaTime)  >= CONFIG.staminaMin.Value then
+		STATUS.isRunning.Value = true
+	else
+		STATUS.isRunning.Value = false
+	end
 end
+
+local function EndRun()
+	STATUS.isRunning.Value = false
+end
+
 
 
 math.randomseed(tick())
-RunService.Heartbeat:Connect(function(deltaTime)
-	if isHoldBreath then
-		if not requestHoldBreath then
-			isHoldBreath = false
-			IsExhale = true
-			IsInhale = false
-			exhaleOffset = 0
-		end
-		return
+local function Update(deltaTime)
+
+	BreathLength = Math.lerp(0.4,1.8,  STATUS.stamina.Value/100)
+
+	if STATUS.requestHoldBreath.Value and STATUS.isBreathing.Value then
+		BeginHoldBreath(deltaTime)
 	end
 
-	if requestHoldBreath and not isHoldBreath then
-		exhaleOffset = BreathLength
+	if not STATUS.isBreathing.Value then
+		if not STATUS.requestHoldBreath.Value then
+			EndHoldBreath()
+		end
 	end
 
-	if tick() - lastTick >= BreathLength-exhaleOffset+math.random(0, 1) then
-		if IsInhale then
-			sound = GetInhaleSound()
-		end
-		
-		if IsExhale then
-			sound = SFXBreath.exhale
+	if STATUS.requestRun.Value then
+		BeginRun(deltaTime)
+	else
+		EndRun()
+	end
+
+	--print(BreathLength)
+
+	if STATUS.isBreathing.Value and tick() - TickLastBreath >= BreathLength-OverrideHoldBreath+math.random(0, 1) then
+		if STATUS.requestHoldBreath.Value then
+			InhaleToHoldBreath()	
+		elseif STATUS.isInhale.Value then
+			Inhale()
+		elseif STATUS.isExhale.Value  then
+			Exhale()
 		end
 
-		if requestHoldBreath then
-			sound = SFXBreath.inhale
-			isHoldBreath = true
-		end
 		
+
 		Breathe()
-		Tracks.breath = PlaySound(sound)
-		lastTick = tick()
 	end
 
-end)
+	if STATUS.isRunning.Value or not STATUS.isBreathing.Value then
 
+		local staminaTotal  = ( CONFIG.costRun.Value ) + ( CONFIG.costHoldBreath.Value )
+		STATUS.stamina.Value = math.clamp(STATUS.stamina.Value-(staminaTotal*deltaTime), CONFIG.staminaMin.Value, CONFIG.staminaMax.Value)
+		StaminaText.Text = STATUS.stamina.Value
 
+		--print("Cost Total:", staminaTotal)
+		CheckStaminaState(staminaTotal >= 0)
+	end
+end
 
 
 
 
 
 RunService.Heartbeat:Connect(Update)
-SignalUpdateStamina:Connect(OnStaminaSignal)

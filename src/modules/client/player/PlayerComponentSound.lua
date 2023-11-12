@@ -24,9 +24,9 @@ local SoundConfig = GeneralUtil:Get(ConfigFolder, "sound", "Configuration")
 
 local IsDebug = GeneralUtil:GetBool(SoundConfig, "_DEBUG", true)
 local CONFIG = {
-	intervalLength = GeneralUtil:GetNumber(SoundConfig, "interval length", 1, IsDebug.Value),
-	weightBreath = GeneralUtil:GetNumber(SoundConfig, "weight breath", 30, IsDebug.Value),
-	weightMove = GeneralUtil:GetNumber(SoundConfig, "weight move", 70, IsDebug.Value  ),
+	intervalLength = GeneralUtil:GetNumber(SoundConfig, "interval length", IsDebug.Value),
+	weightBreath = GeneralUtil:GetNumber(SoundConfig, "weight breath", IsDebug.Value),
+	weightMove = GeneralUtil:GetNumber(SoundConfig, "weight move", IsDebug.Value ),
 }
 
 local IntervalTimeStart = tick()

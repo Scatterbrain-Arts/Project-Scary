@@ -25,8 +25,57 @@ local SFXBreath = {
 
 	inhale = Root:FindFirstChild("breathIn"),
 	exhale = Root:FindFirstChild("breathOut"),
+	inhaleToHoldBreath = Root:FindFirstChild("inhaleToHoldBreath")
 }
 
+local StatusFolder = GeneralUtil:Get(Character, "status", "Folder")
+
+local STATUS = {
+	requestHoldBreath = GeneralUtil:GetBool(StatusFolder, "request hold breath", false),
+	requestRun = GeneralUtil:GetBool(StatusFolder, "request run", false),
+
+	breathState = GeneralUtil:GetNumber(StatusFolder, "breath state", false),
+	moveState = GeneralUtil:GetNumber(StatusFolder, "move state", false),
+	staminaState = GeneralUtil:GetNumber(StatusFolder, "stamina state", false),
+}
+
+local STATE_IDLE, STATE_IDLE_SNEAK, STATE_WALK_SNEAK, STATE_WALK, STATE_RUN = 1, 2, 3, 4, 5
+local STATE_BREATH_INHALE, STATE_BREATH_INHALE_TO_HOLD_BREATH, STATE_BREATH_EXHALE = 1,2,3
+
+local STATE = {
+	[STATE_BREATH_INHALE] = {
+		sound = Root:FindFirstChild("breathIn"),
+		playbackSpeed = {
+			[STATE_IDLE_SNEAK] = 0.90,
+			[STATE_IDLE] = 0.95,
+			[STATE_WALK_SNEAK] = 1,
+			[STATE_WALK] = 1.05,
+			[STATE_RUN] = 1.10,
+		}
+	},
+
+	[STATE_BREATH_INHALE_TO_HOLD_BREATH] = {
+		sound = Root:FindFirstChild("breathIn"),
+		playbackSpeed = {
+			[STATE_IDLE_SNEAK] = 0.90,
+			[STATE_IDLE] = 0.95,
+			[STATE_WALK_SNEAK] = 1,
+			[STATE_WALK] = 1.05,
+			[STATE_RUN] = 1.10,
+		}
+	},
+	
+	[STATE_BREATH_EXHALE] = {
+		sound = Root:FindFirstChild("breathOut"),
+		playbackSpeed = {
+			[STATE_IDLE_SNEAK] = 0.90,
+			[STATE_IDLE] = 0.95,
+			[STATE_WALK_SNEAK] = 1,
+			[STATE_WALK] = 1.05,
+			[STATE_RUN] = 1.10,
+		}
+	},
+}
 
 SFXBreath.staminaMin.Looped = true
 SFXBreath.staminaHighLow.Looped = true
@@ -67,13 +116,7 @@ local function SwitchBreathingMainTrack(newTrack)
 	BreathingTracks.mainTrack:Play()
 end
 
-local function AdjustTrack(track, value)
-	local playbackLerp = Math.lerp(1, 0.7, value/100)
-	local pitchLerp = Math.lerp(1, 1.35, value/100)
-	
-	track.PlaybackSpeed = playbackLerp
-	track.pitch.Octave = pitchLerp
-end
+
 
 
 
@@ -138,11 +181,25 @@ local function SwitchSounds(track, sound)
 end
 
 
-local function PlaySound(sound)
+local function AdjustTrack(track, value)
+	local playbackLerp = Math.lerp(1, 0.7, value/100)
+	local pitchLerp = Math.lerp(1, 1.35, value/100)
+
+	track.PlaybackSpeed = playbackLerp
+	track.pitch.Octave = pitchLerp
+end
+
+
+local function PlaySound(sound, playbackSpeed)
 	assert(sound ~= nil, "Sound is nil...")
 	sound.Looped  = false
 	if not sound.IsPlaying then
-		print(sound)
+		local pitchLerp = Math.lerp(1.35, 1, playbackSpeed)
+		sound.PlaybackSpeed = playbackSpeed
+		sound.pitch.Octave = pitchLerp
+
+		print(sound.Name)
+
 		sound:Play()
 	end
 
@@ -158,7 +215,7 @@ PlayerComponentSound.Signals.playBreathing:Connect(function(state, staminaValue)
 	-- 	return
 	-- end
 	--print(staminaValue)
-	BreathLength = Math.lerp(0.8,1.5,  staminaValue/100)
+	BreathLength = Math.lerp(0.4,1.8,  staminaValue/100)
 	StaminaValue = staminaValue
 	StaminaState = state
 	-- if state == STATE_STAMINA_MAX then
@@ -184,55 +241,13 @@ end)
 
 
 
-local lastTick = tick()
-local IsInhale = math.random(0,1) == 1
-local IsExhale = not IsInhale
-local exhaleOffset = 0
 
-local function Breathe()
-	IsInhale = IsExhale
-	IsExhale = not IsInhale
-end
-
-local function GetInhaleSound()
-	if StaminaState == STATE_STAMINA_MAX then
-		
+STATUS.breathState.Changed:Connect(function(newState)
+	if newState == STATE_BREATH_INHALE then
+		PlaySound(SFXBreath.inhale, STATE[STATE_BREATH_INHALE].playbackSpeed[STATUS.moveState.Value])
+	elseif newState == STATE_BREATH_INHALE_TO_HOLD_BREATH then
+		PlaySound(SFXBreath.inhaleToHoldBreath, STATE[STATE_BREATH_INHALE_TO_HOLD_BREATH].playbackSpeed[STATUS.moveState.Value])
+	elseif newState == STATE_BREATH_EXHALE then
+		PlaySound(SFXBreath.exhale, STATE[STATE_BREATH_EXHALE].playbackSpeed[STATUS.moveState.Value])
 	end
-end
-
-math.randomseed(tick())
-RunService.Heartbeat:Connect(function(deltaTime)
-	if isHoldBreath then
-		if not requestHoldBreath then
-			isHoldBreath = false
-			IsExhale = true
-			IsInhale = false
-			exhaleOffset = 0
-		end
-		return
-	end
-
-	if requestHoldBreath and not isHoldBreath then
-		exhaleOffset = BreathLength
-	end
-
-	if tick() - lastTick >= BreathLength-exhaleOffset+math.random(0, 1) then
-		if IsInhale then
-			sound = GetInhaleSound()
-		end
-		
-		if IsExhale then
-			sound = SFXBreath.exhale
-		end
-
-		if requestHoldBreath then
-			sound = SFXBreath.inhale
-			isHoldBreath = true
-		end
-		
-		Breathe()
-		Tracks.breath = PlaySound(sound)
-		lastTick = tick()
-	end
-
 end)
