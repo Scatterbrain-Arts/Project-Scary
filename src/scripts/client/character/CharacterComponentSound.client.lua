@@ -2,192 +2,130 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
 local packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
+local GetRemoteEvent = require(packages.GetRemoteEvent)
 local GeneralUtil = require(packages.GeneralUtil)
-local PlayerComponentSound = require(packages.PlayerComponentSound)
 local Math = require(packages.Math)
 
-local STATE_STAMINA_MIN, STATE_STAMINA_LOW, STATE_STAMINA_MED, STATE_STAMINA_HIGH, STATE_STAMINA_MAX = 1, 2, 3, 4, 5
-local STATES_STAMINA = { STATE_STAMINA_MIN, STATE_STAMINA_LOW, STATE_STAMINA_MED , STATE_STAMINA_HIGH, STATE_STAMINA_MAX }
+local PlayerMoveSoundEvent = GetRemoteEvent("PlayerMoveSoundEvent")
 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
 local Root = Character:WaitForChild("HumanoidRootPart")
 
-local SFXBreath = {
-	staminaMin = Root:FindFirstChild("breathStaminaMin"),
-	staminaHighLow = Root:FindFirstChild("breathStaminaHighLow"),
-	staminaMax = Root:FindFirstChild("breathStaminaMax"),
+local ConfigFolder = GeneralUtil:Get("Folder", Character, "config")
+local ConfigSound = GeneralUtil:Get("Configuration", ConfigFolder, "sound")
 
-	staminaMinGasp = Root:FindFirstChild("breathStaminaMinGasp"),
-	staminaMaxInhale = Root:FindFirstChild("breathStaminaMaxInhale"),
-	staminaMaxExhale = Root:FindFirstChild("breathStaminaMaxExhale"),
+local IsDebug = GeneralUtil:GetBool(ConfigSound, "_DEBUG", true)
 
-	inhale = Root:FindFirstChild("breathIn"),
-	exhale = Root:FindFirstChild("breathOut"),
-	inhaleToHoldBreath = Root:FindFirstChild("inhaleToHoldBreath")
+local CONFIG = {
+	intervalLength = GeneralUtil:GetNumber(ConfigSound, "interval length", IsDebug.Value),
 }
 
-local StatusFolder = GeneralUtil:Get(Character, "status", "Folder")
-
+local StatusFolder = GeneralUtil:Get("Folder", Character, "status")
 local STATUS = {
-	requestHoldBreath = GeneralUtil:GetBool(StatusFolder, "request hold breath", false),
-	requestRun = GeneralUtil:GetBool(StatusFolder, "request run", false),
-
-	breathState = GeneralUtil:GetNumber(StatusFolder, "breath state", false),
-	moveState = GeneralUtil:GetNumber(StatusFolder, "move state", false),
-	staminaState = GeneralUtil:GetNumber(StatusFolder, "stamina state", false),
+	breathState = GeneralUtil:GetNumber(StatusFolder, "breath state", IsDebug.Value),
+	moveState = GeneralUtil:GetNumber(StatusFolder, "move state", IsDebug.Value),
+	staminaState = GeneralUtil:GetNumber(StatusFolder, "stamina state", IsDebug.Value),
 }
 
-local STATE_IDLE, STATE_IDLE_SNEAK, STATE_WALK_SNEAK, STATE_WALK, STATE_RUN = 1, 2, 3, 4, 5
-local STATE_BREATH_INHALE, STATE_BREATH_INHALE_TO_HOLD_BREATH, STATE_BREATH_EXHALE = 1,2,3
-
-local STATE = {
-	[STATE_BREATH_INHALE] = {
-		sound = Root:FindFirstChild("breathIn"),
+local STATE_BREATH = {
+	[shared.states.breath.inhale] = {
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier inhale", IsDebug.Value),
+		sound = GeneralUtil:GetSound(Root, "breathIn"),
 		playbackSpeed = {
-			[STATE_IDLE_SNEAK] = 0.90,
-			[STATE_IDLE] = 0.95,
-			[STATE_WALK_SNEAK] = 1,
-			[STATE_WALK] = 1.05,
-			[STATE_RUN] = 1.10,
+			[shared.states.move.idleCrouch] = 0.90,
+			[shared.states.move.idle] = 0.95,
+			[shared.states.move.walkCrouch] = 1,
+			[shared.states.move.walk] = 1.05,
+			[shared.states.move.run] = 1.10,
 		}
 	},
 
-	[STATE_BREATH_INHALE_TO_HOLD_BREATH] = {
-		sound = Root:FindFirstChild("breathIn"),
+	[shared.states.breath.inhaleToHoldBreath] = {
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier inhaleToHoldBreath", IsDebug.Value),
+		sound = GeneralUtil:GetSound(Root, "inhaleToHoldBreath"),
 		playbackSpeed = {
-			[STATE_IDLE_SNEAK] = 0.90,
-			[STATE_IDLE] = 0.95,
-			[STATE_WALK_SNEAK] = 1,
-			[STATE_WALK] = 1.05,
-			[STATE_RUN] = 1.10,
+			[shared.states.move.idleCrouch] = 0.90,
+			[shared.states.move.idle] = 0.95,
+			[shared.states.move.walkCrouch] = 1,
+			[shared.states.move.walk] = 1.05,
+			[shared.states.move.run] = 1.10,
 		}
 	},
 	
-	[STATE_BREATH_EXHALE] = {
-		sound = Root:FindFirstChild("breathOut"),
+	[shared.states.breath.exhale] = {
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier exhale", IsDebug.Value),
+		sound = GeneralUtil:GetSound(Root, "breathOut"),
 		playbackSpeed = {
-			[STATE_IDLE_SNEAK] = 0.90,
-			[STATE_IDLE] = 0.95,
-			[STATE_WALK_SNEAK] = 1,
-			[STATE_WALK] = 1.05,
-			[STATE_RUN] = 1.10,
+			[shared.states.move.idleCrouch] = 0.90,
+			[shared.states.move.idle] = 0.95,
+			[shared.states.move.walkCrouch] = 1,
+			[shared.states.move.walk] = 1.05,
+			[shared.states.move.run] = 1.10,
 		}
 	},
+	[shared.states.breath.holding] = {
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier hold breath", IsDebug.Value),
+		sound = GeneralUtil:GetSound(Root, "breathOut"),
+		playbackSpeed = {
+			[shared.states.move.idleCrouch] = 0.90,
+			[shared.states.move.idle] = 0.95,
+			[shared.states.move.walkCrouch] = 1,
+			[shared.states.move.walk] = 1.05,
+			[shared.states.move.run] = 1.10,
+		}
+	},
+
+	["base"] = GeneralUtil:GetNumber(ConfigSound, "weight breath", IsDebug.Value),
 }
 
-SFXBreath.staminaMin.Looped = true
-SFXBreath.staminaHighLow.Looped = true
-SFXBreath.staminaMax.Looped = true
+local STATE_MOVE = {
+	[shared.states.move.idleCrouch] = {
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier idle", IsDebug.Value)
+	},
+	[shared.states.move.idle] ={
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier idle", IsDebug.Value)
+	},
+	[shared.states.move.walkCrouch] ={
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier crouch", IsDebug.Value)
+	},
+	[shared.states.move.walk] ={
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier walk", IsDebug.Value)
+	},
+	[shared.states.move.run] ={
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier run", IsDebug.Value)
+	},
 
-SFXBreath.staminaMinGasp.Looped = false
-SFXBreath.staminaMaxInhale.Looped = false
-SFXBreath.staminaMaxExhale.Looped = false
-
-local IsBreathing = false
-
-local BreathingTracks = {
-	mainTrack = nil,
+	["base"] = GeneralUtil:GetNumber(ConfigSound, "weight move", IsDebug.Value),
 }
 
-local Tracks = {
-	breath = nil,
-	move = nil,
+local STATE_STAMINA = {
+	[shared.states.stamina.min] ={
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier stamina min", IsDebug.Value)
+	},
+	[shared.states.stamina.low] ={
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier stamina low", IsDebug.Value)
+	},
+	[shared.states.stamina.med] ={
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier stamina med", IsDebug.Value)
+	},
+	[shared.states.stamina.high] ={
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier stamina high", IsDebug.Value)
+	},
+	[shared.states.stamina.max] ={
+		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier stamina max", IsDebug.Value)
+	},
+
+
+	["base"] = GeneralUtil:GetNumber(ConfigSound, "weight stamina", IsDebug.Value),
 }
 
-local function PlayEffect(sfx)
-	if sfx.IsPlaying then
-		return
-	end
-	sfx:Play()
-end
+local SoundGui = GeneralUtil:GetUI(LocalPlayer.PlayerGui, "sound")
+local SoundGuiText = SoundGui.Frame.TextLabel
 
-local function SwitchBreathingMainTrack(newTrack)
-	if BreathingTracks.mainTrack and BreathingTracks.mainTrack == newTrack then
-		return
-	end
-
-	if BreathingTracks.mainTrack and BreathingTracks.mainTrack.IsPlaying then
-		BreathingTracks.mainTrack:Stop()
-	end
-
-	BreathingTracks.mainTrack = newTrack
-	BreathingTracks.mainTrack:Play()
-end
-
-
-
-
-
-local ThreadFadeOut = coroutine.create(function(sound, fadeStep, speed)
-	while true do
-		if sound.IsPlaying then
-			fadeStep = fadeStep or 1.25
-			speed = speed or 0.1
-
-			local prevVolume = sound.Volume
-			while sound.Volume > 0.1 do
-				sound.Volume = sound.Volume - fadeStep
-				task.wait(speed)
-				print(sound, sound.Volume)
-			end
-			sound:Stop()
-			sound.Volume = prevVolume
-		end
-
-		coroutine.yield()
-	end
-end)
-
-
-local ThreadFadeIn = coroutine.create(function(sound, fadeStep, speed)
-	while true do
-		if not sound.IsPlaying then
-			fadeStep = fadeStep or 1.25
-			speed = speed or 0.1
-
-			local volume = sound.Volume
-			sound.Volume = 0
-			sound:Play()
-			while sound.Volume < volume do
-				sound.Volume = sound.Volume + fadeStep
-				task.wait(speed)
-				print(sound, sound.Volume)
-			end
-		end
-
-		coroutine.yield()
-	end
-end)
-
-
-local function Fade(thread, sound, fadeStep)
-	coroutine.resume(thread, sound, fadeStep)
-end
-
-
-local function SwitchSounds(track, sound)
-	if track == sound then
-		return track
-	end
-
-	Fade(ThreadFadeIn, sound)
-	Fade(ThreadFadeOut, track)
-	
-	print(track, sound)
-
-	return sound
-end
-
-
-local function AdjustTrack(track, value)
-	local playbackLerp = Math.lerp(1, 0.7, value/100)
-	local pitchLerp = Math.lerp(1, 1.35, value/100)
-
-	track.PlaybackSpeed = playbackLerp
-	track.pitch.Octave = pitchLerp
-end
+local IntervalTimeStart = nil
+local IntervalTimeElapsed = nil
+local Decibel = nil
 
 
 local function PlaySound(sound, playbackSpeed)
@@ -198,56 +136,127 @@ local function PlaySound(sound, playbackSpeed)
 		sound.PlaybackSpeed = playbackSpeed
 		sound.pitch.Octave = pitchLerp
 
-		print(sound.Name)
-
 		sound:Play()
+
+		if IsDebug.Value then
+			print(sound.Name)
+		end
 	end
 
 	return sound
 end
 
 
-local BreathLength = 1.8
-local StaminaValue = 0
-local StaminaState = nil
-PlayerComponentSound.Signals.playBreathing:Connect(function(state, staminaValue)
-	-- if not IsBreathing then
-	-- 	return
-	-- end
-	--print(staminaValue)
-	BreathLength = Math.lerp(0.4,1.8,  staminaValue/100)
-	StaminaValue = staminaValue
-	StaminaState = state
-	-- if state == STATE_STAMINA_MAX then
-	-- 	PlayEffect(SFXBreath.staminaMaxExhale)
-	-- 	Tracks.breath = SwitchSounds(Tracks.breath, SFXBreath.staminaMax)
+local function FireSound(deltaTime)
+	IntervalTimeElapsed = tick() - IntervalTimeStart
+	if IntervalTimeElapsed > CONFIG.intervalLength.Value then
+		IntervalTimeStart = tick()
 
-	-- elseif state == STATE_STAMINA_MIN then
-	-- 	-- PlayEffect(SFXBreath.staminaMinGasp)
-	-- 	-- Tracks.breath = SwitchSounds(Tracks.breath, SFXBreath.staminaMin)
-	-- else
-	-- 	Tracks.breath = SwitchSounds(Tracks.breath, SFXBreath.staminaHighLow)
-	-- 	--AdjustTrack(SFXBreath.staminaHighLow, staminaValue)
-	-- end
-end)
--- Tracks.breath = SFXBreath.staminaHighLow
--- Tracks.breath:Play()
+		Decibel = (STATE_MOVE.base.Value * STATE_MOVE[STATUS.moveState.Value].scalar.Value)
+			+ (STATE_BREATH.base.Value * STATE_BREATH[STATUS.breathState.Value].scalar.Value)
+			+ (STATE_STAMINA.base.Value * STATE_STAMINA[STATUS.staminaState.Value].scalar.Value)
 
-local isHoldBreath = false
-local requestHoldBreath = false
-PlayerComponentSound.Signals.playHoldBreath:Connect(function(state)
-	requestHoldBreath = not state
-end)
-
-
-
-
-STATUS.breathState.Changed:Connect(function(newState)
-	if newState == STATE_BREATH_INHALE then
-		PlaySound(SFXBreath.inhale, STATE[STATE_BREATH_INHALE].playbackSpeed[STATUS.moveState.Value])
-	elseif newState == STATE_BREATH_INHALE_TO_HOLD_BREATH then
-		PlaySound(SFXBreath.inhaleToHoldBreath, STATE[STATE_BREATH_INHALE_TO_HOLD_BREATH].playbackSpeed[STATUS.moveState.Value])
-	elseif newState == STATE_BREATH_EXHALE then
-		PlaySound(SFXBreath.exhale, STATE[STATE_BREATH_EXHALE].playbackSpeed[STATUS.moveState.Value])
+		SoundGuiText.Text = Decibel
+		PlayerMoveSoundEvent:FireServer({
+			position = Root.position,
+			decibel = Decibel,
+		})
 	end
-end)
+end
+
+
+
+local function OnBreathState(newState)
+	if newState == shared.states.breath.inhale or newState == shared.states.breath.inhaleToHoldBreath or newState == shared.states.breath.exhale then
+		PlaySound(STATE_BREATH[newState].sound, STATE_BREATH[newState].playbackSpeed[newState])
+	end
+end
+
+
+local function Init()
+	STATE_BREATH[shared.states.breath.inhale].Looped = false
+	STATE_BREATH[shared.states.breath.inhaleToHoldBreath].Looped = false
+	STATE_BREATH[shared.states.breath.exhale].Looped = false
+
+	IntervalTimeStart = tick()
+	IntervalTimeElapsed = tick() - IntervalTimeStart
+	Decibel = 0
+
+	STATUS.breathState.Changed:Connect(OnBreathState)
+	RunService.Heartbeat:Connect(FireSound)
+
+	SoundGuiText.Text = Decibel
+	SoundGui.Enabled = true
+end
+Init()
+
+
+
+-- local ThreadFadeOut = coroutine.create(function(sound, fadeStep, speed)
+-- 	while true do
+-- 		if sound.IsPlaying then
+-- 			fadeStep = fadeStep or 1.25
+-- 			speed = speed or 0.1
+
+-- 			local prevVolume = sound.Volume
+-- 			while sound.Volume > 0.1 do
+-- 				sound.Volume = sound.Volume - fadeStep
+-- 				task.wait(speed)
+-- 				print(sound, sound.Volume)
+-- 			end
+-- 			sound:Stop()
+-- 			sound.Volume = prevVolume
+-- 		end
+
+-- 		coroutine.yield()
+-- 	end
+-- end)
+
+
+-- local ThreadFadeIn = coroutine.create(function(sound, fadeStep, speed)
+-- 	while true do
+-- 		if not sound.IsPlaying then
+-- 			fadeStep = fadeStep or 1.25
+-- 			speed = speed or 0.1
+
+-- 			local volume = sound.Volume
+-- 			sound.Volume = 0
+-- 			sound:Play()
+-- 			while sound.Volume < volume do
+-- 				sound.Volume = sound.Volume + fadeStep
+-- 				task.wait(speed)
+-- 				print(sound, sound.Volume)
+-- 			end
+-- 		end
+
+-- 		coroutine.yield()
+-- 	end
+-- end)
+
+
+-- local function Fade(thread, sound, fadeStep)
+-- 	coroutine.resume(thread, sound, fadeStep)
+-- end
+
+
+-- local function SwitchSounds(track, sound)
+-- 	if track == sound then
+-- 		return track
+-- 	end
+
+-- 	Fade(ThreadFadeIn, sound)
+-- 	Fade(ThreadFadeOut, track)
+	
+-- 	print(track, sound)
+
+-- 	return sound
+-- end
+
+
+-- local function AdjustTrack(track, value)
+-- 	local playbackLerp = Math.lerp(1, 0.7, value/100)
+-- 	local pitchLerp = Math.lerp(1, 1.35, value/100)
+
+-- 	track.PlaybackSpeed = playbackLerp
+-- 	track.pitch.Octave = pitchLerp
+-- end

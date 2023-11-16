@@ -3,230 +3,181 @@ local Players = game:GetService("Players")
 
 local require = require(script.Parent.loader).load(script)
 
-local Signal = require("Signal")
 local Spring = require("Spring")
 local GeneralUtil = require("GeneralUtil")
 
 local ComponentCamera = require("PlayerComponentCamera")
 local ComponentController = require("PlayerComponentController")
-local ComponentSound = require("PlayerComponentSound")
-local ComponentBreath = require("PlayerComponentBreath")
-
-local Debug = require("PlayerDebug")
 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
-local Root = Character:WaitForChild("HumanoidRootPart")
 
-local ConfigFolder = GeneralUtil:Get(Character, "config", "Folder")
-local ConfigMove = GeneralUtil:Get(ConfigFolder, "move", "Configuration")
-local ConfigStamina = GeneralUtil:Get(ConfigFolder, "stamina", "Configuration")
-local ConfigSound = GeneralUtil:Get(ConfigFolder, "sound", "Configuration")
+local ConfigFolder = GeneralUtil:Get("Folder", Character, "config")
+local ConfigMove = GeneralUtil:Get("Configuration", ConfigFolder, "move")
 
-local IsDebugMove = GeneralUtil:GetBool(ConfigMove, "_DEBUG", true)
-local IsDebugStamina = GeneralUtil:GetBool(ConfigStamina, "_DEBUG", true)
-local IsDebugSound = GeneralUtil:GetBool(ConfigSound, "_DEBUG", true)
+local IsDebug = GeneralUtil:GetBool(ConfigMove, "_DEBUG", true)
 
 local CONFIG = {
-	speedRun = GeneralUtil:GetNumber(ConfigMove, "speed run", IsDebugMove.Value),
-	speedWalk = GeneralUtil:GetNumber(ConfigMove, "speed walk", IsDebugMove.Value),
-	speedSneak = GeneralUtil:GetNumber(ConfigMove, "speed sneak", IsDebugMove.Value),
+	speedRun = GeneralUtil:GetNumber(ConfigMove, "speed run", IsDebug.Value),
+	speedWalk = GeneralUtil:GetNumber(ConfigMove, "speed walk", IsDebug.Value),
+	speedCrouch = GeneralUtil:GetNumber(ConfigMove, "speed crouch", IsDebug.Value),
 
-	runTapdelay = GeneralUtil:GetNumber(ConfigMove, "run tap delay", IsDebugMove.Value),
+	runTapdelay = GeneralUtil:GetNumber(ConfigMove, "run tap delay", IsDebug.Value),
 
-	springDamper = GeneralUtil:GetNumber(ConfigMove, "spring damper", IsDebugMove.Value),
-	springSpeed = GeneralUtil:GetNumber(ConfigMove, "spring speed", IsDebugMove.Value),
-	springTurnMultiplier = GeneralUtil:GetNumber(ConfigMove, "spring turn multiplier", IsDebugMove.Value),
-
-	costRun = GeneralUtil:GetNumber(ConfigStamina, "cost run", IsDebugStamina.Value),
-	costHoldBreath = GeneralUtil:GetNumber(ConfigStamina, "cost hold breath", IsDebugStamina.Value),
-
-	modifierRun = GeneralUtil:GetNumber(ConfigSound, "modifier run", IsDebugSound.Value),
-	modifierWalk = GeneralUtil:GetNumber(ConfigSound, "modifier walk", IsDebugSound.Value),
-	modifierSneak = GeneralUtil:GetNumber(ConfigSound, "modifier sneak", IsDebugSound.Value),
-	modifierIdle = GeneralUtil:GetNumber(ConfigSound, 'modifier idle', IsDebugSound.Value),
-	modifierHoldBreath = GeneralUtil:GetNumber(ConfigSound, "modifier hold breath", IsDebugSound.Value)
+	springDamper = GeneralUtil:GetNumber(ConfigMove, "spring damper", IsDebug.Value),
+	springSpeed = GeneralUtil:GetNumber(ConfigMove, "spring speed", IsDebug.Value),
+	springTurnMultiplier = GeneralUtil:GetNumber(ConfigMove, "spring turn multiplier", IsDebug.Value),
 }
 
-local StatusFolder = GeneralUtil:Get(Character, "status", "Folder")
+local StatusFolder = GeneralUtil:Get("Folder", Character, "status")
 
 local STATUS = {
-	isBreathing = GeneralUtil:GetBool(StatusFolder, "isBreathing", IsDebugMove.Value),
-	isIdle = GeneralUtil:GetBool(StatusFolder, "isIdle", IsDebugMove.Value),
-	isSneaking = GeneralUtil:GetBool(StatusFolder, "isSneaking", IsDebugMove.Value),
-	isRunning = GeneralUtil:GetBool(StatusFolder, "isRunning", IsDebugMove.Value),
-	requestHoldBreath = GeneralUtil:GetBool(StatusFolder, "request hold breath", IsDebugMove.Value),
-	requestRun = GeneralUtil:GetBool(StatusFolder, "request run", IsDebugMove.Value),
-	isTappingRun = GeneralUtil:GetBool(StatusFolder, "isTappingRun", IsDebugMove.Value),
+	isBreathing = GeneralUtil:GetBool(StatusFolder, "isBreathing", IsDebug.Value),
+	isCrouching = GeneralUtil:GetBool(StatusFolder, "isCrouching", IsDebug.Value),
+	isRunning = GeneralUtil:GetBool(StatusFolder, "isRunning", IsDebug.Value),
+	requestHoldBreath = GeneralUtil:GetBool(StatusFolder, "request hold breath", IsDebug.Value),
+	requestRun = GeneralUtil:GetBool(StatusFolder, "request run", IsDebug.Value),
+	isTappingRun = GeneralUtil:GetBool(StatusFolder, "isTappingRun", IsDebug.Value),
 
-	stamina = GeneralUtil:GetNumber(StatusFolder, "stamina", IsDebugMove.Value),
-	moveState = GeneralUtil:GetNumber(StatusFolder, "move state", IsDebugMove.Value),
+	moveState = GeneralUtil:GetNumber(StatusFolder, "move state", IsDebug.Value),
 }
 
 local ZERO_VECTOR = Vector3.new(0,0,0)
-local STATE_IDLE, STATE_IDLE_SNEAK, STATE_WALK_SNEAK, STATE_WALK, STATE_RUN = 1, 2, 3, 4, 5
 
-
-local Signals = {
-	animate = nil,
-}
-
-local MovementLinearSpring = Spring.new(0)
-MovementLinearSpring.Damper = CONFIG.springDamper.Value
-MovementLinearSpring.Speed = CONFIG.springSpeed.Value
-
-local lastRunRequest = tick()
-local MaxSpeed = CONFIG.speedWalk.Value
+local MovementLinearSpring = nil
+local RunRequestLastTick = nil
+local MaxSpeed = nil
 local MoveVectorCurrent = ZERO_VECTOR
 local MoveVectorPrevious = ZERO_VECTOR
 
 
-local function CanStaminaDecrease(value)
-	return STATUS.stamina.Value - value > 0
-end
-
-local function UpdateAnimate(state)
-	Signals.animate:Fire(state)
-end
-
+-- state is set by CharacterComponentStamina
+-- TRUE if enough stamina
 local function RequestRun(value)
 	STATUS.requestRun.Value = value
 end
 
+
+-- state is set by CharacterComponentStamina
+-- TRUE after inhaling to hold breath
 local function RequestHoldBreath(value)
 	STATUS.requestHoldBreath.Value = value
 end
 
 
-local function SetMaxSpeed()
-	if STATUS.isRunning.Value then
-		MaxSpeed = CONFIG.speedRun.Value
-		ComponentSound:Update("move", CONFIG.modifierRun.Value)
-	else
-		if STATUS.isSneaking.Value then
-			MaxSpeed = CONFIG.speedSneak.Value
-			ComponentSound:Update("move", CONFIG.modifierSneak.Value)
-		else
-			MaxSpeed = CONFIG.speedWalk.Value
-			ComponentSound:Update("move", CONFIG.modifierWalk.Value)
-		end
+local function IsDirectionPressed()
+	MoveVectorCurrent = ComponentController:GetMoveVector()
+	return MoveVectorCurrent ~= ZERO_VECTOR
+end
+
+
+local function HasPlayerTurned()
+	if MoveVectorCurrent:Dot(MoveVectorPrevious) == -1 then
+		MovementLinearSpring.Position = math.clamp(MovementLinearSpring.Position * CONFIG.springTurnMultiplier.Value, 0, MaxSpeed)
 	end
+	MoveVectorPrevious = MoveVectorCurrent
+end
+
+
+local function SetState(state, speed)
+	STATUS.moveState.Value = state
+	MaxSpeed = speed
 end
 
 
 local function handleMove(deltaTime)
-	MoveVectorCurrent = ComponentController:GetMoveVector()
-	SetMaxSpeed()
+	if IsDirectionPressed() then
+		HasPlayerTurned()
 
-	if MoveVectorCurrent ~= ZERO_VECTOR then
-		MovementLinearSpring.Target = MaxSpeed
-
-		if STATUS.isTappingRun.Value then
-			STATUS.moveState.Value = STATE_RUN
-			UpdateAnimate(STATUS.moveState.Value)
-			RequestRun(true)
-		elseif STATUS.isSneaking.Value then
-			STATUS.moveState.Value = STATE_WALK_SNEAK
-			UpdateAnimate(STATUS.moveState.Value)
-			RequestRun(false)
+		if STATUS.isRunning.Value then
+			SetState(shared.states.move.run, CONFIG.speedRun.Value)
+		elseif STATUS.isCrouching.Value then
+			SetState(shared.states.move.walkCrouch, CONFIG.speedCrouch.Value)
 		else
-			STATUS.moveState.Value = STATE_WALK
-			UpdateAnimate(STATUS.moveState.Value)
-			RequestRun(false)
+			SetState(shared.states.move.walk, CONFIG.speedWalk.Value)
 		end
 
-		if MoveVectorCurrent:Dot(MoveVectorPrevious) == -1 then
-			MovementLinearSpring.Position = math.clamp(MovementLinearSpring.Position * CONFIG.springTurnMultiplier.Value, 0, MaxSpeed)
-		end
-		MoveVectorPrevious = MoveVectorCurrent
 	else
-		MovementLinearSpring.Target = 0
-		ComponentSound:Update("move", CONFIG.modifierIdle.Value)
-		
-		if STATUS.isSneaking.Value then
-			STATUS.moveState.Value = STATE_IDLE_SNEAK
-			UpdateAnimate(STATUS.moveState.Value)
+		if STATUS.isCrouching.Value then
+			SetState(shared.states.move.idleCrouch, 0)
 		else
-			STATUS.moveState.Value = STATE_IDLE
-			UpdateAnimate(STATUS.moveState.Value)
+			SetState(shared.states.move.idle, 0)
 		end
-
-		RequestRun(false)
 	end
 
-	if IsDebugMove then
-		Debug:SetInputState(STATUS.moveState.Value)
-	end
-
+	MovementLinearSpring.Target = MaxSpeed
 	Humanoid:Move(MoveVectorPrevious, true)
 	Humanoid.WalkSpeed = MovementLinearSpring.Position
 end
 
 
-
 local function handleRun(deltaTime)
-	STATUS.isTappingRun.Value = STATUS.isTappingRun.Value and (tick() - lastRunRequest) <= CONFIG.runTapdelay.Value
+	STATUS.isTappingRun.Value = STATUS.isTappingRun.Value and (tick() - RunRequestLastTick) <= CONFIG.runTapdelay.Value
 
 	if ComponentController:GetIsRunPressed() then
 		STATUS.isTappingRun.Value = true
-		lastRunRequest = tick()
-		ComponentController:CancelSneakToggle()
+		RunRequestLastTick = tick()
+		ComponentController:CancelCrouchToggle()
+
+		if ComponentController:GetMoveVector() then
+			RequestRun(true)
+		end
+	end
+
+	if not STATUS.isTappingRun.Value then
+		RequestRun(false)
 	end
 end
 
 
-local function handleSneak(deltaTime)
-	if ComponentController:GetIsSneakToggle() then
-		STATUS.isSneaking.Value = true
+local function handleCrouch(deltaTime)
+	if ComponentController:GetIsCrouchToggle() then
+		STATUS.isCrouching.Value = true
 	else
-		STATUS.isSneaking.Value = false
+		STATUS.isCrouching.Value = false
 	end
 end
 
 
 local function handleBreath(deltaTime)
-	if ComponentController:GetIsBreathHeld() and CanStaminaDecrease(CONFIG.costHoldBreath.Value * deltaTime) then
+	if ComponentController:GetIsBreathHeld() then
 		RequestHoldBreath(true)
 	else
 		RequestHoldBreath(false)
 	end
-
-	ComponentBreath:Toggle(STATUS.isBreathing.Value)
-	ComponentSound:UpdateBreath(STATUS.isBreathing.Value and 1 or CONFIG.modifierHoldBreath.Value, STATUS.isBreathing.Value)
-
 end
 
 
 local function OnCharacterAdded(newCharacter)
 	Character = newCharacter
 	Humanoid = newCharacter:WaitForChild("Humanoid")
-	Root = newCharacter:WaitForChild("HumanoidRootPart")
 end
 
 
 local function Init()
+	MovementLinearSpring = Spring.new(0)
+	MovementLinearSpring.Damper = CONFIG.springDamper.Value
+	MovementLinearSpring.Speed = CONFIG.springSpeed.Value
+
+	MaxSpeed = CONFIG.speedWalk.Value
 	Humanoid.WalkSpeed = CONFIG.speedWalk.Value
-	STATUS.moveState.Value = STATE_IDLE
+
+	STATUS.moveState.Value = shared.states.move.walk
 	STATUS.isRunning.Value = false
-	STATUS.isSneaking.Value = false
+	STATUS.isCrouching.Value = false
 	STATUS.isBreathing.Value = true
 
-	RunService:BindToRenderStep("bindMove", Enum.RenderPriority.Input.Value, handleMove)
-	RunService:BindToRenderStep("bindRun", Enum.RenderPriority.Input.Value, handleRun)
-	RunService:BindToRenderStep("bindSneak", Enum.RenderPriority.Input.Value, handleSneak)
-	RunService:BindToRenderStep("bindBreath", Enum.RenderPriority.Input.Value, handleBreath)
+	RunService:BindToRenderStep("bindBreath", Enum.RenderPriority.Input.Value+1, handleBreath)
+	RunService:BindToRenderStep("bindRun", Enum.RenderPriority.Input.Value+2, handleRun)
+	RunService:BindToRenderStep("bindCrouch", Enum.RenderPriority.Input.Value+3, handleCrouch)
+	RunService:BindToRenderStep("bindMove", Enum.RenderPriority.Input.Value+4, handleMove)
 
 	LocalPlayer.CharacterAdded:Connect(OnCharacterAdded)
 
-	Signals.animate = Signal.new()
-	Signals.stamina = Signal.new()
-
-	Debug:Toggle(IsDebugMove)
-
 	return true
 end
-Init()
 
 
-return Signals
+
+return Init()

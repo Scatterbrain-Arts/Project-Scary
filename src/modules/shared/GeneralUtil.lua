@@ -89,11 +89,11 @@ function GeneralUtil:GetNumber(instance, name, isDebug)
 		number.Name = name
 		number.Value = 1
 		number.Parent = instance
-		warn(name, "was not found, created new with default value", number.Value, "...")
+		warn(name, "was not found in", instance.Name , "created new with default value", number.Value, "...")
 	end
 
 	if isDebug then
-		warn("[", name, "] is set to ", number.Value)
+		warn(instance.Name, "[", name, "] is set to ", number.Value)
 	end
 
 	return number
@@ -109,11 +109,11 @@ function GeneralUtil:GetString(instance, name, isDebug)
 		string.Name = name
 		string.Value = ""
 		string.Parent = instance
-		warn(name, "was not found...")
+		warn(name, "was not found in", instance.Name, "...")
 	end
 
 	if isDebug then
-		warn("[", name, "] is set to ", string.Value)
+		warn(instance.Name, "[", name, "] is set to ", string.Value)
 	end
 
 	return string
@@ -130,11 +130,11 @@ function GeneralUtil:GetVector(instance, name, isDebug)
 		vector.Name = name
 		vector.Value = Vector3.zero
 		vector.Parent = instance
-		warn(name, "was not found...")
+		warn(name, "was not found in", instance.Name, "...")
 	end
 
 	if isDebug then
-		warn("[", name, "] is set to ", vector.Value)
+		warn(instance.Name, "[", name, "] is set to ", vector.Value)
 	end
 
 	return vector
@@ -149,18 +149,18 @@ function GeneralUtil:GetBool(instance, name, isDebug)
 		bool.Name = name
 		bool.Value = false
 		bool.Parent = instance
-		warn(name, "was not found...")
+		warn(name, "was not found in", instance.Name, "...")
 	end
 
 	if isDebug then
-		warn("[", name, "] is set to ", bool.Value)
+		warn(instance.Name, "[", name, "] is set to ", bool.Value)
 	end
 
 	return bool
 end
 
 
-function GeneralUtil:Get(instance, name, defaultClass)
+function GeneralUtil:Get(defaultClass, instance, name)
 	assert(instance ~= nil, "instance is nil for", name)
 	local folder = instance:FindFirstChild(name)
 
@@ -168,11 +168,33 @@ function GeneralUtil:Get(instance, name, defaultClass)
 		folder = Instance.new(defaultClass)
 		folder.Parent = instance
 		folder.Name = name
-		warn(name, "was not found...")
+		warn(name, "was not found in", instance.Name, "...")
 	end
 
 	return folder
 end
 
+
+function GeneralUtil:GetUI(playerGui, name)
+	assert(playerGui ~= nil, "playerGui is nil for", name)
+	local gui = playerGui:FindFirstChild(name)
+
+	if not gui then
+		error(name, "was not found in", playerGui.Name, "...")
+	end
+
+	return gui
+end
+
+function GeneralUtil:GetSound(root, name)
+	assert(root ~= nil, "playerGui is nil for", name)
+	local sfx = root:FindFirstChild(name)
+
+	if not sfx then
+		error(name, "was not found in", root.Name, "...")
+	end
+
+	return sfx
+end
 
 return GeneralUtil
