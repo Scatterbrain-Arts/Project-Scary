@@ -80,15 +80,14 @@ local STATE_STAMINA = {
 	},
 }
 
-local StaminaGUi = GeneralUtil:GetUI(LocalPlayer.PlayerGui, "stamina")
-local StaminaText = StaminaGUi.Frame.TextLabel
 
-local DebugGui = GeneralUtil:GetUI(LocalPlayer.PlayerGui.debug, "gui")
-local DebugGuiStamina = GeneralUtil:GetUI(DebugGui.frame.frame, "stamina current")
-local DebugGuiStaminaState = GeneralUtil:GetUI(DebugGui.frame.frame, "stamina state")
+local GuiStamina = GeneralUtil:GetUI(LocalPlayer.PlayerGui, "stamina")
 
-local BreathGui = LocalPlayer.PlayerGui:FindFirstChild("breath")
-local BreathGuiText = BreathGui.Frame.TextLabel
+local GuiStaminaBar =  GeneralUtil:GetUI(GuiStamina, "fg")
+local GuiStaminaIsInhale = GeneralUtil:GetUI(GuiStamina, "inhale")
+local GuiStaminaIsExhale = GeneralUtil:GetUI(GuiStamina, "exhale")
+local GuiStaminaIsholding = GeneralUtil:GetUI(GuiStamina, "Holding")
+local GuiStaminaPercent = GeneralUtil:GetUI(GuiStamina, "Percent")
 
 local TickLastBreath = nil
 local StaminaAdd = nil
@@ -99,10 +98,6 @@ local OverrideHoldBreath = nil
 local function BeginHoldBreath(deltaTime)
 	if (STATUS.stamina.Value - CONFIG.costHoldBreath.Value * deltaTime)  >= CONFIG.staminaMin.Value then
 		OverrideHoldBreath = CONFIG.breathLength.Value
-
-		STATUS.isInhale.Value = false
-		STATUS.isExhale.Value = false
-		BreathGuiText.Text = "Holding"
 	end
 end
 
@@ -111,7 +106,6 @@ local function EndHoldBreath()
 	STATUS.isBreathing.Value = true
 	STATUS.isInhale.Value = false
 	STATUS.isExhale.Value = true
-	BreathGuiText.Text = "Breathing"
 
 	OverrideHoldBreath = 0
 end
@@ -151,7 +145,6 @@ end
 
 local function IncreaseStamina(staminaTotal)
 	STATUS.stamina.Value = math.clamp(STATUS.stamina.Value+staminaTotal, CONFIG.staminaMin.Value, CONFIG.staminaMax.Value)
-	StaminaText.Text = STATUS.stamina.Value
 
 	for i = STATUS.staminaState.Value, shared.states.stamina.high, 1 do
 		if STATUS.stamina.Value >= STATE_STAMINA[i].min and STATUS.stamina.Value <= STATE_STAMINA[i].max then
@@ -168,7 +161,6 @@ end
 
 local function DecreaseStamina(staminaTotal)
 	STATUS.stamina.Value = math.clamp(STATUS.stamina.Value-(staminaTotal), CONFIG.staminaMin.Value, CONFIG.staminaMax.Value)
-	StaminaText.Text = STATUS.stamina.Value
 
 	for i = STATUS.staminaState.Value, shared.states.stamina.min, -1 do
 		if STATUS.stamina.Value >= STATE_STAMINA[i].min and STATUS.stamina.Value <= STATE_STAMINA[i].max then
@@ -238,20 +230,18 @@ local function Update(deltaTime)
 	end
 end
 
-local function OnStaminaState(newState)
-	local str = ""
-	if newState == shared.states.stamina.min then
-		str = "min"
-	elseif newState == shared.states.stamina.low then
-		str = "low"
-	elseif newState == shared.states.stamina.med then
-		str = "med"
-	elseif newState == shared.states.stamina.high then
-		str = "high"
-	elseif newState == shared.states.stamina.max then
-		str = "max"
-	end
-	DebugGuiStaminaState.Text = "stamina state: " .. str
+
+
+local function OnStamina(newStamina)
+	local value = math.floor(newStamina)
+	GuiStaminaPercent.Text = value .. "%"
+	GuiStaminaBar.Size = UDim2.fromScale(newStamina/100, 1)
+end
+
+local function OnBreathState(newBreath)
+	GuiStaminaIsInhale.Visible = newBreath == shared.states.breath.inhale or newBreath == shared.states.breath.inhaleToHoldBreath
+	GuiStaminaIsExhale.Visible = newBreath == shared.states.breath.exhale
+	GuiStaminaIsholding.Visible = newBreath == shared.states.breath.holding
 end
 
 
@@ -263,12 +253,13 @@ local function Init()
 
 	STATUS.staminaState.Value = shared.states.stamina.min
 	STATUS.stamina.Value = CONFIG.staminaMin.Value
-	StaminaText.Text = STATUS.stamina.Value
 
 	math.randomseed(tick())
-	STATUS.staminaState.Changed:Connect(OnStaminaState)
-	STATUS.stamina.Changed:Connect(function(newStamina) DebugGuiStamina.Text = "stamina current: " .. newStamina end)
+	STATUS.breathState.Changed:Connect(OnBreathState)
+	STATUS.stamina.Changed:Connect(OnStamina)
 
 	RunService.Heartbeat:Connect(Update)
+
+	GuiStamina.Enabled = true
 end
 Init()

@@ -8,6 +8,7 @@ local GeneralUtil = require("GeneralUtil")
 
 local ComponentCamera = require("PlayerComponentCamera")
 local ComponentController = require("PlayerComponentController")
+local PlayerDebug = require("PlayerDebug")
 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
@@ -152,6 +153,14 @@ end
 local function OnCharacterAdded(newCharacter)
 	Character = newCharacter
 	Humanoid = newCharacter:WaitForChild("Humanoid")
+
+	MaxSpeed = CONFIG.speedWalk.Value
+	Humanoid.WalkSpeed = CONFIG.speedWalk.Value
+
+	STATUS.moveState.Value = shared.states.move.walk
+	STATUS.isRunning.Value = false
+	STATUS.isCrouching.Value = false
+	STATUS.isBreathing.Value = true
 end
 
 

@@ -120,8 +120,9 @@ local STATE_STAMINA = {
 	["base"] = GeneralUtil:GetNumber(ConfigSound, "weight stamina", IsDebug.Value),
 }
 
-local SoundGui = GeneralUtil:GetUI(LocalPlayer.PlayerGui, "sound")
-local SoundGuiText = SoundGui.Frame.TextLabel
+local GuiSound = GeneralUtil:GetUI(LocalPlayer.PlayerGui, "sound")
+local GuiSoundBar = GeneralUtil:GetUI(GuiSound, "fg")
+local GuiSoundValue = GeneralUtil:GetUI(GuiSound, "Value")
 
 local IntervalTimeStart = nil
 local IntervalTimeElapsed = nil
@@ -156,7 +157,8 @@ local function FireSound(deltaTime)
 			+ (STATE_BREATH.base.Value * STATE_BREATH[STATUS.breathState.Value].scalar.Value)
 			+ (STATE_STAMINA.base.Value * STATE_STAMINA[STATUS.staminaState.Value].scalar.Value)
 
-		SoundGuiText.Text = Decibel
+		GuiSoundBar.Size = UDim2.fromScale(Decibel / 140, 1)
+		GuiSoundValue.Text = Decibel .. " dB"
 		PlayerMoveSoundEvent:FireServer({
 			position = Root.position,
 			decibel = Decibel,
@@ -185,8 +187,9 @@ local function Init()
 	STATUS.breathState.Changed:Connect(OnBreathState)
 	RunService.Heartbeat:Connect(FireSound)
 
-	SoundGuiText.Text = Decibel
-	SoundGui.Enabled = true
+	GuiSoundBar.Size = UDim2.fromScale(Decibel / Decibel > GuiSoundBar.Size.X.Scale and Decibel or GuiSoundBar.Size.X.Scale, 1)
+	GuiSoundValue.Text = Decibel .. " dB"
+	GuiSound.Enabled = true
 end
 Init()
 

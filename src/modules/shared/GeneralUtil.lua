@@ -177,7 +177,7 @@ end
 
 function GeneralUtil:GetUI(playerGui, name)
 	assert(playerGui ~= nil, "playerGui is nil for", name)
-	local gui = playerGui:FindFirstChild(name)
+	local gui = playerGui:FindFirstChild(name, true)
 
 	if not gui then
 		error(name, "was not found in", playerGui.Name, "...")
