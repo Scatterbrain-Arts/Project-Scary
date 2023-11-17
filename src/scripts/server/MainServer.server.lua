@@ -8,8 +8,11 @@ ServiceBag:GetService(Packages.AiService)
 ServiceBag:Init()
 ServiceBag:Start()
 
+require(Packages.ServerInit)
+
 local Binder = require(Packages.Binder)
 local AiEntity = require(Packages.AiEntity)
 
 AiEntity.BINDER = Binder.new(AiEntity.TAG_NAME, AiEntity, ServiceBag)
 AiEntity.BINDER:Start()
+
