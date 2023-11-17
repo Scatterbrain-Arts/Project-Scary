@@ -18,19 +18,19 @@ local ConfigSound = GeneralUtil:Get("Configuration", ConfigFolder, "sound")
 local IsDebug = GeneralUtil:GetBool(ConfigSound, "_DEBUG", true)
 
 local CONFIG = {
-	intervalLength = GeneralUtil:GetNumber(ConfigSound, "interval length", IsDebug.Value),
+	intervalLength = GeneralUtil:GetNumber(ConfigSound, "emitter fire delay", IsDebug.Value),
 }
 
 local StatusFolder = GeneralUtil:Get("Folder", Character, "status")
 local STATUS = {
-	breathState = GeneralUtil:GetNumber(StatusFolder, "breath state", IsDebug.Value),
-	moveState = GeneralUtil:GetNumber(StatusFolder, "move state", IsDebug.Value),
-	staminaState = GeneralUtil:GetNumber(StatusFolder, "stamina state", IsDebug.Value),
+	breathState = GeneralUtil:GetNumber(StatusFolder, "state breath", IsDebug.Value),
+	moveState = GeneralUtil:GetNumber(StatusFolder, "state move", IsDebug.Value),
+	staminaState = GeneralUtil:GetNumber(StatusFolder, "state stamina", IsDebug.Value),
 }
 
 local STATE_BREATH = {
 	[shared.states.breath.inhale] = {
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier inhale", IsDebug.Value),
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter breath scalar inhale", IsDebug.Value),
 		sound = GeneralUtil:GetSound(Root, "breathIn"),
 		playbackSpeed = {
 			[shared.states.move.idleCrouch] = 0.90,
@@ -42,7 +42,7 @@ local STATE_BREATH = {
 	},
 
 	[shared.states.breath.inhaleToHoldBreath] = {
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier inhaleToHoldBreath", IsDebug.Value),
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter breath scalar inhaleToHoldBreath", IsDebug.Value),
 		sound = GeneralUtil:GetSound(Root, "inhaleToHoldBreath"),
 		playbackSpeed = {
 			[shared.states.move.idleCrouch] = 0.90,
@@ -54,7 +54,7 @@ local STATE_BREATH = {
 	},
 	
 	[shared.states.breath.exhale] = {
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier exhale", IsDebug.Value),
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter breath scalar exhale", IsDebug.Value),
 		sound = GeneralUtil:GetSound(Root, "breathOut"),
 		playbackSpeed = {
 			[shared.states.move.idleCrouch] = 0.90,
@@ -65,7 +65,7 @@ local STATE_BREATH = {
 		}
 	},
 	[shared.states.breath.holding] = {
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier hold breath", IsDebug.Value),
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter breath scalar hold breath", IsDebug.Value),
 		sound = GeneralUtil:GetSound(Root, "breathOut"),
 		playbackSpeed = {
 			[shared.states.move.idleCrouch] = 0.90,
@@ -76,48 +76,48 @@ local STATE_BREATH = {
 		}
 	},
 
-	["base"] = GeneralUtil:GetNumber(ConfigSound, "weight breath", IsDebug.Value),
+	["base"] = GeneralUtil:GetNumber(ConfigSound, "emitter breath base weight", IsDebug.Value),
 }
 
 local STATE_MOVE = {
 	[shared.states.move.idleCrouch] = {
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier idle", IsDebug.Value)
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter move scalar idle crouch", IsDebug.Value)
 	},
 	[shared.states.move.idle] ={
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier idle", IsDebug.Value)
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter move scalar idle", IsDebug.Value)
 	},
 	[shared.states.move.walkCrouch] ={
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier crouch", IsDebug.Value)
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter move scalar walk crouch", IsDebug.Value)
 	},
 	[shared.states.move.walk] ={
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier walk", IsDebug.Value)
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter move scalar walk", IsDebug.Value)
 	},
 	[shared.states.move.run] ={
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier run", IsDebug.Value)
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter move scalar run", IsDebug.Value)
 	},
 
-	["base"] = GeneralUtil:GetNumber(ConfigSound, "weight move", IsDebug.Value),
+	["base"] = GeneralUtil:GetNumber(ConfigSound, "emitter move base weight", IsDebug.Value),
 }
 
 local STATE_STAMINA = {
 	[shared.states.stamina.min] ={
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier stamina min", IsDebug.Value)
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter stamina scalar min", IsDebug.Value)
 	},
 	[shared.states.stamina.low] ={
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier stamina low", IsDebug.Value)
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter stamina scalar low", IsDebug.Value)
 	},
 	[shared.states.stamina.med] ={
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier stamina med", IsDebug.Value)
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter stamina scalar med", IsDebug.Value)
 	},
 	[shared.states.stamina.high] ={
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier stamina high", IsDebug.Value)
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter stamina scalar high", IsDebug.Value)
 	},
 	[shared.states.stamina.max] ={
-		scalar = GeneralUtil:GetNumber(ConfigSound, "modifier stamina max", IsDebug.Value)
+		scalar = GeneralUtil:GetNumber(ConfigSound, "emitter stamina scalar max", IsDebug.Value)
 	},
 
 
-	["base"] = GeneralUtil:GetNumber(ConfigSound, "weight stamina", IsDebug.Value),
+	["base"] = GeneralUtil:GetNumber(ConfigSound, "emitter stamina base weight", IsDebug.Value),
 }
 
 local GuiSound = GeneralUtil:GetUI(LocalPlayer.PlayerGui, "sound")
@@ -157,7 +157,10 @@ local function FireSound(deltaTime)
 			+ (STATE_BREATH.base.Value * STATE_BREATH[STATUS.breathState.Value].scalar.Value)
 			+ (STATE_STAMINA.base.Value * STATE_STAMINA[STATUS.staminaState.Value].scalar.Value)
 
-		GuiSoundBar.Size = UDim2.fromScale(Decibel / 140, 1)
+		local TotalDecibel = (STATE_MOVE.base.Value * STATE_MOVE[shared.states.move.run].scalar.Value)
+		+ (STATE_BREATH.base.Value * STATE_BREATH[shared.states.breath.inhale].scalar.Value)
+		+ (STATE_STAMINA.base.Value * STATE_STAMINA[shared.states.stamina.min].scalar.Value)
+		GuiSoundBar.Size = UDim2.fromScale(Decibel / TotalDecibel, 1)
 		GuiSoundValue.Text = Decibel .. " dB"
 		PlayerMoveSoundEvent:FireServer({
 			position = Root.position,

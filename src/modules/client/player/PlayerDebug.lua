@@ -16,10 +16,10 @@ local IsDebug = GeneralUtil:GetNumber(ConfigFolder, "_DEBUG", true)
 local StatusFolder = GeneralUtil:Get("Folder", Character, "status")
 
 local STATUS = {
-	moveState = GeneralUtil:GetNumber(StatusFolder, "move state", IsDebug.Value),
-	breathState = GeneralUtil:GetNumber(StatusFolder, "breath state", IsDebug.Value),
-	staminaState = GeneralUtil:GetNumber(StatusFolder, "stamina state",IsDebug.Value),
-	stamina = GeneralUtil:GetNumber(StatusFolder, "stamina", IsDebug.Value),
+	moveState = GeneralUtil:GetNumber(StatusFolder, "state move", IsDebug.Value),
+	breathState = GeneralUtil:GetNumber(StatusFolder, "state breath", IsDebug.Value),
+	staminaState = GeneralUtil:GetNumber(StatusFolder, "state stamina",IsDebug.Value),
+	stamina = GeneralUtil:GetNumber(StatusFolder, "current stamina", IsDebug.Value),
 }
 
 local Gui = GeneralUtil:GetUI(LocalPlayer.PlayerGui.debug, "gui")

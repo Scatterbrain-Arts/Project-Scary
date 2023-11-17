@@ -16,7 +16,7 @@ local IsDebug = GeneralUtil:GetBool(ConfigAnimate, "_DEBUG", true)
 
 local StatusFolder = GeneralUtil:Get("Folder", Character, "status")
 local STATUS = {
-	moveState = GeneralUtil:GetNumber(StatusFolder, "move state", IsDebug.Value),
+	moveState = GeneralUtil:GetNumber(StatusFolder, "state move", IsDebug.Value),
 }
 
 local Animations = nil

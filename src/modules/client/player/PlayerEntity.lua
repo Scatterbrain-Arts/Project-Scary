@@ -34,14 +34,15 @@ local CONFIG = {
 local StatusFolder = GeneralUtil:Get("Folder", Character, "status")
 
 local STATUS = {
-	isBreathing = GeneralUtil:GetBool(StatusFolder, "isBreathing", IsDebug.Value),
-	isCrouching = GeneralUtil:GetBool(StatusFolder, "isCrouching", IsDebug.Value),
-	isRunning = GeneralUtil:GetBool(StatusFolder, "isRunning", IsDebug.Value),
-	requestHoldBreath = GeneralUtil:GetBool(StatusFolder, "request hold breath", IsDebug.Value),
-	requestRun = GeneralUtil:GetBool(StatusFolder, "request run", IsDebug.Value),
-	isTappingRun = GeneralUtil:GetBool(StatusFolder, "isTappingRun", IsDebug.Value),
+	isBreathing = GeneralUtil:GetBool(StatusFolder, "breath isBreathing", IsDebug.Value),
+	requestHoldBreath = GeneralUtil:GetBool(StatusFolder, "breath request hold breath", IsDebug.Value),
 
-	moveState = GeneralUtil:GetNumber(StatusFolder, "move state", IsDebug.Value),
+	isCrouching = GeneralUtil:GetBool(StatusFolder, "move isCrouching", IsDebug.Value),
+	isRunning = GeneralUtil:GetBool(StatusFolder, "move isRunning", IsDebug.Value),
+	isTappingRun = GeneralUtil:GetBool(StatusFolder, "move isTappingRun", IsDebug.Value),
+	requestRun = GeneralUtil:GetBool(StatusFolder, "move request run", IsDebug.Value),
+
+	moveState = GeneralUtil:GetNumber(StatusFolder, "state move", IsDebug.Value),
 }
 
 local ZERO_VECTOR = Vector3.new(0,0,0)

@@ -8,7 +8,7 @@ for i = 1, #shared.states.moveNames do shared.states.move[i] = i end
 
 shared.states.stamina = {}
 shared.states.staminaNames = { "min", "low", "med", "high", "max" }
-for i,v in ipairs(shared.states.staminaNames) do shared.states.stamina[v] = i end
+for i,v in shared.states.staminaNames do shared.states.stamina[v] = i end
 for i = 1, #shared.states.staminaNames do shared.states.stamina[i] = i end
 
 
@@ -16,11 +16,6 @@ shared.states.breath = {}
 shared.states.breathNames = { "inhale", "exhale", "inhaleToHoldBreath", "holding" }
 for i,v in shared.states.breathNames do shared.states.breath[v] = i end
 for i = 1, #shared.states.breathNames do shared.states.breath[i] = i end
-
-print(shared.states.breath)
-print(shared.states.move)
-print(shared.states.stamina)
-
 
 require(packages.PuppetActivator)
 require(packages.PlayerEntity)

@@ -11,72 +11,59 @@ local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
 local ConfigFolder = GeneralUtil:Get("Folder", Character, "config")
 local ConfigStamina = GeneralUtil:Get("Configuration", ConfigFolder, "stamina")
-local ConfigSound = GeneralUtil:Get("Configuration", ConfigFolder, "sound")
 
 local IsDebugStamina = GeneralUtil:GetBool(ConfigStamina, "_DEBUG", true)
 
 local CONFIG = {
-	breathLength = GeneralUtil:GetNumber(ConfigStamina, "breath length", IsDebugStamina.Value),
+	breathLength = GeneralUtil:GetNumber(ConfigStamina, "breath cycle delay", IsDebugStamina.Value),
 
-	costRun = GeneralUtil:GetNumber(ConfigStamina, "cost run", IsDebugStamina.Value),
-	costHoldBreath = GeneralUtil:GetNumber(ConfigStamina, "cost hold breath", IsDebugStamina.Value),
-	regenAmount = GeneralUtil:GetNumber(ConfigStamina, "regen amount", IsDebugStamina.Value),
-	regenDelay = GeneralUtil:GetNumber(ConfigStamina, "regen delay", IsDebugStamina.Value),
-	staminaMax = GeneralUtil:GetNumber(ConfigStamina, "stamina max", IsDebugStamina.Value),
-	staminaMin = GeneralUtil:GetNumber(ConfigStamina, "stamina min", IsDebugStamina.Value),
+	costRun = GeneralUtil:GetNumber(ConfigStamina, "stamina cost run per tick", IsDebugStamina.Value),
+	costHoldBreath = GeneralUtil:GetNumber(ConfigStamina, "stamina cost hold breath per tick", IsDebugStamina.Value),
+	staminaInhaleIncreaseAmount = GeneralUtil:GetNumber(ConfigStamina, "stamina inhale increase amount", IsDebugStamina.Value),
+	staminaMax = GeneralUtil:GetNumber(ConfigStamina, "stamina max value", IsDebugStamina.Value),
+	staminaMin = GeneralUtil:GetNumber(ConfigStamina, "stamina min value", IsDebugStamina.Value),
 
-	rangeLow = GeneralUtil:GetVector(ConfigStamina, "range low", IsDebugStamina.Value),
-	rangeMed = GeneralUtil:GetVector(ConfigStamina, "range med", IsDebugStamina.Value),
-	rangeHigh = GeneralUtil:GetVector(ConfigStamina, "range high", IsDebugStamina.Value),
-
-	modifierStaminaMin = GeneralUtil:GetNumber(ConfigSound, "modifier stamina min", IsDebugStamina.Value),
-	modifierStaminaLow = GeneralUtil:GetNumber(ConfigSound, "modifier stamina low",  IsDebugStamina.Value),
-	modifierStaminaMed = GeneralUtil:GetNumber(ConfigSound, "modifier stamina med", IsDebugStamina.Value),
-	modifierStaminaHigh = GeneralUtil:GetNumber(ConfigSound, "modifier stamina high", IsDebugStamina.Value),
-	modifierStaminaMax = GeneralUtil:GetNumber(ConfigSound, "modifier stamina max", IsDebugStamina.Value),
+	rangeLow = GeneralUtil:GetVector(ConfigStamina, "state range low", IsDebugStamina.Value),
+	rangeMed = GeneralUtil:GetVector(ConfigStamina, "state range med", IsDebugStamina.Value),
+	rangeHigh = GeneralUtil:GetVector(ConfigStamina, "state range high", IsDebugStamina.Value),
 }
 
 local StatusFolder = GeneralUtil:Get("Folder", Character, "status")
 
 local STATUS = {
-	isInhale = GeneralUtil:GetBool(StatusFolder, "isInhale", IsDebugStamina.Value),
-	isExhale = GeneralUtil:GetBool(StatusFolder, "isExhale", IsDebugStamina.Value),
+	isBreathing = GeneralUtil:GetBool(StatusFolder, "breath isBreathing", IsDebugStamina.Value),
+	isInhale = GeneralUtil:GetBool(StatusFolder, "breath isInhale", IsDebugStamina.Value),
+	isExhale = GeneralUtil:GetBool(StatusFolder, "breath isExhale", IsDebugStamina.Value),
+	requestHoldBreath = GeneralUtil:GetBool(StatusFolder, "breath request hold breath", IsDebugStamina.Value),
 
-	isBreathing = GeneralUtil:GetBool(StatusFolder, "isBreathing", IsDebugStamina.Value),
-	isRunning = GeneralUtil:GetBool(StatusFolder, "isRunning", IsDebugStamina.Value),
-	requestHoldBreath = GeneralUtil:GetBool(StatusFolder, "request hold breath", IsDebugStamina.Value),
-	requestRun = GeneralUtil:GetBool(StatusFolder, "request run", IsDebugStamina.Value),
+	isRunning = GeneralUtil:GetBool(StatusFolder, "move isRunning", IsDebugStamina.Value),
+	requestRun = GeneralUtil:GetBool(StatusFolder, "move request run", IsDebugStamina.Value),
 
-	breathState = GeneralUtil:GetNumber(StatusFolder, "breath state", IsDebugStamina.Value),
-	staminaState = GeneralUtil:GetNumber(StatusFolder, "stamina state",IsDebugStamina.Value),
-	stamina = GeneralUtil:GetNumber(StatusFolder, "stamina", IsDebugStamina.Value),
+	breathState = GeneralUtil:GetNumber(StatusFolder, "state breath", IsDebugStamina.Value),
+	staminaState = GeneralUtil:GetNumber(StatusFolder, "state stamina",IsDebugStamina.Value),
+	stamina = GeneralUtil:GetNumber(StatusFolder, "current stamina", IsDebugStamina.Value),
 }
 
 local STATE_STAMINA = {
 	[shared.states.stamina.min] = {
 		min = CONFIG.staminaMin.Value,
 		max = CONFIG.staminaMin.Value,
-		MODIFIER = CONFIG.modifierStaminaMin.Value,
 	},
 	[shared.states.stamina.low] = {
 		min = CONFIG.rangeLow.Value.X,
 		max = CONFIG.rangeLow.Value.Y,
-		MODIFIER = CONFIG.modifierStaminaLow.Value,
 	},
 	[shared.states.stamina.med] = {
 		min = CONFIG.rangeMed.Value.X,
 		max = CONFIG.rangeMed.Value.Y,
-		MODIFIER = CONFIG.modifierStaminaMed.Value,
 	},
 	[shared.states.stamina.high] = {
 		min = CONFIG.rangeHigh.Value.X,
 		max = CONFIG.rangeHigh.Value.Y,
-		MODIFIER = CONFIG.modifierStaminaHigh.Value,
 	},
 	[shared.states.stamina.max] = {
 		min = CONFIG.staminaMax.Value,
 		max = CONFIG.staminaMax.Value,
-		MODIFIER = CONFIG.modifierStaminaMax.Value,
 	},
 }
 
@@ -126,7 +113,7 @@ end
 
 
 local function Inhale()
-	StaminaAdd += CONFIG.regenAmount.Value
+	StaminaAdd += CONFIG.staminaInhaleIncreaseAmount.Value
 	STATUS.breathState.Value = shared.states.breath.inhale
 end
 
@@ -138,7 +125,7 @@ end
 
 
 local function InhaleToHoldBreath()
-	StaminaAdd += CONFIG.regenAmount.Value
+	StaminaAdd += CONFIG.staminaInhaleIncreaseAmount.Value
 	STATUS.breathState.Value = shared.states.breath.inhaleToHoldBreath
 end
 
@@ -212,7 +199,7 @@ local function Update(deltaTime)
 		EndRun()
 	end
 
-	if STATUS.isBreathing.Value and tick() - TickLastBreath >= CONFIG.breathLength.Value-OverrideHoldBreath+math.random(0, 1) then
+	if STATUS.isBreathing.Value and tick() - TickLastBreath >= (CONFIG.breathLength.Value-OverrideHoldBreath)+math.random(0, 1) then
 		if STATUS.requestHoldBreath.Value then
 			InhaleToHoldBreath()
 		elseif STATUS.isInhale.Value then
