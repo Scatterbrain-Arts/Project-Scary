@@ -15,8 +15,6 @@ Talisman.TAG_NAME = "Talisman"
 Talisman.Collected = 0
 Talisman.Count = 0
 
-print(Players.LocalPlayer)
-
 
 function Talisman.new(talismanInstance, serviceBag)
     local self = {}
