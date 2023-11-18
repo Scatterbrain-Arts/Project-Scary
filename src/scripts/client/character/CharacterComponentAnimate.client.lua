@@ -4,22 +4,23 @@ local RunService = game:GetService("RunService")
 local packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
 
 local GeneralUtil = require(packages.GeneralUtil)
-local SignalUpdateAnimate = require(packages.PlayerEntity).animate
 
-local STATE_IDLE, STATE_IDLE_SNEAK, STATE_WALK_SNEAK, STATE_WALK, STATE_RUN = "idle", "idle_sneak", "walk", "walk_sneak", "run"
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
 
-local Character = nil
-local Humanoid = nil
+local configFolder = GeneralUtil:Get("Folder", Character, "config")
+local ConfigAnimate = GeneralUtil:Get("Configuration", configFolder, "animate")
 
-local IsDebug = false
-local State = nil
-local Animations = {}
+local IsDebug = GeneralUtil:GetBool(ConfigAnimate, "_DEBUG", true)
+
+local StatusFolder = GeneralUtil:Get("Folder", Character, "status")
+local STATUS = {
+	moveState = GeneralUtil:GetNumber(StatusFolder, "state move", IsDebug.Value),
+}
+
+local Animations = nil
 local CurrentAnimation = nil
-
-
-local function OnAnimateSignal(state)
-	State = state
-end
 
 
 local function StopAllAnimations()
@@ -41,27 +42,8 @@ local function SwitchToAnimation(name, transitionTime, humanoid)
 			CurrentAnimation.track:Stop(transitionTime)
 		end
 
-		CurrentAnimation = Animations[State]
+		CurrentAnimation = Animations[name]
 		CurrentAnimation.track:Play()
-	end
-end
-
-
-local function Update(deltaTime)
-	if not Character.Parent then return end
-
-	if State == STATE_IDLE then
-		SwitchToAnimation(State, 0.2)
-	elseif State == STATE_IDLE_SNEAK then
-		SwitchToAnimation(State, 0.2)
-	elseif State == STATE_WALK_SNEAK then
-		SwitchToAnimation(State, 0.2)
-	elseif State == STATE_WALK then
-		SwitchToAnimation(State, 0.2)
-	elseif State == STATE_RUN then
-		SwitchToAnimation(State, 0.2)
-	else
-		StopAllAnimations()
 	end
 end
 
@@ -76,12 +58,7 @@ local function ConfigureAnimations()
 		end
 	end
 
-	local configFolder = GeneralUtil:Get(Character, "config", "Folder")
-	local animateConfig = GeneralUtil:Get(configFolder, "animate", "Configuration")
-
-	IsDebug = GeneralUtil:GetBool(animateConfig, "_DEBUG", true)
-
-	for _, animation in animateConfig:GetChildren() do
+	for _, animation in ConfigAnimate:GetChildren() do
 		if animation:IsA("Animation") then
 			local track = animator:LoadAnimation(animation)
 			track.Priority = Enum.AnimationPriority.Core
@@ -92,13 +69,28 @@ local function ConfigureAnimations()
 			Animations[animation.Name].id = animation.AnimationId
 			Animations[animation.Name].weight = animation.weight or 1
 
-			if IsDebug then
+			if IsDebug.Value then
 				warn("animation: [", animation.Name, "] added...")
 			end
 		end
 	end
+end
 
-	State = STATE_IDLE
+
+local function OnMoveState(newState)
+	if newState == shared.states.move.idle then
+		SwitchToAnimation("idle", 0.2)
+	elseif newState == shared.states.move.idleCrouch then
+		SwitchToAnimation("idleCrouch", 0.2)
+	elseif newState == shared.states.move.walkCrouch then
+		SwitchToAnimation("walkCrouch", 0.2)
+	elseif newState == shared.states.move.walk then
+		SwitchToAnimation("walk", 0.2)
+	elseif newState == shared.states.move.run then
+		SwitchToAnimation("run", 0.2)
+	else
+		StopAllAnimations()
+	end
 end
 
 
@@ -106,9 +98,10 @@ local function Init()
 	Character = Players.LocalPlayer.Character or Players.LocalPlayer.CharacterAdded:Wait()
 	Humanoid = Character:WaitForChild("Humanoid")
 
+	Animations = {}
+
 	ConfigureAnimations()
 
-	RunService.Heartbeat:Connect(Update)
-	SignalUpdateAnimate:Connect(OnAnimateSignal)
+	STATUS.moveState.Changed:Connect(OnMoveState)
 end
 Init()

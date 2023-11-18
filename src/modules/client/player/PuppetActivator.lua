@@ -13,7 +13,7 @@ local PuppetManuelOverrideEvent = GetRemoteEvent("PuppetManuelOverrideEvent")
 local LocalPlayer = Players.LocalPlayer
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	if input.KeyCode== Enum.KeyCode.E then
+	if input.KeyCode== Enum.KeyCode.O then
 		PuppetManuelOverrideEvent:FireServer()
 	end
 end)
