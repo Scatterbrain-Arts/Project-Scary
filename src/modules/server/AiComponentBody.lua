@@ -51,6 +51,8 @@ function AiComponentBody.new(entity, serviceBag)
 		description = "next",
 	}
 
+	print(self.navigationCurrent.path:GetChildren(), self.navigationNext.path:GetChildren())
+
 	if self.entity.config["entity"].isDebug then
 		
 		self.entity.debug:CreateRangeSphere("attack", self.entity.root, self.entity.config["body"].attackRange,  Color3.fromRGB(255,0,0))

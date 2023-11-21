@@ -87,6 +87,8 @@ function AiComponentMind:SoundRecieved(sound)
 	if sound.decibel < distance then
 		--print("Sound Not Heard...", " Distance is ", distance, "...")
 		return
+	else
+		return
 	end
 	
 	local objective

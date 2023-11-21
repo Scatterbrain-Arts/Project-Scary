@@ -17,8 +17,8 @@ function btTask.start(obj)
 	if Blackboard.isObjective then
 		self.body:FindPath(self.body.navigationCurrent.waypoints[self.body.navigationCurrent.currentIndex].Position, self.mind.objective.position, self.body.navigationNext)
 
-		self.body.navigationNext.currentIndex = 2
-		self.body.navigationNext.nextIndex = 3
+		self.body.navigationNext.currentIndex = 1
+		self.body.navigationNext.nextIndex = 2
 	end
 end
 
