@@ -44,7 +44,6 @@ function AiComponentBody.new(entity, serviceBag)
 
 	if self.entity.config["entity"].isDebug then
 		
-		self.entity.debug:CreateRangeSphere("attack", self.entity.root, self.entity.config["body"].attackRange,  Color3.fromRGB(255,0,0))
 		self.entity.debug:CreateAgentCylinder("agent", self.entity.root, self.entity.config["body"].navigation.AgentRadius,
 											self.entity.config["body"].navigation.AgentHeight, Color3.fromRGB(255, 255, 0))
 	end
@@ -98,13 +97,8 @@ end
 function AiComponentBody:StopPathing()
 	self.maid:DoCleaning()
 
-	self.navigationCurrent.waypoints = {}
-	self.navigationCurrent.currentIndex = 1
-	self.navigationCurrent.nextIndex = 2
-
-	self.navigationNext.waypoints = {}
-	self.navigationNext.currentIndex = 1
-	self.navigationNext.nextIndex = 2
+	self.navigation.waypoints = {}
+	self.navigation.currentIndex = 1
 
 	self.entity.humanoid:MoveTo(self.entity.root.Position)
 end

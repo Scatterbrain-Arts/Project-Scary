@@ -33,7 +33,7 @@ function AiComponentMind.new(entity, serviceBag)
 		soundFoundRange = AiHelper:GetValue(self.entity.character, "statSoundFoundRange", self.entity.config["entity"].isDebug) or 50,
 	}
 
-    self.AIService = serviceBag:GetService(require("AiService"))
+    self.AIService = serviceBag:GetService(require("AIService"))
 
 	self.hostileTime = 0
 	self.memoryForgetTime = 3

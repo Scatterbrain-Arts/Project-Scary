@@ -12,7 +12,6 @@ local AiDebug = require("AiDebug")
 local AiHelper = require("AiHelper")
 local AiComponentBody = require("AiComponentBody")
 local AiComponentMind = require("AiComponentMind")
-local AiComponentSoul = require("AiComponentSoul")
 
 local PuppetManuelOverrideEvent = GetRemoteEvent("PuppetManuelOverrideEvent")
 
@@ -44,32 +43,31 @@ function AiEntity.new(aiInstance, serviceBag)
 
 	self.body = AiComponentBody.new(self, serviceBag)
 	self.mind = AiComponentMind.new(self, serviceBag)
-	self.soul = AiComponentSoul.new(self, serviceBag)
 
 	AiHelper:SetNetworkOwner(self.character, nil)
 
 
-	self.btRoot = BehaviorTreeCreator:Create(ServerStorage.BehaviorTrees.MOB_Start, self)
-	self.btState = {
-		self = self,
-		Blackboard = {
-			isObjective = false,
-			isPath = false,
-			isNear = false,
-			isMoving = false,
-			isAttacking = false,
-		},
-	}
+	-- self.btRoot = BehaviorTreeCreator:Create(ServerStorage.BehaviorTrees.MOB_Start, self)
+	-- self.btState = {
+	-- 	self = self,
+	-- 	Blackboard = {
+	-- 		isObjective = false,
+	-- 		isPath = false,
+	-- 		isNear = false,
+	-- 		isMoving = false,
+	-- 		isAttacking = false,
+	-- 	},
+	-- }
 
-    RunService.Heartbeat:Connect(function(time, deltaTime)
-		if not self.config["entity"].isOverride then
-			self.btRoot:Run(self.btState)
+    -- RunService.Heartbeat:Connect(function(time, deltaTime)
+	-- 	if not self.config["entity"].isOverride then
+	-- 		self.btRoot:Run(self.btState)
 
-			if self.config["entity"].isDebug then
-				self.debug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name)
-			end
-		end
-	end)
+	-- 		if self.config["entity"].isDebug then
+	-- 			self.debug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name)
+	-- 		end
+	-- 	end
+	-- end)
 
 	PuppetManuelOverrideEvent.OnServerEvent:Connect(function()
 		self.config["entity"].isOverride = not self.config["entity"].isOverride
