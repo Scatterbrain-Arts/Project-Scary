@@ -35,23 +35,12 @@ function AiComponentBody.new(entity, serviceBag)
 		attackCooldown = AiHelper:GetValue(self.entity.character, "statAttackCooldown", self.entity.config["entity"].isDebug) or 2,
 	}
 
-    self.navigationCurrent = {
+    self.navigation = {
 		path = PathfindingService:CreatePath(self.entity.config["body"].navigation),
 		waypoints = {},
 		currentIndex = 1,
-		nextIndex = 2,
-		description = "current",
 	}
 
-	self.navigationNext = {
-		path = PathfindingService:CreatePath(self.entity.config["body"].navigation),
-		waypoints = {},
-		currentIndex = 1,
-		nextIndex = 2,
-		description = "next",
-	}
-
-	print(self.navigationCurrent.path:GetChildren(), self.navigationNext.path:GetChildren())
 
 	if self.entity.config["entity"].isDebug then
 		
@@ -65,9 +54,9 @@ end
 
 
 
-function AiComponentBody:FindPath(startLocation, targetLocation, navigation)
+function AiComponentBody:FindPath(startLocation, targetLocation)
     local success, errorMessage = pcall(function()
-        navigation.path:ComputeAsync(startLocation, targetLocation)
+        self.navigation.path:ComputeAsync(startLocation, targetLocation)
     end)
 
 	if not success then
@@ -75,40 +64,32 @@ function AiComponentBody:FindPath(startLocation, targetLocation, navigation)
 		return false
 	end
 
-	if navigation.path.Status ~= Enum.PathStatus.Success then
-		warn(navigation.path.Status)
+	if self.navigation.path.Status ~= Enum.PathStatus.Success then
+		warn(self.navigation.path.Status)
 		return false
 	end
 
-	navigation.waypoints = navigation.path:GetWaypoints()
-	navigation.currentIndex = 1
-	navigation.nextIndex = 2
+	self.navigation.waypoints = self.navigation.path:GetWaypoints()
+	self.navigation.currentIndex = 1
+
 
 	if self.entity.config["entity"].isDebug then
-		self.entity.debug:CreatePathNext(navigation.waypoints)
+		self.entity.debug:CreatePathCurrent()
 	end
 
 	return true
 end
 
 
-function AiComponentBody:MoveToNextIndex(isDrawing)
+function AiComponentBody:MoveToNextIndex()
 
-	if #self.navigationNext.waypoints <= 0 then
-		warn("Navigation Next has no path...")
+	if #self.navigation.waypoints <= 0 then
+		warn("Navigation has no path...")
 		return false
 	end
 
-	self.navigationCurrent.waypoints = self.navigationNext.waypoints
-	self.navigationCurrent.currentIndex = self.navigationNext.currentIndex
-	self.navigationCurrent.nextIndex = self.navigationNext.nextIndex
-
-	if self.navigationCurrent.waypoints[self.navigationCurrent.nextIndex] then
-		self.entity.humanoid:MoveTo(self.navigationCurrent.waypoints[self.navigationCurrent.nextIndex].Position)
-	end
-
-	if isDrawing and self.entity.config["entity"].isDebug  then
-		self.entity.debug:CreatePathCurrent()
+	if self.navigation.waypoints[self.navigation.currentIndex+1] then
+		self.entity.humanoid:MoveTo(self.navigation.waypoints[self.navigation.currentIndex].Position)
 	end
 
 	return true
