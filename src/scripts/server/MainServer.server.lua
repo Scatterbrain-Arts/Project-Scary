@@ -3,7 +3,7 @@ local Loader = ServerScriptService:FindFirstChild("LoaderUtils", true).Parent
 local Packages = require(Loader).bootstrapGame(ServerScriptService.NevermoreEngine)
 
 local ServiceBag = require(Packages.ServiceBag).new()
-ServiceBag:GetService(Packages.AiService)
+ServiceBag:GetService(Packages.AIService)
 
 ServiceBag:Init()
 ServiceBag:Start()
