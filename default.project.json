@@ -13,7 +13,7 @@
           "$path": "src/game"
         },
         "packages": {
-          "$path": "node_modules"
+          "$path": "node_modules/@quenty"
         }
       },
 
@@ -34,6 +34,10 @@
           "$path": "src/scripts/client/character"
         }
       }
+    },
+
+    "ReplicatedStorage": {
+        "$path": "src/trees"
     }
   }
 }

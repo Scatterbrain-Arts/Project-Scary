@@ -4,6 +4,9 @@
   "description": "Roblox scary game",
   "main": "index.js",
   "scripts": {
+    "rojo-sync-trees": "node behavior_trees_watcher.js",
+    "rojo-game": "rojo serve default.project.json",
+    "sync": "concurrently --kill-others-on-fail \"npm:rojo-*\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -16,5 +19,9 @@
     "@quenty/remoting": "^6.11.0",
     "@quenty/servicebag": "^6.9.0",
     "@quenty/spring": "^6.4.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "md5": "^2.3.0"
   }
 }
