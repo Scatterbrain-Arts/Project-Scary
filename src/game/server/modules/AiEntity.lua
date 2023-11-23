@@ -1,3 +1,4 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -13,7 +14,7 @@ local AiHelper = require("AiHelper")
 local AiComponentBody = require("AiComponentBody")
 local AiComponentMind = require("AiComponentMind")
 
-local PuppetManuelOverrideEvent = GetRemoteEvent("PuppetManuelOverrideEvent")
+-- local PuppetManuelOverrideEvent = GetRemoteEvent("PuppetManuelOverrideEvent")
 
 local AiEntity = {}
 AiEntity.__index = AiEntity
@@ -44,41 +45,41 @@ function AiEntity.new(aiInstance, serviceBag)
 	self.body = AiComponentBody.new(self, serviceBag)
 	self.mind = AiComponentMind.new(self, serviceBag)
 
-	AiHelper:SetNetworkOwner(self.character, nil)
+	-- AiHelper:SetNetworkOwner(self.character, nil)
 
 
-	-- self.btRoot = BehaviorTreeCreator:Create(ServerStorage.BehaviorTrees.MOB_Start, self)
-	-- self.btState = {
-	-- 	self = self,
-	-- 	Blackboard = {
-	-- 		isObjective = false,
-	-- 		isPath = false,
-	-- 		isNear = false,
-	-- 		isMoving = false,
-	-- 		isAttacking = false,
-	-- 	},
-	-- }
+	self.btRoot = BehaviorTreeCreator:Create(ReplicatedStorage.Trees.PS_NPC_Start, self)
+	self.btState = {
+		self = self,
+		Blackboard = {
+			isObjective = false,
+			isPath = false,
+			isNear = false,
+			isMoving = false,
+			isAttacking = false,
+		},
+	}
 
-    -- RunService.Heartbeat:Connect(function(time, deltaTime)
-	-- 	if not self.config["entity"].isOverride then
-	-- 		self.btRoot:Run(self.btState)
+    RunService.Heartbeat:Connect(function(time, deltaTime)
+		if not self.config["entity"].isOverride then
+			self.btRoot:Run(self.btState)
 
-	-- 		if self.config["entity"].isDebug then
-	-- 			self.debug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name)
-	-- 		end
-	-- 	end
-	-- end)
-
-	PuppetManuelOverrideEvent.OnServerEvent:Connect(function()
-		self.config["entity"].isOverride = not self.config["entity"].isOverride
-
-		self.character:SetAttribute("_OVERRIDE", self.config["entity"].isOverride)
-		if self.config["entity"].isOverride then
-			warn("Manuel Override ENABLED for", self.name, "...")
-		elseif self.config["entity"].isOverride == false then
-			warn("Manuel Override DISABLED for", self.name, "...")
+			if self.config["entity"].isDebug then
+				self.debug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name)
+			end
 		end
 	end)
+
+	-- PuppetManuelOverrideEvent.OnServerEvent:Connect(function()
+	-- 	self.config["entity"].isOverride = not self.config["entity"].isOverride
+
+	-- 	self.character:SetAttribute("_OVERRIDE", self.config["entity"].isOverride)
+	-- 	if self.config["entity"].isOverride then
+	-- 		warn("Manuel Override ENABLED for", self.name, "...")
+	-- 	elseif self.config["entity"].isOverride == false then
+	-- 		warn("Manuel Override DISABLED for", self.name, "...")
+	-- 	end
+	-- end)
 
 	self.player = nil
 	self.playerCharacter = nil

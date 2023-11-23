@@ -18,7 +18,7 @@ local Talismans = require(Packages.Talismans)
 
 
 AiEntity.BINDER = Binder.new(AiEntity.TAG_NAME, AiEntity, ServiceBag)
-AiEntity.BINDER:Start()
+-- AiEntity.BINDER:Start()
 
 Locks.BINDER = Binder.new(Locks.TAG_NAME, Locks, ServiceBag)
 Locks.BINDER:Start()
