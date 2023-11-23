@@ -5,11 +5,12 @@
     "$className": "DataModel",
 
     "ServerScriptService": {
-      "NevermoreEngine": {
+      "$className": "ServerScriptService",
+      "src": {
         "$className": "Folder",
         
-        "game": {
-          "$path": "src/modules"
+        "Game": {
+          "$path": "src/game"
         },
         "packages": {
           "$path": "node_modules"
@@ -17,7 +18,7 @@
       },
 
       "Main": {
-        "$path": "src/scripts/server"
+        "$path": "src/scripts/server/main"
       }
     },
     
