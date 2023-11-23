@@ -5,6 +5,7 @@ local require = require(script.Parent.loader).load(script)
 local Maid = require("Maid")
 
 local AiHelper = require("AiHelper")
+local NavigationUtil = require("NavigationUtil")
 
 local AiComponentBody = {}
 AiComponentBody.__index = AiComponentBody
@@ -35,12 +36,7 @@ function AiComponentBody.new(entity, serviceBag)
 		attackCooldown = AiHelper:GetValue(self.entity.character, "statAttackCooldown", self.entity.config["entity"].isDebug) or 2,
 	}
 
-    self.navigation = {
-		path = PathfindingService:CreatePath(self.entity.config["body"].navigation),
-		waypoints = {},
-		currentIndex = 1,
-	}
-
+    self.navigation = NavigationUtil.new(self.entity.config["body"].navigation)
 
 	if self.entity.config["entity"].isDebug then
 		

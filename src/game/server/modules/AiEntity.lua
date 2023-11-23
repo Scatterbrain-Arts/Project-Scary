@@ -57,6 +57,9 @@ function AiEntity.new(aiInstance, serviceBag)
 			isNear = false,
 			isMoving = false,
 			isAttacking = false,
+			defaultWaitTime = 5,
+			player = Players.LocalPlayer,
+			targetPosition = Vector3.new(math.huge, math.huge, math.huge)
 		},
 	}
 
