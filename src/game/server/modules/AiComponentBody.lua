@@ -36,7 +36,7 @@ function AiComponentBody.new(entity, serviceBag)
 		attackCooldown = AiHelper:GetValue(self.entity.character, "statAttackCooldown", self.entity.config["entity"].isDebug) or 2,
 	}
 
-    self.navigation = NavigationUtil.new(self.entity.config["body"].navigation)
+    self.navigation = NavigationUtil.new(self.entity.config["body"].navigation, self.entity.humanoid)
 
 	if self.entity.config["entity"].isDebug then
 		

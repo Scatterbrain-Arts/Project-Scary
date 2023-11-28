@@ -427,7 +427,7 @@
                 <bool name="DefinesCapabilities">false</bool>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <int64 name="Value">4</int64>
+                <int64 name="Value">2</int64>
               </Properties>
             </Item>
           </Item>
@@ -552,7 +552,7 @@ return btTask
                 <bool name="DefinesCapabilities">false</bool>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <int64 name="Value">1</int64>
+                <int64 name="Value">3</int64>
               </Properties>
             </Item>
           </Item>
@@ -569,6 +569,7 @@ return btTask
               <string name="Source"><![CDATA[local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
+local searchRange = 50
 
 local function IsPlayerInRangeOfNPC(plr, npc, range)
 	local playerPosition = plr.Character.PrimaryPart.Position
@@ -581,7 +582,7 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	wasFound, Blackboard.targetPosition = IsPlayerInRangeOfNPC(Blackboard.player, self, 20)
+	wasFound, Blackboard.targetPosition = IsPlayerInRangeOfNPC(Blackboard.player, self, searchRange)
 end
 
 
@@ -820,21 +821,34 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	self.body.navigation:FindPath(self.root.Position, Blackboard.targetPosition)
+	local result = self.body.navigation:FindPath(self.root.Position, Blackboard.targetPosition)
+	
+	if not result then
+		return FAIL
+	end	
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+	
 end
 
 
 function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
-
-	return SUCCESS
+	
+	local result = self.body.navigation:MoveToTarget()
+	
+	if result == "RUNNING" then
+		return RUNNING
+	elseif result == "SUCCESS" then
+		return SUCCESS
+	else
+		return FAIL
+	end
 end
 
 

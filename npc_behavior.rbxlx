@@ -92,18 +92,18 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>7.04912519</X>
-					<Y>11.8364449</Y>
-					<Z>9.18550301</Z>
-					<R00>0.728965878</R00>
-					<R01>0.187534809</R01>
-					<R02>-0.658361197</R02>
-					<R10>1.49011612e-08</R10>
-					<R11>0.961742997</R11>
-					<R12>0.273953408</R12>
-					<R20>0.684550047</R20>
-					<R21>-0.199702695</R21>
-					<R22>0.701077819</R22>
+					<X>12.7230806</X>
+					<Y>5.92185593</Y>
+					<Z>-3.37729359</Z>
+					<R00>0.728965759</R00>
+					<R01>0.187534854</R01>
+					<R02>-0.658361375</R02>
+					<R10>-0</R10>
+					<R11>0.961743116</R11>
+					<R12>0.273953378</R12>
+					<R20>0.684550226</R20>
+					<R21>-0.199702635</R21>
+					<R22>0.701077759</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
@@ -112,9 +112,9 @@
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>8.36585236</X>
-					<Y>11.2885361</Y>
-					<Z>7.78334236</Z>
+					<X>14.0398083</X>
+					<Y>5.37394714</Y>
+					<Z>-4.77945423</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -1715,7 +1715,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<BinaryString name="Tags"></BinaryString>
 									<UniqueId name="UniqueId">01705bfc31d7d8080570511b000044d5</UniqueId>
-									<int64 name="Value">4</int64>
+									<int64 name="Value">2</int64>
 								</Properties>
 							</Item>
 						</Item>
@@ -1854,7 +1854,7 @@ return btTask
 									<int64 name="SourceAssetId">-1</int64>
 									<BinaryString name="Tags"></BinaryString>
 									<UniqueId name="UniqueId">01705bfc31d7d8080570511b0000685f</UniqueId>
-									<int64 name="Value">1</int64>
+									<int64 name="Value">3</int64>
 								</Properties>
 							</Item>
 						</Item>
@@ -1870,6 +1870,7 @@ return btTask
 								<ProtectedString name="Source"><![CDATA[local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
+local searchRange = 50
 
 local function IsPlayerInRangeOfNPC(plr, npc, range)
 	local playerPosition = plr.Character.PrimaryPart.Position
@@ -1882,7 +1883,7 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	wasFound, Blackboard.targetPosition = IsPlayerInRangeOfNPC(Blackboard.player, self, 20)
+	wasFound, Blackboard.targetPosition = IsPlayerInRangeOfNPC(Blackboard.player, self, searchRange)
 end
 
 
@@ -2155,21 +2156,34 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	self.body.navigation:FindPath(self.root.Position, Blackboard.targetPosition)
+	local result = self.body.navigation:FindPath(self.root.Position, Blackboard.targetPosition)
+	
+	if not result then
+		return FAIL
+	end	
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+	
 end
 
 
 function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
-
-	return SUCCESS
+	
+	local result = self.body.navigation:MoveToTarget()
+	
+	if result == "RUNNING" then
+		return RUNNING
+	elseif result == "SUCCESS" then
+		return SUCCESS
+	else
+		return FAIL
+	end
 end
 
 

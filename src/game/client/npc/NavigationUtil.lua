@@ -1,11 +1,12 @@
 local PathfindingService = game:GetService("PathfindingService")
+local Players = game:GetService("Players")
 local navigation = {}
 navigation.__index = navigation
 
 local require = require(script.Parent.loader).load(script)
 local GeneralUtil = require("GeneralUtil")
 
-function navigation.new(pathData)
+function navigation.new(pathData, humanoid)
     local self = {}
     setmetatable(self, navigation)
 
@@ -23,7 +24,7 @@ function navigation.new(pathData)
 
 	self.waypointsFolder = Instance.new("Folder", workspaceFolder)
 	self.waypointsFolder.Name = "waypoints"
-
+    self.aiHumanoid = humanoid
 
     self.waypoints = {}
 
@@ -41,7 +42,7 @@ local function ComputePath(path, startPosition, targetPosition)
     if success and path.Status == Enum.PathStatus.Success then
         return true
     else
-        print("Success: " .. " PathStatus: " .. path.Status)
+        print("PathStatus: ", path.Status)
         return false
     end
 end
@@ -49,20 +50,84 @@ end
 
 function navigation:FindPath(startPosition, targetPosition)
     local tries = 0
+    local hasFoundPath
+    self.finalTargetPosition = targetPosition
     repeat
-        local hasFoundPath = ComputePath(self.path, startPosition, targetPosition)
+        hasFoundPath = ComputePath(self.path, startPosition, targetPosition)
         
         tries+=1
-        print("try " .. tries)
+        print("try to make path" .. tries)
+    until hasFoundPath or tries >= 3
 
-        task.wait(1)
-    until hasFoundPath
-
-    self.waypoints = self.path:GetWaypoints()
-    self:DebugShowWaypoints()
+    if hasFoundPath then
+        self.waypoints = self.path:GetWaypoints()
+        self.index = 1
+        self:DebugShowWaypoints()
+    end
+end
+local function IsDistanceInRange(pos1, pos2, range)
+	return(pos1 - pos2).Magnitude <= range
 end
 
+function navigation:MoveToTarget()
+    local humanoid = self.aiHumanoid
 
+    if self.targetReached then 
+        self.targetReached = false
+        return "SUCCESS"
+    end
+    
+    if self.isMoving then
+        local playerPosition = Players.LocalPlayer.Character.PrimaryPart.Position
+        if IsDistanceInRange(playerPosition, self.finalTargetPosition, 5.0) then
+            return "RUNNING"
+        else
+            self.isMoving = false
+
+            self:FindPath(self.waypoints[self.index].Position, playerPosition)
+        end
+    end
+
+
+    
+    local targetPosition = self.waypoints[self.index].Position
+
+    self.moveToFinished = humanoid.MoveToFinished:Connect(function(reached)
+        print(self.index,#self.waypoints, reached)
+        if self.index < #self.waypoints then
+            self.index = self.index + 1
+            targetPosition = self.waypoints[self.index].Position
+            humanoid:MoveTo(targetPosition)
+        else
+            print("Finished")
+            if self.moveToFinished then self.moveToFinished:Disconnect() end
+            self.moveToFinished = nil
+            self.isMoving = false
+            self.targetReached = true
+        end
+    end)
+
+    humanoid:MoveTo(targetPosition)
+    self.isMoving = true
+    self.targetReached = false
+    return "RUNNING"
+end
+
+function navigation:CancelMoveTo()
+    print("Cancel")
+    if self.moveToFinished then
+        print("Disconnect")
+        self.moveToFinished:Disconnect()
+    end
+    self.moveToFinished = nil
+    self.isMoving = false
+    self.targetReached = false
+    self.aiHumanoid:MoveTo(self.aiHumanoid.RootPart.Position)
+end
+
+function navigation:MoveToIndex(index)
+
+end
 
 function navigation:DebugShowWaypoints()
     for _, waypointPart in pairs(self.waypointsFolder:GetChildren()) do
