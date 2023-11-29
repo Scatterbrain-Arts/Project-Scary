@@ -92,18 +92,18 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>12.7230806</X>
-					<Y>5.92185593</Y>
-					<Z>-3.37729359</Z>
-					<R00>0.728965759</R00>
-					<R01>0.187534854</R01>
-					<R02>-0.658361375</R02>
+					<X>12.8986969</X>
+					<Y>5.67460585</Y>
+					<Z>-6.3942318</Z>
+					<R00>-0.81666553</R00>
+					<R01>0.0867563561</R01>
+					<R02>-0.570553005</R02>
 					<R10>-0</R10>
-					<R11>0.961743116</R11>
-					<R12>0.273953378</R12>
-					<R20>0.684550226</R20>
-					<R21>-0.199702635</R21>
-					<R22>0.701077759</R22>
+					<R11>0.988636076</R11>
+					<R12>0.150328651</R12>
+					<R20>0.577111244</R20>
+					<R21>0.122768231</R21>
+					<R22>-0.807385027</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
@@ -1557,7 +1557,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fc0</UniqueId>
-								<string name="Value"></string>
+								<string name="Value">0.5055295003184529,0,0.4959876543209877,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBX85B3D59E7EE74DC2BE3DDA019AA5E2BF">
@@ -1571,7 +1571,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fc1</UniqueId>
 							</Properties>
-							<Item class="ObjectValue" referent="RBXBC50EF1C15E349D4859B6663C6187C4C">
+							<Item class="ObjectValue" referent="RBX3B939A5AB7EE4D3082E8D80EE45C518F">
 								<Properties>
 									<BinaryString name="AttributesSerialize"></BinaryString>
 									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -1580,7 +1580,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 									<string name="Name">1</string>
 									<int64 name="SourceAssetId">-1</int64>
 									<BinaryString name="Tags"></BinaryString>
-									<UniqueId name="UniqueId">01705bfc31d7d8080570511b0000940f</UniqueId>
+									<UniqueId name="UniqueId">6997e0364567620b0578389f000096db</UniqueId>
 									<Ref name="Value">RBX2DFBA6CB1A8949669AAE481B069C7F08</Ref>
 								</Properties>
 							</Item>
@@ -1662,7 +1662,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">01705bfc31d7d8080570511b000044d1</UniqueId>
-								<string name="Value">0.5193398993528748,0,0.5346030131420394,0</string>
+								<string name="Value">0.5203815509018007,0,0.5216401527938529,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBX150A60216E0F4086B1A942DA32A1ED20">
@@ -1801,7 +1801,7 @@ return btTask
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">01705bfc31d7d8080570511b0000685b</UniqueId>
-								<string name="Value">0.4974312227921145,0,0.535363519552658,0</string>
+								<string name="Value">0.497083882935991,0,0.5217835226176698,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBXADCDA94DD11343848B871DD612006FA3">
@@ -1870,26 +1870,29 @@ return btTask
 								<ProtectedString name="Source"><![CDATA[local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
-local searchRange = 50
 
-local function IsPlayerInRangeOfNPC(plr, npc, range)
-	local playerPosition = plr.Character.PrimaryPart.Position
-	return (playerPosition - npc.root.Position).Magnitude < range, playerPosition
-end
-
-local wasFound = false
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	wasFound, Blackboard.targetPosition = IsPlayerInRangeOfNPC(Blackboard.player, self, searchRange)
+	print(Blackboard.player)
+	if not Blackboard.target and Blackboard.player.Character then
+		Blackboard.target = Blackboard.player
+		Blackboard.targetPosition = Blackboard.player.Character.PrimaryPart.Position
+	end
+	
+	if Blackboard.target == Blackboard.player and Blackboard.player.Character then
+		Blackboard.targetPosition = Blackboard.player.Character.PrimaryPart.Position
+	end
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+	
+	print("FindTarget:", Blackboard.target)
 	
 end
 
@@ -1898,11 +1901,9 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	if wasFound then 
-		print("I found you in my range")
+	if Blackboard.target then 
 		return SUCCESS
 	else
-		print("I didn't find you.")
 		return FAIL
 	end
 end
@@ -1922,7 +1923,7 @@ return btTask
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-							<string name="Name">Sequence1</string>
+							<string name="Name">Move Check</string>
 							<int64 name="SourceAssetId">-1</int64>
 							<BinaryString name="Tags"></BinaryString>
 							<UniqueId name="UniqueId">01705bfc31d7d8080570511b0000698a</UniqueId>
@@ -1950,7 +1951,7 @@ return btTask
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">01705bfc31d7d8080570511b0000698c</UniqueId>
-								<string name="Value">0.5110208832811047,0,0.5184124407272503,0</string>
+								<string name="Value">0.5055198879262927,0,0.5103875305426955,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBX0F5EC988EACE46EFAF18A8DB1932A2B7">
@@ -1977,19 +1978,6 @@ return btTask
 									<Ref name="Value">RBX2CF33F9E0AFC455C827D3058A941D2C8</Ref>
 								</Properties>
 							</Item>
-							<Item class="ObjectValue" referent="RBX8B55E5E627684AC9A4AB33776CB118EE">
-								<Properties>
-									<BinaryString name="AttributesSerialize"></BinaryString>
-									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-									<bool name="DefinesCapabilities">false</bool>
-									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-									<string name="Name">1</string>
-									<int64 name="SourceAssetId">-1</int64>
-									<BinaryString name="Tags"></BinaryString>
-									<UniqueId name="UniqueId">01705bfc31d7d8080570511b0000cf11</UniqueId>
-									<Ref name="Value">RBXAD5F849C6D0D4303A1C7A71F23F5368E</Ref>
-								</Properties>
-							</Item>
 							<Item class="ObjectValue" referent="RBXC74E6EA4DF274D6DA1CCD74BBC34B545">
 								<Properties>
 									<BinaryString name="AttributesSerialize"></BinaryString>
@@ -2001,6 +1989,19 @@ return btTask
 									<BinaryString name="Tags"></BinaryString>
 									<UniqueId name="UniqueId">01705bfc31d7d8080570511b0000ffa2</UniqueId>
 									<Ref name="Value">RBX03203BA1E92946F394A5099AD95B1ABB</Ref>
+								</Properties>
+							</Item>
+							<Item class="ObjectValue" referent="RBXCEA967E3CF1B4306A9413BB494AD1FF5">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+									<string name="Name">1</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<UniqueId name="UniqueId">6997e0364567620b0578389f00017b18</UniqueId>
+									<Ref name="Value">RBXAD5F849C6D0D4303A1C7A71F23F5368E</Ref>
 								</Properties>
 							</Item>
 						</Item>
@@ -2081,7 +2082,7 @@ return btTask
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">01705bfc31d7d8080570511b0000e9f0</UniqueId>
-								<string name="Value">0.5081482717884539,0,0.5348959590925982,0</string>
+								<string name="Value">0.5086692468588964,0,0.5221387321566358,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBXC3375FE775C348D1BEE0DE20D908E449">
@@ -2151,16 +2152,19 @@ return btTask
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
+local isMoving = false
+local isTargetReached = false
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	local result = self.body.navigation:FindPath(self.root.Position, Blackboard.targetPosition)
+	if not Blackboard.target then
+		return
+	end
 	
-	if not result then
-		return FAIL
-	end	
+	Blackboard.isTargetReached = false
+	Blackboard.isMoving = self.navigation:Move(Blackboard.targetPosition)
 end
 
 
@@ -2175,11 +2179,23 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	local result = self.body.navigation:MoveToTarget()
+	if not Blackboard.isMoving then
+		return FAIL
+	end
 	
-	if result == "RUNNING" then
+	Blackboard.isTargetReached = self.navigation.isTargetReached
+	
+	
+	if Blackboard.player.Character then
+		if (Blackboard.player.Character.PrimaryPart.Position - Blackboard.targetPosition).Magnitude > 15 then
+			return FAIL
+		end
+	end
+	
+	if not isTargetReached then
 		return RUNNING
-	elseif result == "SUCCESS" then
+	
+	elseif isTargetReached then
 		return SUCCESS
 	else
 		return FAIL
@@ -2206,7 +2222,7 @@ return btTask
 						<int64 name="SourceAssetId">-1</int64>
 						<BinaryString name="Tags"></BinaryString>
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fbb</UniqueId>
-						<double name="Value">0.59999990463256835938</double>
+						<double name="Value">1</double>
 					</Properties>
 				</Item>
 				<Item class="Vector3Value" referent="RBX64E548E1159F479594153E7559EB3504">
@@ -2221,7 +2237,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fbc</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-248</Y>
+							<Y>-351</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -2238,7 +2254,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fbd</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-161</Y>
+							<Y>-378</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>

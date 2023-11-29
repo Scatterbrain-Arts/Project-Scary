@@ -1,146 +1,129 @@
 local PathfindingService = game:GetService("PathfindingService")
-local Players = game:GetService("Players")
-local navigation = {}
-navigation.__index = navigation
 
 local require = require(script.Parent.loader).load(script)
+
 local GeneralUtil = require("GeneralUtil")
 
-function navigation.new(pathData, humanoid)
+local NavigationUtil = {}
+NavigationUtil.__index = NavigationUtil
+
+function NavigationUtil.new(npc)
     local self = {}
-    setmetatable(self, navigation)
+    setmetatable(self, NavigationUtil)
+
+    self.npc = npc
+
+    local configFolder = GeneralUtil:Get("Folder", self.npc.character, "config")
+	local configNavigation = GeneralUtil:Get("Configuration", configFolder, "navigation")
+
+    local isDebug = GeneralUtil:GetBool(configNavigation, "_isDebug", true)
+
+    self.npc.config["AgentRadius"] = GeneralUtil:GetNumber(configNavigation, "agentWidth", isDebug.Value)
+    self.npc.config["AgentHeight"] = GeneralUtil:GetNumber(configNavigation, "agentHeight", isDebug.Value)
+    self.npc.config["AgentCanJump"] = GeneralUtil:GetBool(configNavigation, "agentCanJump", isDebug.Value)
+    self.npc.config["AgentCanClimb"] = GeneralUtil:GetBool(configNavigation, "agentCanClimb", isDebug.Value)
+    self.npc.config["WaypointSpacing"] = GeneralUtil:GetNumber(configNavigation, "waypointSpacing", isDebug.Value)
 
     self.path = PathfindingService:CreatePath({
-        AgentRadius = (pathData.AgentWidth or 4)/2,
-        AgentHeight = pathData.AgentHeight or 5,
-        AgentCanJump = pathData.AgentCanJump or false,
-        AgentCanClimb = pathData.AgentCanClimb or false,
-        WaypointSpacing = pathData.WaypointSpacing or 4,
-        Costs = pathData.Costs or {Plastic = 1}
+        AgentRadius = self.npc.config["AgentRadius"].Value/2,
+        AgentHeight = self.npc.config["AgentHeight"].Value,
+        AgentCanJump = self.npc.config["AgentCanJump"].Value,
+        AgentCanClimb = self.npc.config["AgentCanClimb"].Value,
+        WaypointSpacing = self.npc.config["WaypointSpacing"].Value,
+        Costs = {
+            Plastic = 1,
+        },
     })
 
-    local workspaceFolder = Instance.new("Folder", workspace)
-    workspaceFolder.Name = "NavigationDebug"
-
-	self.waypointsFolder = Instance.new("Folder", workspaceFolder)
-	self.waypointsFolder.Name = "waypoints"
-    self.aiHumanoid = humanoid
+    if isDebug.Value and self.npc.config.isDebug.Value then
+        self.npc.npcDebug:CreateAgentCylinder("agent", self.npc.root, self.npc.config["AgentRadius"].Value, self.npc.config["AgentHeight"].Value, Color3.fromRGB(255, 255, 0))
+    end
 
     self.waypoints = {}
+    self.index = nil
+    self.isTargetReached = false
+    self.moveConnection = nil
 
     return self
 end
 
 
-
+local function IsDistanceInRange(pos1, pos2, range)
+	return (pos1 - pos2).Magnitude <= range
+end
 
 
 local function ComputePath(path, startPosition, targetPosition)
     local success, errorMessage = pcall(function()
         path:ComputeAsync(startPosition, targetPosition)
     end)
+
     if success and path.Status == Enum.PathStatus.Success then
         return true
     else
-        print("PathStatus: ", path.Status)
+        print("path status: ", path.Status)
         return false
     end
 end
 
 
-function navigation:FindPath(startPosition, targetPosition)
+local function FindPath(path, startPosition, targetPosition)
     local tries = 0
-    local hasFoundPath
-    self.finalTargetPosition = targetPosition
+    local isPath = false
+
     repeat
-        hasFoundPath = ComputePath(self.path, startPosition, targetPosition)
-        
+        isPath = ComputePath(path, startPosition, targetPosition)
+
+        if tries >= 1 then
+            task.wait(1)
+            print("path re-attempt:" .. tries)
+        end
         tries+=1
-        print("try to make path" .. tries)
-    until hasFoundPath or tries >= 3
+    until isPath or tries > 3
 
-    if hasFoundPath then
-        self.waypoints = self.path:GetWaypoints()
-        self.index = 1
-        self:DebugShowWaypoints()
+    if not isPath then
+        print("No Path Found...")
+        return false
     end
-end
-local function IsDistanceInRange(pos1, pos2, range)
-	return(pos1 - pos2).Magnitude <= range
+
+    return true
 end
 
-function navigation:MoveToTarget()
-    local humanoid = self.aiHumanoid
 
-    if self.targetReached then 
-        self.targetReached = false
-        return "SUCCESS"
+function NavigationUtil:Move(targetPosition)
+
+    if not FindPath(self.path, self.npc.root.Position, targetPosition) then
+        return false
     end
-    
-    if self.isMoving then
-        local playerPosition = Players.LocalPlayer.Character.PrimaryPart.Position
-        if IsDistanceInRange(playerPosition, self.finalTargetPosition, 5.0) then
-            return "RUNNING"
-        else
-            self.isMoving = false
 
-            self:FindPath(self.waypoints[self.index].Position, playerPosition)
+    self.isTargetReached = false
+    self.waypoints = self.path:GetWaypoints()
+    self.index = 1
+
+    if self.moveConnection then
+        self.moveConnection:Disconnect()
+    end
+
+    self.moveConnection  = self.npc.humanoid.MoveToFinished:Connect(function(reached)
+		if self.index < #self.waypoints then
+            print("moving: ", self.index, #self.waypoints)
+			self.index += 1
+			self.npc.humanoid:MoveTo(self.waypoints[self.index].Position)
+		elseif self.index == #self.waypoints then
+            print("Target Reached: ", self.index, #self.waypoints)
+            if self.moveConnection then
+                self.moveConnection :Disconnect()
+			    self.moveConnection  = nil
+            end
+			self.isTargetReached = true
         end
-    end
+	end)
 
+    self.npc.humanoid:MoveTo(self.waypoints[self.index].Position)
 
-    
-    local targetPosition = self.waypoints[self.index].Position
-
-    self.moveToFinished = humanoid.MoveToFinished:Connect(function(reached)
-        print(self.index,#self.waypoints, reached)
-        if self.index < #self.waypoints then
-            self.index = self.index + 1
-            targetPosition = self.waypoints[self.index].Position
-            humanoid:MoveTo(targetPosition)
-        else
-            print("Finished")
-            if self.moveToFinished then self.moveToFinished:Disconnect() end
-            self.moveToFinished = nil
-            self.isMoving = false
-            self.targetReached = true
-        end
-    end)
-
-    humanoid:MoveTo(targetPosition)
-    self.isMoving = true
-    self.targetReached = false
-    return "RUNNING"
+    return true
 end
 
-function navigation:CancelMoveTo()
-    print("Cancel")
-    if self.moveToFinished then
-        print("Disconnect")
-        self.moveToFinished:Disconnect()
-    end
-    self.moveToFinished = nil
-    self.isMoving = false
-    self.targetReached = false
-    self.aiHumanoid:MoveTo(self.aiHumanoid.RootPart.Position)
-end
 
-function navigation:MoveToIndex(index)
 
-end
-
-function navigation:DebugShowWaypoints()
-    for _, waypointPart in pairs(self.waypointsFolder:GetChildren()) do
-        waypointPart:Destroy()
-    end
-
-    for index, waypoint in self.waypoints do
-		local sphere = GeneralUtil:CreatePart(Enum.PartType.Ball, Vector3.new(0.5, 0.5, 0.5), Color3.fromHex("006969"))
-		sphere.Material = Enum.Material.Neon
-		sphere.Name = index
-		sphere.Parent = self.waypointsFolder
-		sphere.Position = Vector3.new(waypoint.Position.X, waypoint.Position.Y + 0.5, waypoint.Position.Z)
-	end
-end
-
-return navigation
+return NavigationUtil

@@ -2,11 +2,6 @@ local Lighting = game:GetService("Lighting")
 
 local require = require(script.Parent.loader).load(script)
 
-
-
-
-
-
 local function Init()
 	Lighting.ClockTime = 0
 
@@ -37,7 +32,6 @@ local function Init()
 
 	return true
 end
-
 
 
 return Init()

@@ -293,7 +293,7 @@
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value"></string>
+              <string name="Value">0.5055295003184529,0,0.4959876543209877,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="27">
@@ -382,7 +382,7 @@
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.5193398993528748,0,0.5346030131420394,0</string>
+              <string name="Value">0.5203815509018007,0,0.5216401527938529,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="36">
@@ -507,7 +507,7 @@ return btTask
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4974312227921145,0,0.535363519552658,0</string>
+              <string name="Value">0.497083882935991,0,0.5217835226176698,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="44">
@@ -569,26 +569,29 @@ return btTask
               <string name="Source"><![CDATA[local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
-local searchRange = 50
 
-local function IsPlayerInRangeOfNPC(plr, npc, range)
-	local playerPosition = plr.Character.PrimaryPart.Position
-	return (playerPosition - npc.root.Position).Magnitude < range, playerPosition
-end
-
-local wasFound = false
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	wasFound, Blackboard.targetPosition = IsPlayerInRangeOfNPC(Blackboard.player, self, searchRange)
+	print(Blackboard.player)
+	if not Blackboard.target and Blackboard.player.Character then
+		Blackboard.target = Blackboard.player
+		Blackboard.targetPosition = Blackboard.player.Character.PrimaryPart.Position
+	end
+	
+	if Blackboard.target == Blackboard.player and Blackboard.player.Character then
+		Blackboard.targetPosition = Blackboard.player.Character.PrimaryPart.Position
+	end
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+	
+	print("FindTarget:", Blackboard.target)
 	
 end
 
@@ -597,11 +600,9 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	if wasFound then 
-		print("I found you in my range")
+	if Blackboard.target then 
 		return SUCCESS
 	else
-		print("I didn't find you.")
 		return FAIL
 	end
 end
@@ -616,7 +617,7 @@ return btTask
         </Item>
         <Item class="Folder" referent="29">
           <Properties>
-            <string name="Name">Sequence1</string>
+            <string name="Name">Move Check</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
             <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
             <bool name="DefinesCapabilities">false</bool>
@@ -642,7 +643,7 @@ return btTask
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.5110208832811047,0,0.5184124407272503,0</string>
+              <string name="Value">0.5055198879262927,0,0.5103875305426955,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="51">
@@ -667,6 +668,17 @@ return btTask
             </Item>
             <Item class="ObjectValue" referent="53">
               <Properties>
+                <string name="Name">2</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <Ref name="Value">54</Ref>
+              </Properties>
+            </Item>
+            <Item class="ObjectValue" referent="55">
+              <Properties>
                 <string name="Name">1</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
                 <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -674,17 +686,6 @@ return btTask
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
                 <Ref name="Value">41</Ref>
-              </Properties>
-            </Item>
-            <Item class="ObjectValue" referent="54">
-              <Properties>
-                <string name="Name">2</string>
-                <BinaryString name="AttributesSerialize"></BinaryString>
-                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-                <bool name="DefinesCapabilities">false</bool>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">55</Ref>
               </Properties>
             </Item>
           </Item>
@@ -725,7 +726,7 @@ return btTask
             </Item>
           </Item>
         </Item>
-        <Item class="Folder" referent="55">
+        <Item class="Folder" referent="54">
           <Properties>
             <string name="Name">MoveToTarget</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
@@ -753,7 +754,7 @@ return btTask
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.5081482717884539,0,0.5348959590925982,0</string>
+              <string name="Value">0.5086692468588964,0,0.5221387321566358,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="61">
@@ -816,16 +817,19 @@ return btTask
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
+local isMoving = false
+local isTargetReached = false
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	local result = self.body.navigation:FindPath(self.root.Position, Blackboard.targetPosition)
+	if not Blackboard.target then
+		return
+	end
 	
-	if not result then
-		return FAIL
-	end	
+	Blackboard.isTargetReached = false
+	Blackboard.isMoving = self.navigation:Move(Blackboard.targetPosition)
 end
 
 
@@ -840,11 +844,23 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	local result = self.body.navigation:MoveToTarget()
+	if not Blackboard.isMoving then
+		return FAIL
+	end
 	
-	if result == "RUNNING" then
+	Blackboard.isTargetReached = self.navigation.isTargetReached
+	
+	
+	if Blackboard.player.Character then
+		if (Blackboard.player.Character.PrimaryPart.Position - Blackboard.targetPosition).Magnitude > 15 then
+			return FAIL
+		end
+	end
+	
+	if not isTargetReached then
 		return RUNNING
-	elseif result == "SUCCESS" then
+	
+	elseif isTargetReached then
 		return SUCCESS
 	else
 		return FAIL
@@ -868,7 +884,7 @@ return btTask
           <bool name="DefinesCapabilities">false</bool>
           <int64 name="SourceAssetId">-1</int64>
           <BinaryString name="Tags"></BinaryString>
-          <double name="Value">0.5999999046325684</double>
+          <double name="Value">1</double>
         </Properties>
       </Item>
       <Item class="Vector3Value" referent="67">
@@ -881,7 +897,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-248</Y>
+            <Y>-351</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
@@ -896,7 +912,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-161</Y>
+            <Y>-378</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>

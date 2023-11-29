@@ -197,4 +197,13 @@ function GeneralUtil:GetSound(root, name)
 	return sfx
 end
 
+function GeneralUtil:SetNetworkOwner(entity, owner)
+	owner = owner or nil
+	for _, part in pairs(entity:GetChildren()) do
+		if part:IsA("BasePart") then
+			part:SetNetworkOwner(owner)
+		end
+	end
+end
+
 return GeneralUtil
