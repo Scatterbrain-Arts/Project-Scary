@@ -1662,7 +1662,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">01705bfc31d7d8080570511b000044d1</UniqueId>
-								<string name="Value">0.5203815509018007,0,0.5216401527938529,0</string>
+								<string name="Value">0.512773427322173,0,0.5228901728877314,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBX150A60216E0F4086B1A942DA32A1ED20">
@@ -1801,7 +1801,7 @@ return btTask
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">01705bfc31d7d8080570511b0000685b</UniqueId>
-								<string name="Value">0.497083882935991,0,0.5217835226176698,0</string>
+								<string name="Value">0.4943219938770193,0,0.5227558051215278,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBXADCDA94DD11343848B871DD612006FA3">
@@ -2082,7 +2082,7 @@ return btTask
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">01705bfc31d7d8080570511b0000e9f0</UniqueId>
-								<string name="Value">0.5086692468588964,0,0.5221387321566358,0</string>
+								<string name="Value">0.5033018906331422,0,0.522786865234375,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBXC3375FE775C348D1BEE0DE20D908E449">
@@ -2187,7 +2187,7 @@ function btTask.run(obj)
 	
 	
 	if Blackboard.player.Character then
-		if (Blackboard.player.Character.PrimaryPart.Position - Blackboard.targetPosition).Magnitude > 15 then
+		if (Blackboard.player.Character.PrimaryPart.Position - Blackboard.targetPosition).Magnitude > 10 then
 			return FAIL
 		end
 	end
@@ -2237,7 +2237,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fbc</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-351</Y>
+							<Y>-355</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -2254,7 +2254,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fbd</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-378</Y>
+							<Y>-277</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>

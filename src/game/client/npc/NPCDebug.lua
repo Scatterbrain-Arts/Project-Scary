@@ -182,4 +182,21 @@ function NPCDebug:PrintTimer()
 end
 
 
+function NPCDebug:PrintWaypoints(waypoints)
+	for _, waypointPart in pairs(self.workspaceFolder["waypoints"]:GetChildren()) do
+		waypointPart:Destroy()
+	end
+
+	for index, waypoint in waypoints do
+		local sphere = GeneralUtil:CreatePart(Enum.PartType.Ball, Vector3.new(0.5, 0.5, 0.5), Color3.fromHex("006969"))
+		sphere.Material = Enum.Material.Neon
+		sphere.Name = index
+		sphere.Parent = self.workspaceFolder["waypoints"]
+		sphere.Position = Vector3.new(waypoint.Position.X, waypoint.Position.Y + 0.5, waypoint.Position.Z)
+	end
+end
+
+
+
+
 return NPCDebug

@@ -8,6 +8,7 @@ local BehaviorTreeCreator = require("BehaviorTreeCreator")
 local GetRemoteEvent = require("GetRemoteEvent")
 local Maid = require("Maid")
 
+local EventNPCSpawn = GetRemoteEvent("EventNPCSpawn")
 
 local NPCDebug = require("NPCDebug")
 local GeneralUtil = require("GeneralUtil")
@@ -39,7 +40,7 @@ function NPC.new(npcModel, player)
 	}
 
 	if self.config.isDebug.Value then
-		self.npcDebug = NPCDebug.new(self)
+		self.NPCDebug = NPCDebug.new(self)
 	end
 
 	self.navigation = NavigationUtil.new(self)
@@ -61,7 +62,7 @@ function NPC.new(npcModel, player)
 			self.btRoot:Run(self.btState)
 
 			if self.config.isDebug.Value then
-				self.npcDebug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name, false)
+				self.NPCDebug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name, false)
 			end
 		end
 	end)
@@ -85,6 +86,8 @@ function NPC.new(npcModel, player)
 			self.playerCharacter = character
 		end)
 	end)
+
+	EventNPCSpawn:FireServer(self.character)
 
 	return self
 end

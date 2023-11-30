@@ -12,17 +12,19 @@ function NavigationUtil.new(npc)
     setmetatable(self, NavigationUtil)
 
     self.npc = npc
+    self.config = npc.config
+    self.character = npc.character
 
-    local configFolder = GeneralUtil:Get("Folder", self.npc.character, "config")
+    local configFolder = GeneralUtil:Get("Folder", self.character, "config")
 	local configNavigation = GeneralUtil:Get("Configuration", configFolder, "navigation")
 
-    local isDebug = GeneralUtil:GetBool(configNavigation, "_isDebug", true)
-
-    self.npc.config["AgentRadius"] = GeneralUtil:GetNumber(configNavigation, "agentWidth", isDebug.Value)
-    self.npc.config["AgentHeight"] = GeneralUtil:GetNumber(configNavigation, "agentHeight", isDebug.Value)
-    self.npc.config["AgentCanJump"] = GeneralUtil:GetBool(configNavigation, "agentCanJump", isDebug.Value)
-    self.npc.config["AgentCanClimb"] = GeneralUtil:GetBool(configNavigation, "agentCanClimb", isDebug.Value)
-    self.npc.config["WaypointSpacing"] = GeneralUtil:GetNumber(configNavigation, "waypointSpacing", isDebug.Value)
+    self.isDebug = GeneralUtil:GetBool(configNavigation, "_isDebug", true)
+    
+    self.config["AgentHeight"] = GeneralUtil:GetNumber(configNavigation, "agentHeight", self.isDebug.Value)
+    self.config["AgentCanJump"] = GeneralUtil:GetBool(configNavigation, "agentCanJump", self.isDebug.Value)
+    self.config["AgentCanClimb"] = GeneralUtil:GetBool(configNavigation, "agentCanClimb", self.isDebug.Value)
+    self.config["AgentRadius"] = GeneralUtil:GetNumber(configNavigation, "agentWidth", self.isDebug.Value)
+    self.config["WaypointSpacing"] = GeneralUtil:GetNumber(configNavigation, "waypointSpacing", self.isDebug.Value)
 
     self.path = PathfindingService:CreatePath({
         AgentRadius = self.npc.config["AgentRadius"].Value/2,
@@ -34,9 +36,9 @@ function NavigationUtil.new(npc)
             Plastic = 1,
         },
     })
-
-    if isDebug.Value and self.npc.config.isDebug.Value then
-        self.npc.npcDebug:CreateAgentCylinder("agent", self.npc.root, self.npc.config["AgentRadius"].Value, self.npc.config["AgentHeight"].Value, Color3.fromRGB(255, 255, 0))
+    self.NPCDebug = npc.NPCDebug
+    if self.isDebug.Value and self.npc.config.isDebug.Value then
+        self.NPCDebug:CreateAgentCylinder("agent", self.npc.root, self.npc.config["AgentRadius"].Value, self.npc.config["AgentHeight"].Value, Color3.fromRGB(255, 255, 0))
     end
 
     self.waypoints = {}
@@ -46,7 +48,6 @@ function NavigationUtil.new(npc)
 
     return self
 end
-
 
 local function IsDistanceInRange(pos1, pos2, range)
 	return (pos1 - pos2).Magnitude <= range
@@ -61,7 +62,6 @@ local function ComputePath(path, startPosition, targetPosition)
     if success and path.Status == Enum.PathStatus.Success then
         return true
     else
-        print("path status: ", path.Status)
         return false
     end
 end
@@ -77,6 +77,7 @@ local function FindPath(path, startPosition, targetPosition)
         if tries >= 1 then
             task.wait(1)
             print("path re-attempt:" .. tries)
+            print("path status: ", path.Status)
         end
         tries+=1
     until isPath or tries > 3
@@ -100,6 +101,10 @@ function NavigationUtil:Move(targetPosition)
     self.waypoints = self.path:GetWaypoints()
     self.index = 1
 
+    -- if self.isDebug.Value then
+    --     self.NPCDebug:PrintWaypoints(self.waypoints)
+    -- end
+
     if self.moveConnection then
         self.moveConnection:Disconnect()
     end
@@ -112,8 +117,8 @@ function NavigationUtil:Move(targetPosition)
 		elseif self.index == #self.waypoints then
             print("Target Reached: ", self.index, #self.waypoints)
             if self.moveConnection then
-                self.moveConnection :Disconnect()
-			    self.moveConnection  = nil
+                self.moveConnection:Disconnect()
+			    self.moveConnection = nil
             end
 			self.isTargetReached = true
         end

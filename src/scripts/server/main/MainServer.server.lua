@@ -9,6 +9,7 @@ ServiceBag:Init()
 ServiceBag:Start()
 
 require(Packages.ServerInit)
+require(Packages.NPCStarter)
 
 local Binder = require(Packages.Binder)
 local Locks = require(Packages.Locks)
@@ -23,6 +24,3 @@ Keys.BINDER:Start()
 
 Talismans.BINDER = Binder.new(Talismans.TAG_NAME, Talismans, ServiceBag)
 Talismans.BINDER:Start()
-
-
-require(Packages.NPCStarter)
