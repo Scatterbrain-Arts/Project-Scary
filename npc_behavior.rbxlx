@@ -1876,7 +1876,6 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	print(Blackboard.player)
 	if not Blackboard.target and Blackboard.player.Character then
 		Blackboard.target = Blackboard.player
 		Blackboard.targetPosition = Blackboard.player.Character.PrimaryPart.Position
@@ -1885,6 +1884,22 @@ function btTask.start(obj)
 	if Blackboard.target == Blackboard.player and Blackboard.player.Character then
 		Blackboard.targetPosition = Blackboard.player.Character.PrimaryPart.Position
 	end
+	
+	if Blackboard.target then
+		task.spawn(function()
+			while true do		
+				local targetCFrame = CFrame.new(self.root.Position, Blackboard.targetPosition)
+				self.root.CFrame = self.root.CFrame:Lerp(targetCFrame, 0.01)
+				
+				if (targetCFrame.LookVector - self.root.CFrame.LookVector).Magnitude >= 0.01 then
+					break
+				end
+				task.wait()
+			end
+		end)
+	end
+	
+	
 end
 
 

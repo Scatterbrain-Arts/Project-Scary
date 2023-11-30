@@ -111,11 +111,9 @@ function NavigationUtil:Move(targetPosition)
 
     self.moveConnection  = self.npc.humanoid.MoveToFinished:Connect(function(reached)
 		if self.index < #self.waypoints then
-            print("moving: ", self.index, #self.waypoints)
 			self.index += 1
 			self.npc.humanoid:MoveTo(self.waypoints[self.index].Position)
 		elseif self.index == #self.waypoints then
-            print("Target Reached: ", self.index, #self.waypoints)
             if self.moveConnection then
                 self.moveConnection:Disconnect()
 			    self.moveConnection = nil
