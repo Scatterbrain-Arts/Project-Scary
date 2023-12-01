@@ -206,4 +206,35 @@ function GeneralUtil:SetNetworkOwner(entity, owner)
 	end
 end
 
+
+function GeneralUtil:CastRay(origin, direction, collisionGroup)
+	local raycastParams = RaycastParams.new()
+	raycastParams.CollisionGroup = collisionGroup
+	raycastParams.IgnoreWater = true
+	raycastParams.RespectCanCollide = false
+
+	return workspace:Raycast(origin, direction, raycastParams)
+end
+
+function GeneralUtil:CastSphere(origin, radius, direction, collisionGroup)
+	local raycastParams = RaycastParams.new()
+	raycastParams.CollisionGroup = collisionGroup
+	raycastParams.IgnoreWater = true
+	raycastParams.RespectCanCollide = false
+
+	return workspace:Spherecast(origin, radius, direction, raycastParams)
+end
+
+
+function GeneralUtil:GetDistance(pos1, pos2)
+	return (pos1 - pos2).Magnitude
+end
+
+
+function GeneralUtil:IsDistanceInRange(pos1, pos2, range)
+	return GeneralUtil:GetDistance(pos1, pos2) >= range
+end
+
+
+
 return GeneralUtil

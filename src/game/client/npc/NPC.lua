@@ -54,6 +54,7 @@ function NPC.new(npcModel, player)
 			player = player,
 			targetPosition = Vector3.new(math.huge, math.huge, math.huge),
 			target = nil,
+			collisionGroup = "Monster"
 		},
 	}
 
