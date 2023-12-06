@@ -4,6 +4,9 @@ local require = require(script.Parent.loader).load(script)
 
 local GeneralUtil = require("GeneralUtil")
 
+
+
+
 local NavigationUtil = {}
 NavigationUtil.__index = NavigationUtil
 
@@ -75,8 +78,8 @@ local function FindPath(path, startPosition, targetPosition)
 
         if tries >= 1 then
             task.wait()
-            print("path re-attempt:" .. tries)
-            print("path status: ", path.Status)
+            --print("path re-attempt:" .. tries)
+            --print("path status: ", path.Status)
         end
         tries+=1
     until isPath or tries > 3
@@ -92,6 +95,13 @@ end
 
 function NavigationUtil:PathTo(targetPosition)
 
+    local rayResult = GeneralUtil:CastSphere(self.root.Position, 4, Vector3.zero, "CharNPC")
+
+    if rayResult then
+        print(rayResult.Instance)
+    end
+    
+
     if not FindPath(self.path, self.root.Position, targetPosition) then
         return false
     end
@@ -99,10 +109,6 @@ function NavigationUtil:PathTo(targetPosition)
     self.isTargetReached = false
     self.waypoints = self.path:GetWaypoints()
     self.index = 1
-
-    -- if self.isDebug.Value then
-    --     self.NPCDebug:PrintWaypoints(self.waypoints)
-    -- end
 
     if self.moveConnection then
         self.moveConnection:Disconnect()
@@ -160,7 +166,72 @@ function NavigationUtil:Stop()
     return true
 end
 
+local Axis8Directions = {
+    north = Vector3.new(0, 0, -1), east = Vector3.new(1, 0, 0), northeast = Vector3.new(1, 0, -1), southwest = Vector3.new(-1, 0, 1),
+    south = Vector3.new(0, 0, 1), west = Vector3.new(-1, 0, 0), southeast = Vector3.new(1, 0, 1), northwest = Vector3.new(-1, 0, -1),
+}
 
+local ThreadLookDirection = coroutine.create(function(npcRoot, targetDirection)
+	while true do
+        while true do
+            local targetCFrame = CFrame.new(npcRoot.Position, npcRoot.Position + targetDirection)
+            
+            npcRoot.CFrame = npcRoot.CFrame:Lerp(targetCFrame, 0.1)
+            if (targetCFrame.LookVector - npcRoot.CFrame.LookVector).Magnitude <= 0.1 then
+                break
+            end
+
+          -- print(npcRoot.CFrame.LookVector)
+
+            task.wait()
+        end
+		coroutine.yield()
+	end
+end)
+
+
+function NavigationUtil:FaceTo(targetDirection)
+    coroutine.resume(ThreadLookDirection, self.root, targetDirection)
+end
+
+
+function NavigationUtil:FindDirectionToFace()
+    local partsInRadius = GeneralUtil:QueryRadius(self.root.Position, 8, "CharNPC")
+    if not partsInRadius then
+        return
+    end
+
+    local directionScores = {
+        north = 0, east = 0, --northeast = 0, southwest = 0,
+        south = 0, west = 0, --southeast = 0, northwest = 0,
+    }
+
+    for _, part in pairs(partsInRadius) do
+        local directionToPart = (part.Position - self.root.Position).Unit
+        local angle = math.deg(math.atan2(directionToPart.X, directionToPart.Z))
+
+        angle = angle % 360
+
+        if angle >= 135.6 and angle <= 225.4 then
+            directionScores.north += 1
+
+        elseif angle >= 225.6 and angle <= 315.4 then
+            directionScores.west += 1
+
+        elseif angle >= 315.6 and angle <= 360 or angle >= 0 and angle <= 45.4 then
+            directionScores.south += 1
+
+        elseif angle >= 45.6 and angle <= 135.4 then
+            directionScores.east += 1
+        end
+    end
+
+    local i, v = GeneralUtil:GetConditonFromTable(directionScores, function(a,b) return a > b end)
+
+    print("final direction:", i)
+
+    return Axis8Directions[i]
+end
 
 
 

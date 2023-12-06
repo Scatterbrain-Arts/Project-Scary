@@ -14,9 +14,6 @@ local NPCDebug = require("NPCDebug")
 local GeneralUtil = require("GeneralUtil")
 local NavigationUtil = require("NavigationUtil")
 
-
--- local PuppetManuelOverrideEvent = GetRemoteEvent("PuppetManuelOverrideEvent")
-
 local NPC = {}
 NPC.__index = NPC
 NPC.TAG_NAME = "NPC"
@@ -54,7 +51,7 @@ function NPC.new(npcModel, player)
 			player = player,
 			targetPosition = Vector3.new(math.huge, math.huge, math.huge),
 			target = nil,
-			collisionGroup = "Monster"
+			collisionGroup = "CharNPC"
 		},
 	}
 
@@ -67,17 +64,6 @@ function NPC.new(npcModel, player)
 			end
 		end
 	end)
-
-	-- PuppetManuelOverrideEvent.OnServerEvent:Connect(function()
-	-- 	self.config["entity"].isOverride = not self.config["entity"].isOverride
-
-	-- 	self.character:SetAttribute("_OVERRIDE", self.config["entity"].isOverride)
-	-- 	if self.config["entity"].isOverride then
-	-- 		warn("Manuel Override ENABLED for", self.name, "...")
-	-- 	elseif self.config["entity"].isOverride == false then
-	-- 		warn("Manuel Override DISABLED for", self.name, "...")
-	-- 	end
-	-- end)
 
 	self.player = player
 	self.playerCharacter = player.Character or player.CharacterAdded:Wait()

@@ -9,6 +9,7 @@ local GeneralUtil = require("GeneralUtil")
 local ComponentCamera = require("PlayerComponentCamera")
 local ComponentController = require("PlayerComponentController")
 local PlayerDebug = require("PlayerDebug")
+local OverrideNPC = require("OverrideNPC")
 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()

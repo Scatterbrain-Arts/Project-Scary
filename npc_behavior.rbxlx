@@ -92,18 +92,18 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>14.5150909</X>
-					<Y>6.349617</Y>
-					<Z>-6.45939827</Z>
-					<R00>-0.962232113</R00>
-					<R01>-0.132802993</R01>
-					<R02>0.237640232</R02>
-					<R10>7.4505806e-09</R10>
-					<R11>0.872937262</R11>
-					<R12>0.487832665</R12>
-					<R20>-0.272230625</R20>
-					<R21>0.469408244</R21>
-					<R22>-0.839968085</R22>
+					<X>17.6719303</X>
+					<Y>19.4683323</Y>
+					<Z>6.7328248</Z>
+					<R00>0.4510355</R00>
+					<R01>-0.530286729</R01>
+					<R02>0.717887819</R02>
+					<R10>2.98023224e-08</R10>
+					<R11>0.804350674</R11>
+					<R12>0.594154835</R12>
+					<R20>-0.892506003</R20>
+					<R21>-0.267984897</R21>
+					<R22>0.362790734</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
@@ -112,9 +112,9 @@
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>14.0398083</X>
-					<Y>5.37394714</Y>
-					<Z>-4.77945423</Z>
+					<X>16.2361374</X>
+					<Y>18.2800083</Y>
+					<Z>6.00723457</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -1571,7 +1571,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fc1</UniqueId>
 							</Properties>
-							<Item class="ObjectValue" referent="RBX09B4634F6F9D4A9A831D5A10C078064A">
+							<Item class="ObjectValue" referent="RBX597BF39D651F41E8AD6CD18E59C2737E">
 								<Properties>
 									<BinaryString name="AttributesSerialize"></BinaryString>
 									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -1580,7 +1580,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 									<string name="Name">1</string>
 									<int64 name="SourceAssetId">-1</int64>
 									<BinaryString name="Tags"></BinaryString>
-									<UniqueId name="UniqueId">2ed33cfd97cc4f90057abf7f0001dc92</UniqueId>
+									<UniqueId name="UniqueId">0bfa23de6365e5ea05812bf300008fbc</UniqueId>
 									<Ref name="Value">RBX2DFBA6CB1A8949669AAE481B069C7F08</Ref>
 								</Properties>
 							</Item>
@@ -1803,7 +1803,7 @@ return btTask
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">01705bfc31d7d8080570511b0000685b</UniqueId>
-								<string name="Value">0.48746945521032364,0,0.5228895399305555,0</string>
+								<string name="Value">0.4794183982542991,0,0.5212691695601852,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBXADCDA94DD11343848B871DD612006FA3">
@@ -1885,23 +1885,7 @@ function btTask.start(obj)
 	
 	if Blackboard.target == Blackboard.player and Blackboard.player.Character then
 		Blackboard.targetPosition = Blackboard.player.Character.PrimaryPart.Position
-	end
-	
-	if Blackboard.target then
-		task.spawn(function()
-			while true do		
-				local targetCFrame = CFrame.new(self.root.Position, Blackboard.targetPosition)
-				self.root.CFrame = self.root.CFrame:Lerp(targetCFrame, 0.01)
-				
-				if (targetCFrame.LookVector - self.root.CFrame.LookVector).Magnitude >= 0.01 then
-					break
-				end
-				task.wait()
-			end
-		end)
-	end
-	
-	
+	end	
 end
 
 
@@ -1909,7 +1893,7 @@ function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	print("FindTarget:", Blackboard.target)
+	--print("FindTarget:", Blackboard.target)
 	
 end
 
@@ -2021,7 +2005,7 @@ return btTask
 									<Ref name="Value">RBXDB8B4BCF24D7412B97806877C0989739</Ref>
 								</Properties>
 							</Item>
-							<Item class="ObjectValue" referent="RBXFD02B86400F742B8821FEFBD4CFBB25B">
+							<Item class="ObjectValue" referent="RBX61A39E4FF5E04C38955B5EB1EAD93BD1">
 								<Properties>
 									<BinaryString name="AttributesSerialize"></BinaryString>
 									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -2030,7 +2014,7 @@ return btTask
 									<string name="Name">3</string>
 									<int64 name="SourceAssetId">-1</int64>
 									<BinaryString name="Tags"></BinaryString>
-									<UniqueId name="UniqueId">71bbbcbec9a9947e057998100001a067</UniqueId>
+									<UniqueId name="UniqueId">0bfa23de6365e5ea05812bf300009b2c</UniqueId>
 									<Ref name="Value">RBXB171FE3C601344119229166C905B6D8A</Ref>
 								</Properties>
 							</Item>
@@ -2207,7 +2191,7 @@ function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	print("PathToTarget: finish")
+	--print("PathToTarget: finish")
 end
 
 
@@ -2216,7 +2200,7 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	print("PathToTarget: run")
+	--print("PathToTarget: run")
 	
 	if not isMoving then
 		return FAIL
@@ -2227,7 +2211,7 @@ function btTask.run(obj)
 	
 	if Blackboard.player.Character then
 		if GeneralUtil:IsDistanceInRange(Blackboard.player.Character.PrimaryPart.Position, Blackboard.targetPosition, 10) then
-			print("out of range of pathto")
+			--print("out of range of pathto")
 			return FAIL
 		end
 	end
@@ -2256,7 +2240,7 @@ return btTask
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-							<string name="Name">LineOfSight</string>
+							<string name="Name">SensePath</string>
 							<int64 name="SourceAssetId">-1</int64>
 							<BinaryString name="Tags"></BinaryString>
 							<UniqueId name="UniqueId">71bbbcbec9a9947e0579981000009b06</UniqueId>
@@ -2284,7 +2268,7 @@ return btTask
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">71bbbcbec9a9947e0579981000009b08</UniqueId>
-								<string name="Value">0.4980167938668867,0,0.5226335957217119,0</string>
+								<string name="Value">0.4962059603012561,0,0.5234207179792297,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBXA51E4E2DF5584F33AA237A6A17F6B459">
@@ -2348,7 +2332,7 @@ return btTask
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<Content name="LinkedSource"><null></null></Content>
-								<string name="Name">LineOfSight</string>
+								<string name="Name">SensePath</string>
 								<string name="ScriptGuid">{837F8E8C-6D28-4C1B-9A4C-75C85DD41665}</string>
 								<ProtectedString name="Source"><![CDATA[local Packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
 
@@ -2358,21 +2342,28 @@ local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
-local RayResult = nil
+local RayLineOfSight = nil
+local PartsInRadius = nil
+
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	RayResult = GeneralUtil:CastSphere(self.root.Position, 2, Blackboard.targetPosition - self.root.Position, Blackboard.collisionGroup)
+	print("sense-start")
+	
+	RayLineOfSight = GeneralUtil:CastSphere(self.root.Position, 3, Blackboard.targetPosition - self.root.Position, Blackboard.collisionGroup)
+	
+	print(RayLineOfSight)
+	local direction = self.navigation:FindDirectionToFace()
+	
+	self.navigation:FaceTo(direction)
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
-	
-	print("LineOfSight:", Blackboard.isLineOfSight)
 end
 
 
@@ -2380,16 +2371,15 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	if RayResult == nil then
-		return FAIL
-	end
-	
-	
-	if RayResult.Instance.Parent.Name == Blackboard.player.Name then
-		Blackboard.isLineOfSight = true
+	if RayLineOfSight then
+		Blackboard.isLineOfSight = RayLineOfSight.Instance.Parent.Name == Blackboard.player.Name
 	else
 		Blackboard.isLineOfSight = false
 	end
+	
+
+	
+	
 	
 
 	return SUCCESS
@@ -2636,6 +2626,8 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
+	print("MoveToTarget: start")
+	
 	if not Blackboard.target then
 		return
 	end
@@ -2654,7 +2646,7 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	print("MoveToTarget: run")
+	--print("MoveToTarget: run")
 	
 	if not isMoving then
 		return FAIL
@@ -2664,7 +2656,7 @@ function btTask.run(obj)
 	
 	if Blackboard.player.Character then
 		if GeneralUtil:IsDistanceInRange(Blackboard.player.Character.PrimaryPart.Position, Blackboard.targetPosition, 5) then
-			print("out of range of moveTo")
+			--print("out of range of moveTo")
 			return FAIL
 		end
 	end
@@ -3196,7 +3188,7 @@ return btTask
 						<int64 name="SourceAssetId">-1</int64>
 						<BinaryString name="Tags"></BinaryString>
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fbb</UniqueId>
-						<double name="Value">0.89999997615814208984</double>
+						<double name="Value">0.79999995231628417969</double>
 					</Properties>
 				</Item>
 				<Item class="Vector3Value" referent="RBX64E548E1159F479594153E7559EB3504">
@@ -3211,7 +3203,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fbc</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-632</Y>
+							<Y>-409</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -3228,7 +3220,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fbd</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-607</Y>
+							<Y>-422</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>

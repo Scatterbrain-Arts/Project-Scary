@@ -509,7 +509,7 @@ return btTask
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.48746945521032364,0,0.5228895399305555,0</string>
+              <string name="Value">0.4794183982542991,0,0.5212691695601852,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="44">
@@ -584,23 +584,7 @@ function btTask.start(obj)
 	
 	if Blackboard.target == Blackboard.player and Blackboard.player.Character then
 		Blackboard.targetPosition = Blackboard.player.Character.PrimaryPart.Position
-	end
-	
-	if Blackboard.target then
-		task.spawn(function()
-			while true do		
-				local targetCFrame = CFrame.new(self.root.Position, Blackboard.targetPosition)
-				self.root.CFrame = self.root.CFrame:Lerp(targetCFrame, 0.01)
-				
-				if (targetCFrame.LookVector - self.root.CFrame.LookVector).Magnitude >= 0.01 then
-					break
-				end
-				task.wait()
-			end
-		end)
-	end
-	
-	
+	end	
 end
 
 
@@ -608,7 +592,7 @@ function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	print("FindTarget:", Blackboard.target)
+	--print("FindTarget:", Blackboard.target)
 	
 end
 
@@ -870,7 +854,7 @@ function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	print("PathToTarget: finish")
+	--print("PathToTarget: finish")
 end
 
 
@@ -879,7 +863,7 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	print("PathToTarget: run")
+	--print("PathToTarget: run")
 	
 	if not isMoving then
 		return FAIL
@@ -890,7 +874,7 @@ function btTask.run(obj)
 	
 	if Blackboard.player.Character then
 		if GeneralUtil:IsDistanceInRange(Blackboard.player.Character.PrimaryPart.Position, Blackboard.targetPosition, 10) then
-			print("out of range of pathto")
+			--print("out of range of pathto")
 			return FAIL
 		end
 	end
@@ -914,7 +898,7 @@ return btTask
         </Item>
         <Item class="Folder" referent="55">
           <Properties>
-            <string name="Name">LineOfSight</string>
+            <string name="Name">SensePath</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
             <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
             <bool name="DefinesCapabilities">false</bool>
@@ -940,7 +924,7 @@ return btTask
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4980167938668867,0,0.5226335957217119,0</string>
+              <string name="Value">0.4962059603012561,0,0.5234207179792297,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="71">
@@ -991,7 +975,7 @@ return btTask
           </Item>
           <Item class="ModuleScript" referent="75">
             <Properties>
-              <string name="Name">LineOfSight</string>
+              <string name="Name">SensePath</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
               <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
               <bool name="DefinesCapabilities">false</bool>
@@ -1007,21 +991,28 @@ local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
-local RayResult = nil
+local RayLineOfSight = nil
+local PartsInRadius = nil
+
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	RayResult = GeneralUtil:CastSphere(self.root.Position, 2, Blackboard.targetPosition - self.root.Position, Blackboard.collisionGroup)
+	print("sense-start")
+	
+	RayLineOfSight = GeneralUtil:CastSphere(self.root.Position, 3, Blackboard.targetPosition - self.root.Position, Blackboard.collisionGroup)
+	
+	print(RayLineOfSight)
+	local direction = self.navigation:FindDirectionToFace()
+	
+	self.navigation:FaceTo(direction)
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
-	
-	print("LineOfSight:", Blackboard.isLineOfSight)
 end
 
 
@@ -1029,16 +1020,15 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	if RayResult == nil then
-		return FAIL
-	end
-	
-	
-	if RayResult.Instance.Parent.Name == Blackboard.player.Name then
-		Blackboard.isLineOfSight = true
+	if RayLineOfSight then
+		Blackboard.isLineOfSight = RayLineOfSight.Instance.Parent.Name == Blackboard.player.Name
 	else
 		Blackboard.isLineOfSight = false
 	end
+	
+
+	
+	
 	
 
 	return SUCCESS
@@ -1253,6 +1243,8 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
+	print("MoveToTarget: start")
+	
 	if not Blackboard.target then
 		return
 	end
@@ -1271,7 +1263,7 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	
-	print("MoveToTarget: run")
+	--print("MoveToTarget: run")
 	
 	if not isMoving then
 		return FAIL
@@ -1281,7 +1273,7 @@ function btTask.run(obj)
 	
 	if Blackboard.player.Character then
 		if GeneralUtil:IsDistanceInRange(Blackboard.player.Character.PrimaryPart.Position, Blackboard.targetPosition, 5) then
-			print("out of range of moveTo")
+			--print("out of range of moveTo")
 			return FAIL
 		end
 	end
@@ -1734,7 +1726,7 @@ return btTask
           <bool name="DefinesCapabilities">false</bool>
           <int64 name="SourceAssetId">-1</int64>
           <BinaryString name="Tags"></BinaryString>
-          <double name="Value">0.8999999761581421</double>
+          <double name="Value">0.7999999523162842</double>
         </Properties>
       </Item>
       <Item class="Vector3Value" referent="131">
@@ -1747,7 +1739,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-632</Y>
+            <Y>-409</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
@@ -1762,7 +1754,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-607</Y>
+            <Y>-422</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
