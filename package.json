@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@quenty/binder": "^8.26.0",
+    "@quenty/draw": "^4.3.0",
     "@quenty/loader": "^6.3.0",
     "@quenty/math": "^2.5.0",
     "@quenty/remoting": "^6.11.0",

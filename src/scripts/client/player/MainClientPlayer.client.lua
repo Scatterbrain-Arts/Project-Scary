@@ -17,5 +17,5 @@ shared.states.breathNames = { "inhale", "exhale", "inhaleToHoldBreath", "holding
 for i,v in shared.states.breathNames do shared.states.breath[v] = i end
 for i = 1, #shared.states.breathNames do shared.states.breath[i] = i end
 
-require(packages.PuppetActivator)
 require(packages.PlayerEntity)
+require(packages.NPCStarter)

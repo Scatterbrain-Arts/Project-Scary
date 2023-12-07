@@ -33,7 +33,7 @@ function AiComponentMind.new(entity, serviceBag)
 		soundFoundRange = AiHelper:GetValue(self.entity.character, "statSoundFoundRange", self.entity.config["entity"].isDebug) or 50,
 	}
 
-    self.AIService = serviceBag:GetService(require("AIService"))
+    -- self.AIService = serviceBag:GetService(require("AIService"))
 
 	self.hostileTime = 0
 	self.memoryForgetTime = 3
@@ -53,7 +53,7 @@ function AiComponentMind.new(entity, serviceBag)
 
 	self.searchTimer = 5
 	self.searchStartTime = nil
-    self.AIService.moveAISignal:Connect(function(sound) self:SoundRecieved(sound) end)
+    -- self.AIService.moveAISignal:Connect(function(sound) self:SoundRecieved(sound) end)
 
 	self.cycleLock = false
 	self.cycleRefresh = 3
