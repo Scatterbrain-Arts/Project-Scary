@@ -1,3 +1,7 @@
+local require = require(script.Parent.loader).load(script)
+
+local Draw = require("Draw")
+
 local GeneralUtil = {}
 
 function GeneralUtil:CreatePart(shape, size, color)
@@ -217,21 +221,35 @@ function GeneralUtil:CastRay(origin, direction, collisionGroup)
 end
 
 
-function GeneralUtil:CastSphere(origin, radius, direction, collisionGroup)
+function GeneralUtil:CastSphere(origin, radius, direction, collisionGroup, isDraw, isCharacterOffset)
 	local parameters = RaycastParams.new()
 	parameters.CollisionGroup = collisionGroup
 	parameters.IgnoreWater = true
 	parameters.RespectCanCollide = false
 
+	isCharacterOffset = isCharacterOffset or true
+	if isCharacterOffset then
+		origin += direction.Unit * -radius/1.5
+	end
+
+	if isDraw then
+		Draw.sphereCast(origin, radius, direction, Color3.fromRGB(178, 31, 251), workspace)
+	end
+
+
 	return workspace:Spherecast(origin, radius, direction, parameters)
 end
 
 
-function GeneralUtil:QueryRadius(position, diameter, collisionGroup)
+function GeneralUtil:QueryRadius(position, diameter, collisionGroup, isDraw)
 	local parameters = OverlapParams.new()
 	parameters.CollisionGroup = collisionGroup
 	parameters.RespectCanCollide = false
 	parameters.MaxParts = 20
+
+	if isDraw then
+		Draw.sphere(position, diameter/2, Color3.fromRGB(178, 31, 251), workspace)
+	end
 
 	return workspace:GetPartBoundsInRadius(position, diameter/2, parameters)
 end

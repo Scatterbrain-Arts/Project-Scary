@@ -4,9 +4,6 @@ local require = require(script.Parent.loader).load(script)
 
 local GeneralUtil = require("GeneralUtil")
 
-
-
-
 local NavigationUtil = {}
 NavigationUtil.__index = NavigationUtil
 
@@ -38,7 +35,11 @@ function NavigationUtil.new(npc)
         AgentCanClimb = self.config["AgentCanClimb"].Value,
         WaypointSpacing = self.config["WaypointSpacing"].Value,
         Costs = {
-            Plastic = 1,
+            Plastic = 10,
+            NonWalkableSurface = math.huge,
+            RoomHallway = 1,
+            RoomLarge = 1,
+            RoomSmall = 1,
         },
     })
 
@@ -78,8 +79,6 @@ local function FindPath(path, startPosition, targetPosition)
 
         if tries >= 1 then
             task.wait()
-            --print("path re-attempt:" .. tries)
-            --print("path status: ", path.Status)
         end
         tries+=1
     until isPath or tries > 3
@@ -95,7 +94,7 @@ end
 
 function NavigationUtil:PathTo(targetPosition)
 
-    local rayResult = GeneralUtil:CastSphere(self.root.Position, 4, Vector3.zero, "CharNPC")
+    local rayResult = GeneralUtil:CastSphere(self.root.Position, 4, Vector3.zero, "RayNPC")
 
     if rayResult then
         print(rayResult.Instance)
@@ -196,14 +195,14 @@ end
 
 
 function NavigationUtil:FindDirectionToFace()
-    local partsInRadius = GeneralUtil:QueryRadius(self.root.Position, 8, "CharNPC")
+    local partsInRadius = GeneralUtil:QueryRadius(self.root.Position, 8, "RayNPC", false)
     if not partsInRadius then
         return
     end
 
     local directionScores = {
-        north = 0, east = 0, --northeast = 0, southwest = 0,
-        south = 0, west = 0, --southeast = 0, northwest = 0,
+        north = 0, east = 0,
+        south = 0, west = 0,
     }
 
     for _, part in pairs(partsInRadius) do

@@ -2352,12 +2352,7 @@ function btTask.start(obj)
 	
 	print("sense-start")
 	
-	RayLineOfSight = GeneralUtil:CastSphere(self.root.Position, 3, Blackboard.targetPosition - self.root.Position, Blackboard.collisionGroup)
-	
-	print(RayLineOfSight)
-	local direction = self.navigation:FindDirectionToFace()
-	
-	self.navigation:FaceTo(direction)
+	RayLineOfSight = GeneralUtil:CastSphere(self.root.Position, 2, Blackboard.targetPosition - self.root.Position, Blackboard.collisionGroup, false)
 end
 
 
@@ -2376,11 +2371,6 @@ function btTask.run(obj)
 	else
 		Blackboard.isLineOfSight = false
 	end
-	
-
-	
-	
-	
 
 	return SUCCESS
 end
