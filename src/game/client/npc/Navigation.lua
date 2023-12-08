@@ -4,12 +4,12 @@ local require = require(script.Parent.loader).load(script)
 
 local GeneralUtil = require("GeneralUtil")
 
-local NavigationUtil = {}
-NavigationUtil.__index = NavigationUtil
+local Navigation = {}
+Navigation.__index = Navigation
 
-function NavigationUtil.new(npc)
+function Navigation.new(npc)
     local self = {}
-    setmetatable(self, NavigationUtil)
+    setmetatable(self, Navigation)
 
     self.npc = npc
     self.config = npc.config
@@ -92,7 +92,7 @@ local function FindPath(path, startPosition, targetPosition)
 end
 
 
-function NavigationUtil:PathTo(targetPosition)
+function Navigation:PathTo(targetPosition)
 
     local rayResult = GeneralUtil:CastSphere(self.root.Position, 4, Vector3.zero, "RayNPC")
 
@@ -132,7 +132,7 @@ function NavigationUtil:PathTo(targetPosition)
 end
 
 
-function NavigationUtil:MoveTo(targetPosition)
+function Navigation:MoveTo(targetPosition)
     self.isTargetReached = false
 
     if self.moveConnection then
@@ -154,7 +154,7 @@ function NavigationUtil:MoveTo(targetPosition)
 end
 
 
-function NavigationUtil:Stop()
+function Navigation:Stop()
     if self.moveConnection then
         self.moveConnection:Disconnect()
         self.moveConnection = nil
@@ -189,12 +189,12 @@ local ThreadLookDirection = coroutine.create(function(npcRoot, targetDirection)
 end)
 
 
-function NavigationUtil:FaceTo(targetDirection)
+function Navigation:FaceTo(targetDirection)
     coroutine.resume(ThreadLookDirection, self.root, targetDirection)
 end
 
 
-function NavigationUtil:FindDirectionToFace()
+function Navigation:FindDirectionToFace()
     local partsInRadius = GeneralUtil:QueryRadius(self.root.Position, 8, "RayNPC", false)
     if not partsInRadius then
         return
@@ -234,4 +234,4 @@ end
 
 
 
-return NavigationUtil
+return Navigation

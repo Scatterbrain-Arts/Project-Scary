@@ -2,11 +2,8 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
 local packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
-local GetRemoteEvent = require(packages.GetRemoteEvent)
 local GeneralUtil = require(packages.GeneralUtil)
 local Math = require(packages.Math)
-
-local PlayerMoveSoundEvent = GetRemoteEvent("PlayerMoveSoundEvent")
 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
@@ -26,6 +23,8 @@ local STATUS = {
 	breathState = GeneralUtil:GetNumber(StatusFolder, "state breath", IsDebug.Value),
 	moveState = GeneralUtil:GetNumber(StatusFolder, "state move", IsDebug.Value),
 	staminaState = GeneralUtil:GetNumber(StatusFolder, "state stamina", IsDebug.Value),
+
+	currentDecibel = GeneralUtil:GetNumber(StatusFolder, "current decibel", IsDebug.Value)
 }
 
 local STATE_BREATH = {
@@ -157,15 +156,13 @@ local function FireSound(deltaTime)
 			+ (STATE_BREATH.base.Value * STATE_BREATH[STATUS.breathState.Value].scalar.Value)
 			+ (STATE_STAMINA.base.Value * STATE_STAMINA[STATUS.staminaState.Value].scalar.Value)
 
-		local TotalDecibel = (STATE_MOVE.base.Value * STATE_MOVE[shared.states.move.run].scalar.Value)
+		local totalDecibel = (STATE_MOVE.base.Value * STATE_MOVE[shared.states.move.run].scalar.Value)
 		+ (STATE_BREATH.base.Value * STATE_BREATH[shared.states.breath.inhale].scalar.Value)
 		+ (STATE_STAMINA.base.Value * STATE_STAMINA[shared.states.stamina.min].scalar.Value)
-		GuiSoundBar.Size = UDim2.fromScale(Decibel / TotalDecibel, 1)
-		GuiSoundValue.Text = Decibel .. " dB"
-		PlayerMoveSoundEvent:FireServer({
-			position = Root.position,
-			decibel = Decibel,
-		})
+		GuiSoundBar.Size = UDim2.fromScale(Decibel / totalDecibel, 1)
+		GuiSoundValue.Text = math.floor(Decibel) .. " dB"
+
+		STATUS.currentDecibel.Value = Decibel
 	end
 end
 

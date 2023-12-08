@@ -115,7 +115,7 @@
             </Item>
           </Item>
         </Item>
-        <Item class="Folder" referent="8">
+        <Item class="Folder" referent="12">
           <Properties>
             <string name="Name">Idle</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
@@ -124,7 +124,7 @@
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="12">
+          <Item class="StringValue" referent="13">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -135,7 +135,7 @@
               <string name="Value">Tree</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="13">
+          <Item class="StringValue" referent="14">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -143,10 +143,10 @@
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4988012372512503,0,0.5187397738626122,0</string>
+              <string name="Value">0.49396669724538245,0,0.5253760067033179,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="14">
+          <Item class="Folder" referent="15">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -156,7 +156,7 @@
               <BinaryString name="Tags"></BinaryString>
             </Properties>
           </Item>
-          <Item class="Vector3Value" referent="15">
+          <Item class="Vector3Value" referent="16">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -171,7 +171,7 @@
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="16">
+          <Item class="Folder" referent="17">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -180,7 +180,7 @@
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="17">
+            <Item class="IntValue" referent="18">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -191,7 +191,7 @@
                 <int64 name="Value">2</int64>
               </Properties>
             </Item>
-            <Item class="StringValue" referent="18">
+            <Item class="StringValue" referent="19">
               <Properties>
                 <string name="Name">TreeID</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -204,77 +204,16 @@
             </Item>
           </Item>
         </Item>
-      </Item>
-      <Item class="NumberValue" referent="19">
-        <Properties>
-          <string name="Name">Zoom</string>
-          <BinaryString name="AttributesSerialize"></BinaryString>
-          <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-          <bool name="DefinesCapabilities">false</bool>
-          <int64 name="SourceAssetId">-1</int64>
-          <BinaryString name="Tags"></BinaryString>
-          <double name="Value">0.8999999761581421</double>
-        </Properties>
-      </Item>
-      <Item class="Vector3Value" referent="20">
-        <Properties>
-          <string name="Name">WorkspaceX</string>
-          <BinaryString name="AttributesSerialize"></BinaryString>
-          <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-          <bool name="DefinesCapabilities">false</bool>
-          <int64 name="SourceAssetId">-1</int64>
-          <BinaryString name="Tags"></BinaryString>
-          <Vector3 name="Value">
-            <X>0.5</X>
-            <Y>-143</Y>
-            <Z>0</Z>
-          </Vector3>
-        </Properties>
-      </Item>
-      <Item class="Vector3Value" referent="21">
-        <Properties>
-          <string name="Name">WorkspaceY</string>
-          <BinaryString name="AttributesSerialize"></BinaryString>
-          <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-          <bool name="DefinesCapabilities">false</bool>
-          <int64 name="SourceAssetId">-1</int64>
-          <BinaryString name="Tags"></BinaryString>
-          <Vector3 name="Value">
-            <X>0.5</X>
-            <Y>-157</Y>
-            <Z>0</Z>
-          </Vector3>
-        </Properties>
-      </Item>
-    </Item>
-    <Item class="Folder" referent="22">
-      <Properties>
-        <string name="Name">PS_NPC_Idle</string>
-        <BinaryString name="AttributesSerialize"></BinaryString>
-        <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-        <bool name="DefinesCapabilities">false</bool>
-        <int64 name="SourceAssetId">-1</int64>
-        <BinaryString name="Tags">X0JUcmVl</BinaryString>
-      </Properties>
-      <Item class="Folder" referent="23">
-        <Properties>
-          <string name="Name">Nodes</string>
-          <BinaryString name="AttributesSerialize"></BinaryString>
-          <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-          <bool name="DefinesCapabilities">false</bool>
-          <int64 name="SourceAssetId">-1</int64>
-          <BinaryString name="Tags"></BinaryString>
-        </Properties>
-        <Item class="Folder" referent="24">
+        <Item class="Folder" referent="8">
           <Properties>
-            <string name="Name">Root</string>
+            <string name="Name">Do Action</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
             <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
             <bool name="DefinesCapabilities">false</bool>
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="25">
+          <Item class="StringValue" referent="20">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -282,10 +221,10 @@
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">Root</string>
+              <string name="Value">Sequence</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="26">
+          <Item class="StringValue" referent="21">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -293,10 +232,10 @@
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.5055295003184529,0,0.4959876543209877,0</string>
+              <string name="Value">0.49972497249724973,0,0.512499899530607,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="27">
+          <Item class="Folder" referent="22">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -305,7 +244,7 @@
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="ObjectValue" referent="28">
+            <Item class="ObjectValue" referent="23">
               <Properties>
                 <string name="Name">1</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -313,11 +252,22 @@
                 <bool name="DefinesCapabilities">false</bool>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">29</Ref>
+                <Ref name="Value">12</Ref>
+              </Properties>
+            </Item>
+            <Item class="ObjectValue" referent="24">
+              <Properties>
+                <string name="Name">2</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <Ref name="Value">25</Ref>
               </Properties>
             </Item>
           </Item>
-          <Item class="Vector3Value" referent="30">
+          <Item class="Vector3Value" referent="26">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -332,7 +282,7 @@
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="31">
+          <Item class="Folder" referent="27">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -341,7 +291,246 @@
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="32">
+            <Item class="IntValue" referent="28">
+              <Properties>
+                <string name="Name">Index</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <int64 name="Value">3</int64>
+              </Properties>
+            </Item>
+          </Item>
+        </Item>
+        <Item class="Folder" referent="25">
+          <Properties>
+            <string name="Name">Chase</string>
+            <BinaryString name="AttributesSerialize"></BinaryString>
+            <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+            <bool name="DefinesCapabilities">false</bool>
+            <int64 name="SourceAssetId">-1</int64>
+            <BinaryString name="Tags"></BinaryString>
+          </Properties>
+          <Item class="StringValue" referent="29">
+            <Properties>
+              <string name="Name">Type</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">Tree</string>
+            </Properties>
+          </Item>
+          <Item class="StringValue" referent="30">
+            <Properties>
+              <string name="Name">Position</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">0.5053414932364947,0,0.524743350935571,0</string>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="31">
+            <Properties>
+              <string name="Name">Outputs</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+          </Item>
+          <Item class="Vector3Value" referent="32">
+            <Properties>
+              <string name="Name">Size</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <Vector3 name="Value">
+                <X>260</X>
+                <Y>120</Y>
+                <Z>0</Z>
+              </Vector3>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="33">
+            <Properties>
+              <string name="Name">Parameters</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="IntValue" referent="34">
+              <Properties>
+                <string name="Name">Index</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <int64 name="Value">4</int64>
+              </Properties>
+            </Item>
+            <Item class="StringValue" referent="35">
+              <Properties>
+                <string name="Name">TreeID</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <string name="Value">PS_NPC_Chase</string>
+              </Properties>
+            </Item>
+          </Item>
+        </Item>
+      </Item>
+      <Item class="NumberValue" referent="36">
+        <Properties>
+          <string name="Name">Zoom</string>
+          <BinaryString name="AttributesSerialize"></BinaryString>
+          <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+          <bool name="DefinesCapabilities">false</bool>
+          <int64 name="SourceAssetId">-1</int64>
+          <BinaryString name="Tags"></BinaryString>
+          <double name="Value">0.8999999761581421</double>
+        </Properties>
+      </Item>
+      <Item class="Vector3Value" referent="37">
+        <Properties>
+          <string name="Name">WorkspaceX</string>
+          <BinaryString name="AttributesSerialize"></BinaryString>
+          <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+          <bool name="DefinesCapabilities">false</bool>
+          <int64 name="SourceAssetId">-1</int64>
+          <BinaryString name="Tags"></BinaryString>
+          <Vector3 name="Value">
+            <X>0.5</X>
+            <Y>-188</Y>
+            <Z>0</Z>
+          </Vector3>
+        </Properties>
+      </Item>
+      <Item class="Vector3Value" referent="38">
+        <Properties>
+          <string name="Name">WorkspaceY</string>
+          <BinaryString name="AttributesSerialize"></BinaryString>
+          <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+          <bool name="DefinesCapabilities">false</bool>
+          <int64 name="SourceAssetId">-1</int64>
+          <BinaryString name="Tags"></BinaryString>
+          <Vector3 name="Value">
+            <X>0.5</X>
+            <Y>-383</Y>
+            <Z>0</Z>
+          </Vector3>
+        </Properties>
+      </Item>
+    </Item>
+    <Item class="Folder" referent="39">
+      <Properties>
+        <string name="Name">PS_NPC_Chase</string>
+        <BinaryString name="AttributesSerialize"></BinaryString>
+        <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+        <bool name="DefinesCapabilities">false</bool>
+        <int64 name="SourceAssetId">-1</int64>
+        <BinaryString name="Tags">X0JUcmVl</BinaryString>
+      </Properties>
+      <Item class="Folder" referent="40">
+        <Properties>
+          <string name="Name">Nodes</string>
+          <BinaryString name="AttributesSerialize"></BinaryString>
+          <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+          <bool name="DefinesCapabilities">false</bool>
+          <int64 name="SourceAssetId">-1</int64>
+          <BinaryString name="Tags"></BinaryString>
+        </Properties>
+        <Item class="Folder" referent="41">
+          <Properties>
+            <string name="Name">Root</string>
+            <BinaryString name="AttributesSerialize"></BinaryString>
+            <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+            <bool name="DefinesCapabilities">false</bool>
+            <int64 name="SourceAssetId">-1</int64>
+            <BinaryString name="Tags"></BinaryString>
+          </Properties>
+          <Item class="StringValue" referent="42">
+            <Properties>
+              <string name="Name">Type</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">Root</string>
+            </Properties>
+          </Item>
+          <Item class="StringValue" referent="43">
+            <Properties>
+              <string name="Name">Position</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">0.5055295003184529,0,0.4959876543209877,0</string>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="44">
+            <Properties>
+              <string name="Name">Outputs</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="ObjectValue" referent="45">
+              <Properties>
+                <string name="Name">1</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <Ref name="Value">46</Ref>
+              </Properties>
+            </Item>
+          </Item>
+          <Item class="Vector3Value" referent="47">
+            <Properties>
+              <string name="Name">Size</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <Vector3 name="Value">
+                <X>260</X>
+                <Y>92</Y>
+                <Z>0</Z>
+              </Vector3>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="48">
+            <Properties>
+              <string name="Name">Parameters</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="IntValue" referent="49">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -354,7 +543,7 @@
             </Item>
           </Item>
         </Item>
-        <Item class="Folder" referent="33">
+        <Item class="Folder" referent="50">
           <Properties>
             <string name="Name">Wait</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
@@ -363,7 +552,7 @@
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="34">
+          <Item class="StringValue" referent="51">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -374,7 +563,7 @@
               <string name="Value">Task</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="35">
+          <Item class="StringValue" referent="52">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -382,10 +571,10 @@
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.5311018560737653,0,0.5223346474729939,0</string>
+              <string name="Value">0.5309157333295724,0,0.521011888099874,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="36">
+          <Item class="Folder" referent="53">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -395,7 +584,7 @@
               <BinaryString name="Tags"></BinaryString>
             </Properties>
           </Item>
-          <Item class="Vector3Value" referent="37">
+          <Item class="Vector3Value" referent="54">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -410,7 +599,7 @@
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="38">
+          <Item class="Folder" referent="55">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -419,7 +608,7 @@
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="39">
+            <Item class="IntValue" referent="56">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -431,7 +620,7 @@
               </Properties>
             </Item>
           </Item>
-          <Item class="ModuleScript" referent="40">
+          <Item class="ModuleScript" referent="57">
             <Properties>
               <string name="Name">Wait</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -481,7 +670,7 @@ return btTask
             </Properties>
           </Item>
         </Item>
-        <Item class="Folder" referent="41">
+        <Item class="Folder" referent="58">
           <Properties>
             <string name="Name">FindTarget</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
@@ -490,7 +679,7 @@ return btTask
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="42">
+          <Item class="StringValue" referent="59">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -501,7 +690,7 @@ return btTask
               <string name="Value">Task</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="43">
+          <Item class="StringValue" referent="60">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -509,10 +698,10 @@ return btTask
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4794183982542991,0,0.5212691695601852,0</string>
+              <string name="Value">0.4813508486054022,0,0.5199767523845251,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="44">
+          <Item class="Folder" referent="61">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -522,7 +711,7 @@ return btTask
               <BinaryString name="Tags"></BinaryString>
             </Properties>
           </Item>
-          <Item class="Vector3Value" referent="45">
+          <Item class="Vector3Value" referent="62">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -537,7 +726,7 @@ return btTask
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="46">
+          <Item class="Folder" referent="63">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -546,7 +735,7 @@ return btTask
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="47">
+            <Item class="IntValue" referent="64">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -558,7 +747,7 @@ return btTask
               </Properties>
             </Item>
           </Item>
-          <Item class="ModuleScript" referent="48">
+          <Item class="ModuleScript" referent="65">
             <Properties>
               <string name="Name">FindTarget</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -616,7 +805,7 @@ return btTask
             </Properties>
           </Item>
         </Item>
-        <Item class="Folder" referent="29">
+        <Item class="Folder" referent="46">
           <Properties>
             <string name="Name">Begin Move</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
@@ -625,7 +814,7 @@ return btTask
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="49">
+          <Item class="StringValue" referent="66">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -636,7 +825,7 @@ return btTask
               <string name="Value">Sequence</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="50">
+          <Item class="StringValue" referent="67">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -647,7 +836,7 @@ return btTask
               <string name="Value">0.5055198879262927,0,0.5103875305426955,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="51">
+          <Item class="Folder" referent="68">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -656,7 +845,7 @@ return btTask
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="ObjectValue" referent="52">
+            <Item class="ObjectValue" referent="69">
               <Properties>
                 <string name="Name">4</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -664,10 +853,10 @@ return btTask
                 <bool name="DefinesCapabilities">false</bool>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">33</Ref>
+                <Ref name="Value">50</Ref>
               </Properties>
             </Item>
-            <Item class="ObjectValue" referent="53">
+            <Item class="ObjectValue" referent="70">
               <Properties>
                 <string name="Name">1</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -675,10 +864,10 @@ return btTask
                 <bool name="DefinesCapabilities">false</bool>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">41</Ref>
+                <Ref name="Value">58</Ref>
               </Properties>
             </Item>
-            <Item class="ObjectValue" referent="54">
+            <Item class="ObjectValue" referent="71">
               <Properties>
                 <string name="Name">2</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -686,10 +875,10 @@ return btTask
                 <bool name="DefinesCapabilities">false</bool>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">55</Ref>
+                <Ref name="Value">72</Ref>
               </Properties>
             </Item>
-            <Item class="ObjectValue" referent="56">
+            <Item class="ObjectValue" referent="73">
               <Properties>
                 <string name="Name">3</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -697,11 +886,11 @@ return btTask
                 <bool name="DefinesCapabilities">false</bool>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">57</Ref>
+                <Ref name="Value">74</Ref>
               </Properties>
             </Item>
           </Item>
-          <Item class="Vector3Value" referent="58">
+          <Item class="Vector3Value" referent="75">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -716,7 +905,7 @@ return btTask
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="59">
+          <Item class="Folder" referent="76">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -725,7 +914,7 @@ return btTask
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="60">
+            <Item class="IntValue" referent="77">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -738,7 +927,7 @@ return btTask
             </Item>
           </Item>
         </Item>
-        <Item class="Folder" referent="61">
+        <Item class="Folder" referent="78">
           <Properties>
             <string name="Name">PathToTarget</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
@@ -747,7 +936,7 @@ return btTask
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="62">
+          <Item class="StringValue" referent="79">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -758,7 +947,7 @@ return btTask
               <string name="Value">Task</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="63">
+          <Item class="StringValue" referent="80">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -769,7 +958,7 @@ return btTask
               <string name="Value">0.5198125538293961,0,0.5454402468332047,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="64">
+          <Item class="Folder" referent="81">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -779,7 +968,7 @@ return btTask
               <BinaryString name="Tags"></BinaryString>
             </Properties>
           </Item>
-          <Item class="Vector3Value" referent="65">
+          <Item class="Vector3Value" referent="82">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -794,7 +983,7 @@ return btTask
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="66">
+          <Item class="Folder" referent="83">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -803,7 +992,7 @@ return btTask
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="67">
+            <Item class="IntValue" referent="84">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -815,7 +1004,7 @@ return btTask
               </Properties>
             </Item>
           </Item>
-          <Item class="ModuleScript" referent="68">
+          <Item class="ModuleScript" referent="85">
             <Properties>
               <string name="Name">PathToTarget</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -896,7 +1085,7 @@ return btTask
             </Properties>
           </Item>
         </Item>
-        <Item class="Folder" referent="55">
+        <Item class="Folder" referent="72">
           <Properties>
             <string name="Name">SensePath</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
@@ -905,7 +1094,7 @@ return btTask
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="69">
+          <Item class="StringValue" referent="86">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -916,7 +1105,7 @@ return btTask
               <string name="Value">Task</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="70">
+          <Item class="StringValue" referent="87">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -924,10 +1113,10 @@ return btTask
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4962059603012561,0,0.5234207179792297,0</string>
+              <string name="Value">0.4966153997367287,0,0.5228254721118386,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="71">
+          <Item class="Folder" referent="88">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -937,7 +1126,7 @@ return btTask
               <BinaryString name="Tags"></BinaryString>
             </Properties>
           </Item>
-          <Item class="Vector3Value" referent="72">
+          <Item class="Vector3Value" referent="89">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -952,7 +1141,7 @@ return btTask
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="73">
+          <Item class="Folder" referent="90">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -961,7 +1150,7 @@ return btTask
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="74">
+            <Item class="IntValue" referent="91">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -973,7 +1162,7 @@ return btTask
               </Properties>
             </Item>
           </Item>
-          <Item class="ModuleScript" referent="75">
+          <Item class="ModuleScript" referent="92">
             <Properties>
               <string name="Name">SensePath</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1032,7 +1221,7 @@ return btTask
             </Properties>
           </Item>
         </Item>
-        <Item class="Folder" referent="57">
+        <Item class="Folder" referent="74">
           <Properties>
             <string name="Name">Move Check</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1041,7 +1230,7 @@ return btTask
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="76">
+          <Item class="StringValue" referent="93">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1052,7 +1241,7 @@ return btTask
               <string name="Value">Selector</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="77">
+          <Item class="StringValue" referent="94">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1063,7 +1252,7 @@ return btTask
               <string name="Value">0.5070204954294771,0,0.5265740539801955,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="78">
+          <Item class="Folder" referent="95">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1072,7 +1261,7 @@ return btTask
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="ObjectValue" referent="79">
+            <Item class="ObjectValue" referent="96">
               <Properties>
                 <string name="Name">1</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1080,10 +1269,10 @@ return btTask
                 <bool name="DefinesCapabilities">false</bool>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">80</Ref>
+                <Ref name="Value">97</Ref>
               </Properties>
             </Item>
-            <Item class="ObjectValue" referent="81">
+            <Item class="ObjectValue" referent="98">
               <Properties>
                 <string name="Name">2</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1091,11 +1280,11 @@ return btTask
                 <bool name="DefinesCapabilities">false</bool>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">82</Ref>
+                <Ref name="Value">99</Ref>
               </Properties>
             </Item>
           </Item>
-          <Item class="Vector3Value" referent="83">
+          <Item class="Vector3Value" referent="100">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1110,7 +1299,7 @@ return btTask
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="84">
+          <Item class="Folder" referent="101">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1119,7 +1308,7 @@ return btTask
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="85">
+            <Item class="IntValue" referent="102">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1132,7 +1321,7 @@ return btTask
             </Item>
           </Item>
         </Item>
-        <Item class="Folder" referent="86">
+        <Item class="Folder" referent="103">
           <Properties>
             <string name="Name">MoveToTarget</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1141,7 +1330,7 @@ return btTask
             <int64 name="SourceAssetId">-1</int64>
             <BinaryString name="Tags"></BinaryString>
           </Properties>
-          <Item class="StringValue" referent="87">
+          <Item class="StringValue" referent="104">
             <Properties>
               <string name="Name">Type</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1152,7 +1341,7 @@ return btTask
               <string name="Value">Task</string>
             </Properties>
           </Item>
-          <Item class="StringValue" referent="88">
+          <Item class="StringValue" referent="105">
             <Properties>
               <string name="Name">Position</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1163,7 +1352,7 @@ return btTask
               <string name="Value">0.5028686770815239,0,0.5453642919720936,0</string>
             </Properties>
           </Item>
-          <Item class="Folder" referent="89">
+          <Item class="Folder" referent="106">
             <Properties>
               <string name="Name">Outputs</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1173,7 +1362,7 @@ return btTask
               <BinaryString name="Tags"></BinaryString>
             </Properties>
           </Item>
-          <Item class="Vector3Value" referent="90">
+          <Item class="Vector3Value" referent="107">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1188,7 +1377,7 @@ return btTask
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="91">
+          <Item class="Folder" referent="108">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1197,7 +1386,7 @@ return btTask
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="92">
+            <Item class="IntValue" referent="109">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1209,7 +1398,7 @@ return btTask
               </Properties>
             </Item>
           </Item>
-          <Item class="ModuleScript" referent="93">
+          <Item class="ModuleScript" referent="110">
             <Properties>
               <string name="Name">MoveToTarget</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1285,220 +1474,9 @@ return btTask
             </Properties>
           </Item>
         </Item>
-        <Item class="Folder" referent="94">
+        <Item class="Folder" referent="111">
           <Properties>
             <string name="Name">Node9</string>
-            <BinaryString name="AttributesSerialize"></BinaryString>
-            <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-            <bool name="DefinesCapabilities">false</bool>
-            <int64 name="SourceAssetId">-1</int64>
-            <BinaryString name="Tags"></BinaryString>
-          </Properties>
-          <Item class="StringValue" referent="95">
-            <Properties>
-              <string name="Name">Type</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <string name="Value">Blackboard Query</string>
-            </Properties>
-          </Item>
-          <Item class="StringValue" referent="96">
-            <Properties>
-              <string name="Name">Position</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4948886952840021,0,0.5452148939846965,0</string>
-            </Properties>
-          </Item>
-          <Item class="Folder" referent="97">
-            <Properties>
-              <string name="Name">Outputs</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-            </Properties>
-          </Item>
-          <Item class="Vector3Value" referent="98">
-            <Properties>
-              <string name="Name">Size</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <Vector3 name="Value">
-                <X>260</X>
-                <Y>176</Y>
-                <Z>0</Z>
-              </Vector3>
-            </Properties>
-          </Item>
-          <Item class="Folder" referent="99">
-            <Properties>
-              <string name="Name">Parameters</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-            </Properties>
-            <Item class="IntValue" referent="100">
-              <Properties>
-                <string name="Name">Index</string>
-                <BinaryString name="AttributesSerialize"></BinaryString>
-                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-                <bool name="DefinesCapabilities">false</bool>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <int64 name="Value">9</int64>
-              </Properties>
-            </Item>
-            <Item class="StringValue" referent="101">
-              <Properties>
-                <string name="Name">Value</string>
-                <BinaryString name="AttributesSerialize"></BinaryString>
-                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-                <bool name="DefinesCapabilities">false</bool>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <string name="Value">true</string>
-              </Properties>
-            </Item>
-            <Item class="StringValue" referent="102">
-              <Properties>
-                <string name="Name">Key</string>
-                <BinaryString name="AttributesSerialize"></BinaryString>
-                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-                <bool name="DefinesCapabilities">false</bool>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <string name="Value">isLineOfSight</string>
-              </Properties>
-            </Item>
-            <Item class="StringValue" referent="103">
-              <Properties>
-                <string name="Name">Board</string>
-                <BinaryString name="AttributesSerialize"></BinaryString>
-                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-                <bool name="DefinesCapabilities">false</bool>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <string name="Value">Entity</string>
-              </Properties>
-            </Item>
-          </Item>
-        </Item>
-        <Item class="Folder" referent="80">
-          <Properties>
-            <string name="Name">Use MoveToTarget</string>
-            <BinaryString name="AttributesSerialize"></BinaryString>
-            <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-            <bool name="DefinesCapabilities">false</bool>
-            <int64 name="SourceAssetId">-1</int64>
-            <BinaryString name="Tags"></BinaryString>
-          </Properties>
-          <Item class="StringValue" referent="104">
-            <Properties>
-              <string name="Name">Type</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <string name="Value">Sequence</string>
-            </Properties>
-          </Item>
-          <Item class="StringValue" referent="105">
-            <Properties>
-              <string name="Name">Position</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.4999698623234034,0,0.5365577980324074,0</string>
-            </Properties>
-          </Item>
-          <Item class="Folder" referent="106">
-            <Properties>
-              <string name="Name">Outputs</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-            </Properties>
-            <Item class="ObjectValue" referent="107">
-              <Properties>
-                <string name="Name">1</string>
-                <BinaryString name="AttributesSerialize"></BinaryString>
-                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-                <bool name="DefinesCapabilities">false</bool>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">94</Ref>
-              </Properties>
-            </Item>
-            <Item class="ObjectValue" referent="108">
-              <Properties>
-                <string name="Name">2</string>
-                <BinaryString name="AttributesSerialize"></BinaryString>
-                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-                <bool name="DefinesCapabilities">false</bool>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">86</Ref>
-              </Properties>
-            </Item>
-          </Item>
-          <Item class="Vector3Value" referent="109">
-            <Properties>
-              <string name="Name">Size</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <Vector3 name="Value">
-                <X>260</X>
-                <Y>92</Y>
-                <Z>0</Z>
-              </Vector3>
-            </Properties>
-          </Item>
-          <Item class="Folder" referent="110">
-            <Properties>
-              <string name="Name">Parameters</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-            </Properties>
-            <Item class="IntValue" referent="111">
-              <Properties>
-                <string name="Name">Index</string>
-                <BinaryString name="AttributesSerialize"></BinaryString>
-                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-                <bool name="DefinesCapabilities">false</bool>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <int64 name="Value">10</int64>
-              </Properties>
-            </Item>
-          </Item>
-        </Item>
-        <Item class="Folder" referent="82">
-          <Properties>
-            <string name="Name">Use PathToTarget</string>
             <BinaryString name="AttributesSerialize"></BinaryString>
             <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
             <bool name="DefinesCapabilities">false</bool>
@@ -1513,7 +1491,7 @@ return btTask
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">Sequence</string>
+              <string name="Value">Blackboard Query</string>
             </Properties>
           </Item>
           <Item class="StringValue" referent="113">
@@ -1524,7 +1502,7 @@ return btTask
               <bool name="DefinesCapabilities">false</bool>
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.51575007418505,0,0.5363269193672839,0</string>
+              <string name="Value">0.4948886952840021,0,0.5452148939846965,0</string>
             </Properties>
           </Item>
           <Item class="Folder" referent="114">
@@ -1536,108 +1514,8 @@ return btTask
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="ObjectValue" referent="115">
-              <Properties>
-                <string name="Name">2</string>
-                <BinaryString name="AttributesSerialize"></BinaryString>
-                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-                <bool name="DefinesCapabilities">false</bool>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">61</Ref>
-              </Properties>
-            </Item>
-            <Item class="ObjectValue" referent="116">
-              <Properties>
-                <string name="Name">1</string>
-                <BinaryString name="AttributesSerialize"></BinaryString>
-                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-                <bool name="DefinesCapabilities">false</bool>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <Ref name="Value">117</Ref>
-              </Properties>
-            </Item>
           </Item>
-          <Item class="Vector3Value" referent="118">
-            <Properties>
-              <string name="Name">Size</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <Vector3 name="Value">
-                <X>260</X>
-                <Y>92</Y>
-                <Z>0</Z>
-              </Vector3>
-            </Properties>
-          </Item>
-          <Item class="Folder" referent="119">
-            <Properties>
-              <string name="Name">Parameters</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-            </Properties>
-            <Item class="IntValue" referent="120">
-              <Properties>
-                <string name="Name">Index</string>
-                <BinaryString name="AttributesSerialize"></BinaryString>
-                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-                <bool name="DefinesCapabilities">false</bool>
-                <int64 name="SourceAssetId">-1</int64>
-                <BinaryString name="Tags"></BinaryString>
-                <int64 name="Value">11</int64>
-              </Properties>
-            </Item>
-          </Item>
-        </Item>
-        <Item class="Folder" referent="117">
-          <Properties>
-            <string name="Name">Node12</string>
-            <BinaryString name="AttributesSerialize"></BinaryString>
-            <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-            <bool name="DefinesCapabilities">false</bool>
-            <int64 name="SourceAssetId">-1</int64>
-            <BinaryString name="Tags"></BinaryString>
-          </Properties>
-          <Item class="StringValue" referent="121">
-            <Properties>
-              <string name="Name">Type</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <string name="Value">Blackboard Query</string>
-            </Properties>
-          </Item>
-          <Item class="StringValue" referent="122">
-            <Properties>
-              <string name="Name">Position</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-              <string name="Value">0.5122708971143825,0,0.5452002254533179,0</string>
-            </Properties>
-          </Item>
-          <Item class="Folder" referent="123">
-            <Properties>
-              <string name="Name">Outputs</string>
-              <BinaryString name="AttributesSerialize"></BinaryString>
-              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-              <bool name="DefinesCapabilities">false</bool>
-              <int64 name="SourceAssetId">-1</int64>
-              <BinaryString name="Tags"></BinaryString>
-            </Properties>
-          </Item>
-          <Item class="Vector3Value" referent="124">
+          <Item class="Vector3Value" referent="115">
             <Properties>
               <string name="Name">Size</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1652,7 +1530,7 @@ return btTask
               </Vector3>
             </Properties>
           </Item>
-          <Item class="Folder" referent="125">
+          <Item class="Folder" referent="116">
             <Properties>
               <string name="Name">Parameters</string>
               <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1661,7 +1539,7 @@ return btTask
               <int64 name="SourceAssetId">-1</int64>
               <BinaryString name="Tags"></BinaryString>
             </Properties>
-            <Item class="IntValue" referent="126">
+            <Item class="IntValue" referent="117">
               <Properties>
                 <string name="Name">Index</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1669,10 +1547,10 @@ return btTask
                 <bool name="DefinesCapabilities">false</bool>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <int64 name="Value">12</int64>
+                <int64 name="Value">9</int64>
               </Properties>
             </Item>
-            <Item class="StringValue" referent="127">
+            <Item class="StringValue" referent="118">
               <Properties>
                 <string name="Name">Value</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1680,10 +1558,10 @@ return btTask
                 <bool name="DefinesCapabilities">false</bool>
                 <int64 name="SourceAssetId">-1</int64>
                 <BinaryString name="Tags"></BinaryString>
-                <string name="Value">false</string>
+                <string name="Value">true</string>
               </Properties>
             </Item>
-            <Item class="StringValue" referent="128">
+            <Item class="StringValue" referent="119">
               <Properties>
                 <string name="Name">Key</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1694,7 +1572,318 @@ return btTask
                 <string name="Value">isLineOfSight</string>
               </Properties>
             </Item>
-            <Item class="StringValue" referent="129">
+            <Item class="StringValue" referent="120">
+              <Properties>
+                <string name="Name">Board</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <string name="Value">Entity</string>
+              </Properties>
+            </Item>
+          </Item>
+        </Item>
+        <Item class="Folder" referent="97">
+          <Properties>
+            <string name="Name">Use MoveToTarget</string>
+            <BinaryString name="AttributesSerialize"></BinaryString>
+            <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+            <bool name="DefinesCapabilities">false</bool>
+            <int64 name="SourceAssetId">-1</int64>
+            <BinaryString name="Tags"></BinaryString>
+          </Properties>
+          <Item class="StringValue" referent="121">
+            <Properties>
+              <string name="Name">Type</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">Sequence</string>
+            </Properties>
+          </Item>
+          <Item class="StringValue" referent="122">
+            <Properties>
+              <string name="Name">Position</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">0.4999698623234034,0,0.5365577980324074,0</string>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="123">
+            <Properties>
+              <string name="Name">Outputs</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="ObjectValue" referent="124">
+              <Properties>
+                <string name="Name">1</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <Ref name="Value">111</Ref>
+              </Properties>
+            </Item>
+            <Item class="ObjectValue" referent="125">
+              <Properties>
+                <string name="Name">2</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <Ref name="Value">103</Ref>
+              </Properties>
+            </Item>
+          </Item>
+          <Item class="Vector3Value" referent="126">
+            <Properties>
+              <string name="Name">Size</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <Vector3 name="Value">
+                <X>260</X>
+                <Y>92</Y>
+                <Z>0</Z>
+              </Vector3>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="127">
+            <Properties>
+              <string name="Name">Parameters</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="IntValue" referent="128">
+              <Properties>
+                <string name="Name">Index</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <int64 name="Value">10</int64>
+              </Properties>
+            </Item>
+          </Item>
+        </Item>
+        <Item class="Folder" referent="99">
+          <Properties>
+            <string name="Name">Use PathToTarget</string>
+            <BinaryString name="AttributesSerialize"></BinaryString>
+            <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+            <bool name="DefinesCapabilities">false</bool>
+            <int64 name="SourceAssetId">-1</int64>
+            <BinaryString name="Tags"></BinaryString>
+          </Properties>
+          <Item class="StringValue" referent="129">
+            <Properties>
+              <string name="Name">Type</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">Sequence</string>
+            </Properties>
+          </Item>
+          <Item class="StringValue" referent="130">
+            <Properties>
+              <string name="Name">Position</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">0.51575007418505,0,0.5363269193672839,0</string>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="131">
+            <Properties>
+              <string name="Name">Outputs</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="ObjectValue" referent="132">
+              <Properties>
+                <string name="Name">2</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <Ref name="Value">78</Ref>
+              </Properties>
+            </Item>
+            <Item class="ObjectValue" referent="133">
+              <Properties>
+                <string name="Name">1</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <Ref name="Value">134</Ref>
+              </Properties>
+            </Item>
+          </Item>
+          <Item class="Vector3Value" referent="135">
+            <Properties>
+              <string name="Name">Size</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <Vector3 name="Value">
+                <X>260</X>
+                <Y>92</Y>
+                <Z>0</Z>
+              </Vector3>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="136">
+            <Properties>
+              <string name="Name">Parameters</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="IntValue" referent="137">
+              <Properties>
+                <string name="Name">Index</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <int64 name="Value">11</int64>
+              </Properties>
+            </Item>
+          </Item>
+        </Item>
+        <Item class="Folder" referent="134">
+          <Properties>
+            <string name="Name">Node12</string>
+            <BinaryString name="AttributesSerialize"></BinaryString>
+            <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+            <bool name="DefinesCapabilities">false</bool>
+            <int64 name="SourceAssetId">-1</int64>
+            <BinaryString name="Tags"></BinaryString>
+          </Properties>
+          <Item class="StringValue" referent="138">
+            <Properties>
+              <string name="Name">Type</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">Blackboard Query</string>
+            </Properties>
+          </Item>
+          <Item class="StringValue" referent="139">
+            <Properties>
+              <string name="Name">Position</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">0.5122708971143825,0,0.5452002254533179,0</string>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="140">
+            <Properties>
+              <string name="Name">Outputs</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+          </Item>
+          <Item class="Vector3Value" referent="141">
+            <Properties>
+              <string name="Name">Size</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <Vector3 name="Value">
+                <X>260</X>
+                <Y>176</Y>
+                <Z>0</Z>
+              </Vector3>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="142">
+            <Properties>
+              <string name="Name">Parameters</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="IntValue" referent="143">
+              <Properties>
+                <string name="Name">Index</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <int64 name="Value">12</int64>
+              </Properties>
+            </Item>
+            <Item class="StringValue" referent="144">
+              <Properties>
+                <string name="Name">Value</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <string name="Value">false</string>
+              </Properties>
+            </Item>
+            <Item class="StringValue" referent="145">
+              <Properties>
+                <string name="Name">Key</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <string name="Value">isLineOfSight</string>
+              </Properties>
+            </Item>
+            <Item class="StringValue" referent="146">
               <Properties>
                 <string name="Name">Board</string>
                 <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1708,7 +1897,7 @@ return btTask
           </Item>
         </Item>
       </Item>
-      <Item class="NumberValue" referent="130">
+      <Item class="NumberValue" referent="147">
         <Properties>
           <string name="Name">Zoom</string>
           <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1719,7 +1908,7 @@ return btTask
           <double name="Value">0.7999999523162842</double>
         </Properties>
       </Item>
-      <Item class="Vector3Value" referent="131">
+      <Item class="Vector3Value" referent="148">
         <Properties>
           <string name="Name">WorkspaceX</string>
           <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1729,12 +1918,12 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-409</Y>
+            <Y>-275</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
       </Item>
-      <Item class="Vector3Value" referent="132">
+      <Item class="Vector3Value" referent="149">
         <Properties>
           <string name="Name">WorkspaceY</string>
           <BinaryString name="AttributesSerialize"></BinaryString>
@@ -1744,7 +1933,280 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-422</Y>
+            <Y>-406</Y>
+            <Z>0</Z>
+          </Vector3>
+        </Properties>
+      </Item>
+    </Item>
+    <Item class="Folder" referent="150">
+      <Properties>
+        <string name="Name">PS_NPC_Idle</string>
+        <BinaryString name="AttributesSerialize"></BinaryString>
+        <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+        <bool name="DefinesCapabilities">false</bool>
+        <int64 name="SourceAssetId">-1</int64>
+        <BinaryString name="Tags">X0JUcmVl</BinaryString>
+      </Properties>
+      <Item class="Folder" referent="151">
+        <Properties>
+          <string name="Name">Nodes</string>
+          <BinaryString name="AttributesSerialize"></BinaryString>
+          <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+          <bool name="DefinesCapabilities">false</bool>
+          <int64 name="SourceAssetId">-1</int64>
+          <BinaryString name="Tags"></BinaryString>
+        </Properties>
+        <Item class="Folder" referent="152">
+          <Properties>
+            <string name="Name">Root</string>
+            <BinaryString name="AttributesSerialize"></BinaryString>
+            <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+            <bool name="DefinesCapabilities">false</bool>
+            <int64 name="SourceAssetId">-1</int64>
+            <BinaryString name="Tags"></BinaryString>
+          </Properties>
+          <Item class="StringValue" referent="153">
+            <Properties>
+              <string name="Name">Type</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">Root</string>
+            </Properties>
+          </Item>
+          <Item class="StringValue" referent="154">
+            <Properties>
+              <string name="Name">Position</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">0.49567483064095885,0,0.4894907407407407,0</string>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="155">
+            <Properties>
+              <string name="Name">Outputs</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="ObjectValue" referent="156">
+              <Properties>
+                <string name="Name">1</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <Ref name="Value">157</Ref>
+              </Properties>
+            </Item>
+          </Item>
+          <Item class="Vector3Value" referent="158">
+            <Properties>
+              <string name="Name">Size</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <Vector3 name="Value">
+                <X>260</X>
+                <Y>92</Y>
+                <Z>0</Z>
+              </Vector3>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="159">
+            <Properties>
+              <string name="Name">Parameters</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="IntValue" referent="160">
+              <Properties>
+                <string name="Name">Index</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <int64 name="Value">1</int64>
+              </Properties>
+            </Item>
+          </Item>
+        </Item>
+        <Item class="Folder" referent="157">
+          <Properties>
+            <string name="Name">Check</string>
+            <BinaryString name="AttributesSerialize"></BinaryString>
+            <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+            <bool name="DefinesCapabilities">false</bool>
+            <int64 name="SourceAssetId">-1</int64>
+            <BinaryString name="Tags"></BinaryString>
+          </Properties>
+          <Item class="StringValue" referent="161">
+            <Properties>
+              <string name="Name">Type</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">Task</string>
+            </Properties>
+          </Item>
+          <Item class="StringValue" referent="162">
+            <Properties>
+              <string name="Name">Position</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <string name="Value">0.49378582595101617,0,0.5058796296296296,0</string>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="163">
+            <Properties>
+              <string name="Name">Outputs</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+          </Item>
+          <Item class="Vector3Value" referent="164">
+            <Properties>
+              <string name="Name">Size</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+              <Vector3 name="Value">
+                <X>260</X>
+                <Y>92</Y>
+                <Z>0</Z>
+              </Vector3>
+            </Properties>
+          </Item>
+          <Item class="Folder" referent="165">
+            <Properties>
+              <string name="Name">Parameters</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+            <Item class="IntValue" referent="166">
+              <Properties>
+                <string name="Name">Index</string>
+                <BinaryString name="AttributesSerialize"></BinaryString>
+                <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+                <bool name="DefinesCapabilities">false</bool>
+                <int64 name="SourceAssetId">-1</int64>
+                <BinaryString name="Tags"></BinaryString>
+                <int64 name="Value">2</int64>
+              </Properties>
+            </Item>
+          </Item>
+          <Item class="ModuleScript" referent="167">
+            <Properties>
+              <string name="Name">Check</string>
+              <BinaryString name="AttributesSerialize"></BinaryString>
+              <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+              <bool name="DefinesCapabilities">false</bool>
+              <Content name="LinkedSource">
+                <null>
+                </null>
+              </Content>
+              <string name="Source"><![CDATA[local btTask = {}
+
+local SUCCESS,FAIL,RUNNING = 1,2,3
+
+
+function btTask.start(obj)
+	local Blackboard = obj.Blackboard
+	local self = obj.self
+end
+
+
+function btTask.finish(obj, status)
+	local Blackboard = obj.Blackboard
+	local self = obj.self
+end
+
+
+function btTask.run(obj)
+	local Blackboard = obj.Blackboard
+	local self = obj.self
+	
+	if self.soundDetection.hunt then
+		return SUCCESS
+	else
+		return FAIL
+	end
+end
+
+
+return btTask
+]]></string>
+              <int64 name="SourceAssetId">-1</int64>
+              <BinaryString name="Tags"></BinaryString>
+            </Properties>
+          </Item>
+        </Item>
+      </Item>
+      <Item class="NumberValue" referent="168">
+        <Properties>
+          <string name="Name">Zoom</string>
+          <BinaryString name="AttributesSerialize"></BinaryString>
+          <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+          <bool name="DefinesCapabilities">false</bool>
+          <int64 name="SourceAssetId">-1</int64>
+          <BinaryString name="Tags"></BinaryString>
+          <double name="Value">1</double>
+        </Properties>
+      </Item>
+      <Item class="Vector3Value" referent="169">
+        <Properties>
+          <string name="Name">WorkspaceX</string>
+          <BinaryString name="AttributesSerialize"></BinaryString>
+          <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+          <bool name="DefinesCapabilities">false</bool>
+          <int64 name="SourceAssetId">-1</int64>
+          <BinaryString name="Tags"></BinaryString>
+          <Vector3 name="Value">
+            <X>0.5</X>
+            <Y>0</Y>
+            <Z>0</Z>
+          </Vector3>
+        </Properties>
+      </Item>
+      <Item class="Vector3Value" referent="170">
+        <Properties>
+          <string name="Name">WorkspaceY</string>
+          <BinaryString name="AttributesSerialize"></BinaryString>
+          <SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+          <bool name="DefinesCapabilities">false</bool>
+          <int64 name="SourceAssetId">-1</int64>
+          <BinaryString name="Tags"></BinaryString>
+          <Vector3 name="Value">
+            <X>0.5</X>
+            <Y>0</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>

@@ -12,7 +12,8 @@ local EventNPCSpawn = GetRemoteEvent("EventNPCSpawn")
 
 local NPCDebug = require("NPCDebug")
 local GeneralUtil = require("GeneralUtil")
-local NavigationUtil = require("NavigationUtil")
+local Navigation = require("Navigation")
+local NPCSoundDetection = require("NPCSoundDetection")
 
 local NPC = {}
 NPC.__index = NPC
@@ -40,7 +41,17 @@ function NPC.new(npcModel, player)
 		self.NPCDebug = NPCDebug.new(self)
 	end
 
-	self.navigation = NavigationUtil.new(self)
+	self.player = player
+	self.playerCharacter = player.Character or player.CharacterAdded:Wait()
+	Players.PlayerAdded:Connect(function(player)
+		self.player = player
+		player.CharacterAdded:Connect(function(character)
+			self.playerCharacter = character
+		end)
+	end)
+
+	self.navigation = Navigation.new(self)
+	self.soundDetection = NPCSoundDetection.new(self)
 
 
 	self.btRoot = BehaviorTreeCreator:Create(ReplicatedStorage.Trees.PS_NPC_Start, self)
@@ -63,15 +74,6 @@ function NPC.new(npcModel, player)
 				self.NPCDebug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name, false)
 			end
 		end
-	end)
-
-	self.player = player
-	self.playerCharacter = player.Character or player.CharacterAdded:Wait()
-	Players.PlayerAdded:Connect(function(player)
-		self.player = player
-		player.CharacterAdded:Connect(function(character)
-			self.playerCharacter = character
-		end)
 	end)
 
 	EventNPCSpawn:FireServer(self.character)

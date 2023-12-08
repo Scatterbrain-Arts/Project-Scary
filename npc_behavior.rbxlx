@@ -1290,7 +1290,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003de6</UniqueId>
 							</Properties>
-							<Item class="ObjectValue" referent="RBX34857DACCD8B4B4C96BDE0CDEDB438CB">
+							<Item class="ObjectValue" referent="RBXCCCD81A9297944A7AD03FCD77041C9EF">
 								<Properties>
 									<BinaryString name="AttributesSerialize"></BinaryString>
 									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -1299,8 +1299,8 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 									<string name="Name">1</string>
 									<int64 name="SourceAssetId">-1</int64>
 									<BinaryString name="Tags"></BinaryString>
-									<UniqueId name="UniqueId">11755ee6a08ffde3057039e200004d7c</UniqueId>
-									<Ref name="Value">RBX9D6FA53F1D43438EB4E812F8ABDB0AD6</Ref>
+									<UniqueId name="UniqueId">5388b23186a737640583d2570001b2ec</UniqueId>
+									<Ref name="Value">RBXE96A6985C71D420D8E8900F6E9169278</Ref>
 								</Properties>
 							</Item>
 						</Item>
@@ -1381,7 +1381,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">11755ee6a08ffde3057039e200004527</UniqueId>
-								<string name="Value">0.4988012372512503,0,0.5187397738626122,0</string>
+								<string name="Value">0.49396669724538245,0,0.5253760067033179,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBX327710EF653E48EBB4A82E0383446119">
@@ -1452,6 +1452,229 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 							</Item>
 						</Item>
 					</Item>
+					<Item class="Folder" referent="RBXE96A6985C71D420D8E8900F6E9169278">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+							<string name="Name">Do Action</string>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+							<UniqueId name="UniqueId">5388b23186a737640583d2570001acc1</UniqueId>
+						</Properties>
+						<Item class="StringValue" referent="RBX56377D8B6E984F2BBF6356AD886C9069">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Type</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001acc2</UniqueId>
+								<string name="Value">Sequence</string>
+							</Properties>
+						</Item>
+						<Item class="StringValue" referent="RBX81507C7AA6C34EF7A2F1E2217063BC8D">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Position</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001acc3</UniqueId>
+								<string name="Value">0.49972497249724973,0,0.512499899530607,0</string>
+							</Properties>
+						</Item>
+						<Item class="Folder" referent="RBX45BD9A407F1F4C379ABB3B920421BD9A">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Outputs</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001acc4</UniqueId>
+							</Properties>
+							<Item class="ObjectValue" referent="RBX962E5EF2D1674BAC826422524A51A4C2">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+									<string name="Name">1</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<UniqueId name="UniqueId">5388b23186a737640583d2570001b628</UniqueId>
+									<Ref name="Value">RBX9D6FA53F1D43438EB4E812F8ABDB0AD6</Ref>
+								</Properties>
+							</Item>
+							<Item class="ObjectValue" referent="RBXCD96F2FDA9B548DF93A6B6AE0957AC49">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+									<string name="Name">2</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<UniqueId name="UniqueId">5388b23186a737640583d2570001ce22</UniqueId>
+									<Ref name="Value">RBXF529E0A098FA41078CB211FF2105D867</Ref>
+								</Properties>
+							</Item>
+						</Item>
+						<Item class="Vector3Value" referent="RBX771234ABCDD74A18978F35633E618D81">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Size</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001acc5</UniqueId>
+								<Vector3 name="Value">
+									<X>260</X>
+									<Y>92</Y>
+									<Z>0</Z>
+								</Vector3>
+							</Properties>
+						</Item>
+						<Item class="Folder" referent="RBX30E6F9D2FE31473B8471408EF39A0D4A">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Parameters</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001acc6</UniqueId>
+							</Properties>
+							<Item class="IntValue" referent="RBX9912DD7670B44A3B84B7FDD6CD5E546F">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+									<string name="Name">Index</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<UniqueId name="UniqueId">5388b23186a737640583d2570001acc7</UniqueId>
+									<int64 name="Value">3</int64>
+								</Properties>
+							</Item>
+						</Item>
+					</Item>
+					<Item class="Folder" referent="RBXF529E0A098FA41078CB211FF2105D867">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+							<string name="Name">Chase</string>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+							<UniqueId name="UniqueId">5388b23186a737640583d2570001bf58</UniqueId>
+						</Properties>
+						<Item class="StringValue" referent="RBX1B5D16DDF097491FB04C97E00CAE7DC6">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Type</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001bf59</UniqueId>
+								<string name="Value">Tree</string>
+							</Properties>
+						</Item>
+						<Item class="StringValue" referent="RBX1D45E1438A9148878CC424070CBCD0E8">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Position</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001bf5a</UniqueId>
+								<string name="Value">0.5053414932364947,0,0.524743350935571,0</string>
+							</Properties>
+						</Item>
+						<Item class="Folder" referent="RBX444DE8C6FB754FC2BE3F26FAE5027ABD">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Outputs</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001bf5b</UniqueId>
+							</Properties>
+						</Item>
+						<Item class="Vector3Value" referent="RBXFB87A4C7524446078AA91995246EE9EC">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Size</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001bf5c</UniqueId>
+								<Vector3 name="Value">
+									<X>260</X>
+									<Y>120</Y>
+									<Z>0</Z>
+								</Vector3>
+							</Properties>
+						</Item>
+						<Item class="Folder" referent="RBXDC320EAEE2DD438F8D93BDE1AE776BA5">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Parameters</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001bf5d</UniqueId>
+							</Properties>
+							<Item class="IntValue" referent="RBXEB73F8C1F1F14A44AEDD622926A00549">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+									<string name="Name">Index</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<UniqueId name="UniqueId">5388b23186a737640583d2570001bf5e</UniqueId>
+									<int64 name="Value">4</int64>
+								</Properties>
+							</Item>
+							<Item class="StringValue" referent="RBX9D256CD2C8DD4BB0B7CF3323E83C0AF2">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+									<string name="Name">TreeID</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<UniqueId name="UniqueId">5388b23186a737640583d2570001bf5f</UniqueId>
+									<string name="Value">PS_NPC_Chase</string>
+								</Properties>
+							</Item>
+						</Item>
+					</Item>
 				</Item>
 				<Item class="NumberValue" referent="RBX35495CA9FA1B4AD1A280902E3AA167E0">
 					<Properties>
@@ -1478,7 +1701,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003de1</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-143</Y>
+							<Y>-188</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -1495,7 +1718,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003de2</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-157</Y>
+							<Y>-383</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -1507,7 +1730,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 					<bool name="DefinesCapabilities">false</bool>
 					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-					<string name="Name">PS_NPC_Idle</string>
+					<string name="Name">PS_NPC_Chase</string>
 					<int64 name="SourceAssetId">-1</int64>
 					<BinaryString name="Tags">X0JUcmVl</BinaryString>
 					<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fb9</UniqueId>
@@ -1662,7 +1885,7 @@ zNLfaoZA///+//PAj5CH]]></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">01705bfc31d7d8080570511b000044d1</UniqueId>
-								<string name="Value">0.5311018560737653,0,0.5223346474729939,0</string>
+								<string name="Value">0.5309157333295724,0,0.521011888099874,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBX150A60216E0F4086B1A942DA32A1ED20">
@@ -1803,7 +2026,7 @@ return btTask
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">01705bfc31d7d8080570511b0000685b</UniqueId>
-								<string name="Value">0.4794183982542991,0,0.5212691695601852,0</string>
+								<string name="Value">0.4813508486054022,0,0.5199767523845251,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBXADCDA94DD11343848B871DD612006FA3">
@@ -2268,7 +2491,7 @@ return btTask
 								<int64 name="SourceAssetId">-1</int64>
 								<BinaryString name="Tags"></BinaryString>
 								<UniqueId name="UniqueId">71bbbcbec9a9947e0579981000009b08</UniqueId>
-								<string name="Value">0.4962059603012561,0,0.5234207179792297,0</string>
+								<string name="Value">0.4966153997367287,0,0.5228254721118386,0</string>
 							</Properties>
 						</Item>
 						<Item class="Folder" referent="RBXA51E4E2DF5584F33AA237A6A17F6B459">
@@ -3193,7 +3416,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fbc</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-409</Y>
+							<Y>-275</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -3210,7 +3433,320 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fbd</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-422</Y>
+							<Y>-406</Y>
+							<Z>0</Z>
+						</Vector3>
+					</Properties>
+				</Item>
+			</Item>
+			<Item class="Folder" referent="RBXA30085B576564B8B8AD94885ED0CCA7A">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">PS_NPC_Idle</string>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags">X0JUcmVl</BinaryString>
+					<UniqueId name="UniqueId">5388b23186a737640583d25700018276</UniqueId>
+				</Properties>
+				<Item class="Folder" referent="RBX432811C4C8724ED2911EE5D7F2539E7C">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+						<string name="Name">Nodes</string>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+						<UniqueId name="UniqueId">5388b23186a737640583d25700018277</UniqueId>
+					</Properties>
+					<Item class="Folder" referent="RBXADEA3BA618D14B97AA0FF1E534097F8F">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+							<string name="Name">Root</string>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+							<UniqueId name="UniqueId">5388b23186a737640583d2570001827b</UniqueId>
+						</Properties>
+						<Item class="StringValue" referent="RBXF501D090500043EFBA7EE2314A17CDF2">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Type</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001827c</UniqueId>
+								<string name="Value">Root</string>
+							</Properties>
+						</Item>
+						<Item class="StringValue" referent="RBXA4CA7C639D7543DEA1A50B80DAD25AF2">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Position</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001827d</UniqueId>
+								<string name="Value">0.49567483064095885,0,0.4894907407407407,0</string>
+							</Properties>
+						</Item>
+						<Item class="Folder" referent="RBXCCAE53127B9F415E929A350B66362B0D">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Outputs</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001827e</UniqueId>
+							</Properties>
+							<Item class="ObjectValue" referent="RBX305AE83945B24633B01D874B25E61B23">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+									<string name="Name">1</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<UniqueId name="UniqueId">5388b23186a737640583d2570001a1f5</UniqueId>
+									<Ref name="Value">RBXAD489083E12944DB956A00F427D656DF</Ref>
+								</Properties>
+							</Item>
+						</Item>
+						<Item class="Vector3Value" referent="RBXC8E29AE05FB445CB8F44967199B44BFE">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Size</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d2570001827f</UniqueId>
+								<Vector3 name="Value">
+									<X>260</X>
+									<Y>92</Y>
+									<Z>0</Z>
+								</Vector3>
+							</Properties>
+						</Item>
+						<Item class="Folder" referent="RBX1448A591F02E4D8984418B5917409F59">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Parameters</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d25700018280</UniqueId>
+							</Properties>
+							<Item class="IntValue" referent="RBX6CEC39698A144F748B6AA7BB8E8D35DA">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+									<string name="Name">Index</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<UniqueId name="UniqueId">5388b23186a737640583d25700018281</UniqueId>
+									<int64 name="Value">1</int64>
+								</Properties>
+							</Item>
+						</Item>
+					</Item>
+					<Item class="Folder" referent="RBXAD489083E12944DB956A00F427D656DF">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+							<string name="Name">Check</string>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+							<UniqueId name="UniqueId">5388b23186a737640583d25700019be1</UniqueId>
+						</Properties>
+						<Item class="StringValue" referent="RBXD13810633222445EB764B9837CCEEA9F">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Type</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d25700019be2</UniqueId>
+								<string name="Value">Task</string>
+							</Properties>
+						</Item>
+						<Item class="StringValue" referent="RBXE22B759F70F440CBA722D3829B371FE9">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Position</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d25700019be3</UniqueId>
+								<string name="Value">0.49378582595101617,0,0.5058796296296296,0</string>
+							</Properties>
+						</Item>
+						<Item class="Folder" referent="RBXAE87D916C78C41C8A1F1DBD9442E8B0B">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Outputs</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d25700019be4</UniqueId>
+							</Properties>
+						</Item>
+						<Item class="Vector3Value" referent="RBXD985692393F2460693F80708E27BCAFF">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Size</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d25700019be5</UniqueId>
+								<Vector3 name="Value">
+									<X>260</X>
+									<Y>92</Y>
+									<Z>0</Z>
+								</Vector3>
+							</Properties>
+						</Item>
+						<Item class="Folder" referent="RBX13F6C2B0D5D84502B60F1506C0192B49">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">Parameters</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d25700019be6</UniqueId>
+							</Properties>
+							<Item class="IntValue" referent="RBXA04A2C1753124AD48B1AF4ABBAEEF8F9">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+									<string name="Name">Index</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+									<UniqueId name="UniqueId">5388b23186a737640583d25700019be7</UniqueId>
+									<int64 name="Value">2</int64>
+								</Properties>
+							</Item>
+						</Item>
+						<Item class="ModuleScript" referent="RBXB881793D0A4A478DA2FB7FA3ECF50349">
+							<Properties>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<Content name="LinkedSource"><null></null></Content>
+								<string name="Name">Check</string>
+								<string name="ScriptGuid">{B3C2C6A6-8E27-4795-9645-8535E182D67D}</string>
+								<ProtectedString name="Source"><![CDATA[local btTask = {}
+
+local SUCCESS,FAIL,RUNNING = 1,2,3
+
+
+function btTask.start(obj)
+	local Blackboard = obj.Blackboard
+	local self = obj.self
+end
+
+
+function btTask.finish(obj, status)
+	local Blackboard = obj.Blackboard
+	local self = obj.self
+end
+
+
+function btTask.run(obj)
+	local Blackboard = obj.Blackboard
+	local self = obj.self
+	
+	if self.soundDetection.hunt then
+		return SUCCESS
+	else
+		return FAIL
+	end
+end
+
+
+return btTask
+]]></ProtectedString>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<UniqueId name="UniqueId">5388b23186a737640583d25700019be8</UniqueId>
+							</Properties>
+						</Item>
+					</Item>
+				</Item>
+				<Item class="NumberValue" referent="RBXABA2BF690EBB4545891C8408E13EBD05">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+						<string name="Name">Zoom</string>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+						<UniqueId name="UniqueId">5388b23186a737640583d25700018278</UniqueId>
+						<double name="Value">1</double>
+					</Properties>
+				</Item>
+				<Item class="Vector3Value" referent="RBXA6104E77EC214D8F8C6FBF45AB73F97F">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+						<string name="Name">WorkspaceX</string>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+						<UniqueId name="UniqueId">5388b23186a737640583d25700018279</UniqueId>
+						<Vector3 name="Value">
+							<X>0.5</X>
+							<Y>0</Y>
+							<Z>0</Z>
+						</Vector3>
+					</Properties>
+				</Item>
+				<Item class="Vector3Value" referent="RBX6D4E2F94FC29432795DE1F6A4F4E66D7">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+						<string name="Name">WorkspaceY</string>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+						<UniqueId name="UniqueId">5388b23186a737640583d2570001827a</UniqueId>
+						<Vector3 name="Value">
+							<X>0.5</X>
+							<Y>0</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
