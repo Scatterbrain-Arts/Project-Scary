@@ -1,11 +1,67 @@
 local PathfindingService = game:GetService("PathfindingService")
+local CollectionService = game:GetService("CollectionService")
+local RunService = game:GetService("RunService")
 
 local require = require(script.Parent.loader).load(script)
+local next = next
 
 local GeneralUtil = require("GeneralUtil")
 
+
 local Navigation = {}
 Navigation.__index = Navigation
+Navigation.TAG_NAME = "Room"
+
+local function GetRegions(rooms)
+    local regions = {
+        rooms = {},
+        totalWeight = 0,
+    }
+
+    local largestArea = 0
+    for index, room in rooms do
+        local regionFolder = GeneralUtil:Get("Folder", room.NavMesh, "Region"):GetChildren()
+
+        if #regionFolder ~= 2 then
+            error("Region folders must have 2 corner parts...")
+        end
+
+        local corner1 = regionFolder[1]
+        local corner2 = regionFolder[2]
+
+        local regionData = {}
+        regionData.lowerbound = Vector3.new(
+            math.min(corner1.Position.X, corner2.Position.X),
+            math.min(corner1.Position.Y, corner2.Position.Y),
+            math.min(corner1.Position.Z, corner2.Position.Z)
+        )
+        regionData.upperbound = Vector3.new(
+            math.max(corner1.Position.X, corner2.Position.X),
+            math.max(corner1.Position.Y, corner2.Position.Y),
+            math.max(corner1.Position.Z, corner2.Position.Z)
+        )
+
+        regionData.region = Region3.new(regionData.lowerbound, regionData.upperbound)
+        regionData.area = regionData.region.Size.X * regionData.region.Size.Z
+
+        if regionData.area > largestArea then
+            largestArea = regionData.area
+        end
+
+        regions.rooms[room.Name] = regionData
+    end
+
+    local totalWeight = 0
+    for i, regionData in regions.rooms do
+        local ratio = (regionData.area/largestArea) * 10
+        regionData.weight = math.floor( math.clamp(ratio, 1, 10) )
+        totalWeight += regionData.weight
+    end
+
+    regions.totalWeight = totalWeight
+
+    return regions
+end
 
 function Navigation.new(npc)
     local self = {}
@@ -21,7 +77,7 @@ function Navigation.new(npc)
 	local configNavigation = GeneralUtil:Get("Configuration", configFolder, "navigation")
 
     self.isDebug = GeneralUtil:GetBool(configNavigation, "_isDebug", true)
-    
+
     self.config["AgentHeight"] = GeneralUtil:GetNumber(configNavigation, "agentHeight", self.isDebug.Value)
     self.config["AgentCanJump"] = GeneralUtil:GetBool(configNavigation, "agentCanJump", self.isDebug.Value)
     self.config["AgentCanClimb"] = GeneralUtil:GetBool(configNavigation, "agentCanClimb", self.isDebug.Value)
@@ -48,13 +104,24 @@ function Navigation.new(npc)
         self.NPCDebug:CreateAgentCylinder("agent", self.root, self.config["AgentRadius"].Value/2, self.config["AgentHeight"].Value, Color3.fromRGB(255, 255, 0))
     end
 
+    self.regions = GetRegions(CollectionService:GetTagged(Navigation.TAG_NAME))
+
     self.waypoints = {}
     self.index = nil
     self.isTargetReached = false
     self.moveConnection = nil
+    
+    self.unstuck = {
+        connection = nil,
+        tickLast = tick(),
+        tickInterval = 5,
+        lastPosition = nil
+    }
 
     return self
 end
+
+
 
 
 local function ComputePath(path, startPosition, targetPosition)
@@ -92,14 +159,40 @@ local function FindPath(path, startPosition, targetPosition)
 end
 
 
-function Navigation:PathTo(targetPosition)
+function Navigation:MoveStart(targetPosition)
+    self.humanoid:MoveTo(targetPosition)
 
+    if self.unstuck.connection then
+        self.unstuck.connection:Disconnect()
+        self.unstuck.connection = nil
+    end
+
+    self.unstuck.tickLast = tick()
+    self.unstuck.connection = RunService.Heartbeat:Connect(function(deltaTime)
+        if not self.isTargetReached then
+
+            if tick() - self.unstuck.tickLast >= self.unstuck.tickInterval then
+
+                if self.unstuck.lastPosition and GeneralUtil:IsDistanceLess(self.unstuck.lastPosition, self.root.Position, 2) then
+                    warn("stuck")
+                    self:Stop()
+                end
+
+                self.unstuck.lastPosition = self.root.Position
+                self.unstuck.tickLast = tick()
+            end
+        end
+    end)
+
+end
+
+
+function Navigation:PathTo(targetPosition)
     local rayResult = GeneralUtil:CastSphere(self.root.Position, 4, Vector3.zero, "RayNPC")
 
     if rayResult then
         print(rayResult.Instance)
     end
-    
 
     if not FindPath(self.path, self.root.Position, targetPosition) then
         return false
@@ -126,7 +219,7 @@ function Navigation:PathTo(targetPosition)
         end
 	end)
 
-    self.humanoid:MoveTo(self.waypoints[self.index].Position)
+    self:MoveStart(self.waypoints[self.index].Position)
 
     return true
 end
@@ -139,28 +232,34 @@ function Navigation:MoveTo(targetPosition)
         self.moveConnection:Disconnect()
     end
 
-    self.moveConnection  = self.humanoid.MoveToFinished:Connect(function(reached)
+    self.moveConnection = self.humanoid.MoveToFinished:Connect(function(reached)
 		if self.moveConnection then
             self.moveConnection:Disconnect()
 			self.moveConnection = nil
         end
-		
         self.isTargetReached = true
 	end)
 
-    self.humanoid:MoveTo(targetPosition)
+    self:MoveStart(targetPosition)
 
     return true
 end
 
 
 function Navigation:Stop()
+    self.humanoid:MoveTo(self.root.Position)
+
     if self.moveConnection then
         self.moveConnection:Disconnect()
         self.moveConnection = nil
     end
 
-    self.humanoid:MoveTo(self.root.Position)
+    if self.unstuck.connection then
+        self.unstuck.connection:Disconnect()
+        self.unstuck.connection = nil
+    end
+
+    self.isTargetReached = nil
 
     return true
 end
@@ -230,6 +329,95 @@ function Navigation:FindDirectionToFace()
     print("final direction:", i)
 
     return Axis8Directions[i]
+end
+
+
+local function GetRandomPointInRegion(regions, currentPos)
+    local rnd = math.random() * regions.totalWeight
+    local selectedRegion = nil
+
+    local cumulativeWeight = 0
+    for index, regionData in regions.rooms do
+        cumulativeWeight += regionData.weight
+
+        if rnd <= cumulativeWeight then
+            selectedRegion = index
+            break
+        end
+    end
+
+    local regionData = regions.rooms[selectedRegion]
+    local point = Vector3.new(
+        math.random(regionData.lowerbound.X, regionData.upperbound.X),
+        math.random(regionData.lowerbound.Y, regionData.upperbound.Y),
+        math.random(regionData.lowerbound.Z, regionData.upperbound.Z)
+    )
+
+    -- local part = GeneralUtil:CreatePart(Enum.PartType.Ball, Vector3.new(1,1,1), Color3.fromHex("fa22af"))
+    -- part.Position = point
+    -- part.Parent = workspace
+
+    return point
+end
+
+
+local function FindRandomPath(regions, path, startPosition)
+    local tries = 0
+    local isPath = false
+    local point = nil
+
+    repeat
+        point = GetRandomPointInRegion(regions, startPosition)
+        isPath = ComputePath(path, startPosition, point)
+
+        if tries >= 1 then
+            task.wait()
+        end
+        tries+=1
+    until isPath or tries > 3
+
+    if not isPath then
+        print("No Path Found...")
+        return false
+    end
+
+    return true
+end
+
+
+function Navigation:PathToRandomPosition()
+    local tries = 0
+    local point = nil
+
+    if not FindRandomPath(self.regions, self.path, self.root.Position) then
+        return false
+    end
+
+    self.isTargetReached = false
+    self.waypoints = self.path:GetWaypoints()
+    self.index = 1
+
+    if self.moveConnection then
+        self.moveConnection:Disconnect()
+    end
+
+    self.moveConnection  = self.humanoid.MoveToFinished:Connect(function(reached)
+		if self.index < #self.waypoints then
+			self.index += 1
+			self.humanoid:MoveTo(self.waypoints[self.index].Position)
+		elseif self.index == #self.waypoints then
+            if self.moveConnection then
+                self.moveConnection:Disconnect()
+			    self.moveConnection = nil
+            end
+
+			self.isTargetReached = true
+        end
+	end)
+
+    self:MoveStart(self.waypoints[self.index].Position)
+
+    return point
 end
 
 

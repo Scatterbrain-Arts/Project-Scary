@@ -64,7 +64,7 @@ function SoundDetection.new(npc)
 			self.guiNPC.GuiNPCBar.Size = UDim2.fromScale(self.bar / 100, 1)
 			self.guiNPC.GuiNPCPercent.Text = math.floor(self.bar) .. " pts"
 
-			if self.bar > 10 then
+			if self.bar > 50 then
 				self.guiNPC.GuiNPCIsAlert.Visible = false
 				self.guiNPC.GuiNPCIsHostile.Visible = true
 				self.guiNPC.GuiNPCIsCalm.Visible = false
@@ -90,7 +90,7 @@ function SoundDetection:Listen()
 
 	local apparentSound = math.clamp(self.PLAYER_STATUS.currentDecibel.Value / inverseSquare, 0, 100)
 
-	print("apparentSound:", apparentSound)
+	--print("apparentSound:", apparentSound)
 	self.bar += apparentSound
 end
 

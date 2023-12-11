@@ -31,7 +31,7 @@ function NPC.new(npcModel, player)
 	self.root = npcModel:FindFirstChild("HumanoidRootPart") or warn("No root found for", self.name, "...")
 
 	local configFolder = GeneralUtil:Get("Folder", self.character, "config")
-	
+
 	self.config = {
 		isDebug = GeneralUtil:GetBool(configFolder, "_DEBUG"),
 		isOverride = GeneralUtil:GetBool(configFolder, "_OVERRIDE"),
@@ -58,7 +58,7 @@ function NPC.new(npcModel, player)
 	self.btState = {
 		self = self,
 		Blackboard = {
-			defaultWaitTime = 5,
+			defaultWaitTime = 2,
 			player = player,
 			targetPosition = Vector3.new(math.huge, math.huge, math.huge),
 			target = nil,
