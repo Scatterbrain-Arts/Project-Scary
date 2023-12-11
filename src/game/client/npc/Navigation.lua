@@ -364,11 +364,11 @@ end
 local function FindRandomPath(regions, path, startPosition)
     local tries = 0
     local isPath = false
-    local point = nil
+    local targetPosition = nil
 
     repeat
-        point = GetRandomPointInRegion(regions, startPosition)
-        isPath = ComputePath(path, startPosition, point)
+        targetPosition = GetRandomPointInRegion(regions, startPosition)
+        isPath = ComputePath(path, startPosition, targetPosition)
 
         if tries >= 1 then
             task.wait()
@@ -381,15 +381,15 @@ local function FindRandomPath(regions, path, startPosition)
         return false
     end
 
-    return true
+    return targetPosition
 end
 
 
 function Navigation:PathToRandomPosition()
     local tries = 0
-    local point = nil
+    local targetPosition = FindRandomPath(self.regions, self.path, self.root.Position)
 
-    if not FindRandomPath(self.regions, self.path, self.root.Position) then
+    if not targetPosition then
         return false
     end
 
@@ -417,7 +417,7 @@ function Navigation:PathToRandomPosition()
 
     self:MoveStart(self.waypoints[self.index].Position)
 
-    return point
+    return targetPosition
 end
 
 

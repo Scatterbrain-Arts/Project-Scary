@@ -8,7 +8,6 @@ local Math = require("Math")
 local SoundDetection = {}
 SoundDetection.__index = SoundDetection
 
-
 function SoundDetection.new(npc)
     local self = {}
     setmetatable(self, SoundDetection)
@@ -18,6 +17,9 @@ function SoundDetection.new(npc)
     self.character = npc.character
     self.humanoid = npc.humanoid
     self.root = npc.root
+	self.blackboard = npc.btState.Blackboard
+
+	print(self.blackboard)
 
 	self.player = npc.player
 	self.playerCharacter = npc.playerCharacter
@@ -46,10 +48,16 @@ function SoundDetection.new(npc)
 		GuiNPCStatus = GeneralUtil:GetUI(GuiNPC, "Status"),
 	}
 
+	self.soundHeardThreshold = 3
+	self.statusCalmThreshold = 10
+	self.statusAlertThreshold = 25
+	self.statusHostileThreshold = 50
 
-	self.hunt = false
+	self.isSoundHeard = false
 
-	self.bar = 0
+	self.tickLastSoundHeard = tick()
+
+	self.soundAwareness = 0
 
 	self.cycleLock = false
 	self.cycleRefresh = 1
@@ -59,23 +67,30 @@ function SoundDetection.new(npc)
 			self:Listen()
 			self.cycleStartTime = tick()
 
-			self.bar = math.clamp(self.bar - 1, 0, 100)
 
-			self.guiNPC.GuiNPCBar.Size = UDim2.fromScale(self.bar / 100, 1)
-			self.guiNPC.GuiNPCPercent.Text = math.floor(self.bar) .. " pts"
+			if tick() - self.tickLastSoundHeard >= 7 then
+				if self.soundAwareness < self.statusCalmThreshold then
+					self.soundAwareness = math.clamp(self.soundAwareness - 1, 0, 100)
+				end
+			end
 
-			if self.bar > 50 then
-				self.guiNPC.GuiNPCIsAlert.Visible = false
-				self.guiNPC.GuiNPCIsHostile.Visible = true
+			self.guiNPC.GuiNPCBar.Size = UDim2.fromScale(self.soundAwareness / 100, 1)
+			self.guiNPC.GuiNPCPercent.Text = math.floor(self.soundAwareness) .. " pts"
+
+			if self.soundAwareness >= self.statusCalmThreshold then
+				self.blackboard.state = shared.npc.states.perception.alert
+				self.guiNPC.GuiNPCIsAlert.Visible = true
+				self.guiNPC.GuiNPCIsHostile.Visible = false
 				self.guiNPC.GuiNPCIsCalm.Visible = false
-				self.guiNPC.GuiNPCStatus.Text = "HOSTILE"
-				self.hunt = true
+				self.guiNPC.GuiNPCStatus.Text = "ALERT"
+				self.blackboard.isSoundHeard = true
+				self.isSoundHeard = true
 			else
+				self.blackboard.state = shared.npc.states.perception.calm
 				self.guiNPC.GuiNPCIsAlert.Visible = false
 				self.guiNPC.GuiNPCIsHostile.Visible = false
 				self.guiNPC.GuiNPCIsCalm.Visible = true
 				self.guiNPC.GuiNPCStatus.Text = "CALM"
-				self.hunt = false
 			end
 		end
 	end)
@@ -91,7 +106,17 @@ function SoundDetection:Listen()
 	local apparentSound = math.clamp(self.PLAYER_STATUS.currentDecibel.Value / inverseSquare, 0, 100)
 
 	--print("apparentSound:", apparentSound)
-	self.bar += apparentSound
+
+	local normalizedSound = apparentSound / self.soundHeardThreshold
+	if normalizedSound >= 1 then
+		local detectionAmount = math.floor(normalizedSound%10)
+		print("heard:", detectionAmount)
+
+		self.soundAwareness += detectionAmount
+
+		self.tickLastSoundHeard = tick()
+	end
+
 end
 
 

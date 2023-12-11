@@ -154,7 +154,7 @@ local function FireSound(deltaTime)
 
 		Decibel = (STATE_MOVE.base.Value * STATE_MOVE[STATUS.moveState.Value].scalar.Value)
 			+ (STATE_BREATH.base.Value * STATE_BREATH[STATUS.breathState.Value].scalar.Value)
-			+ (STATE_STAMINA.base.Value * STATE_STAMINA[STATUS.staminaState.Value].scalar.Value)
+			+ (STATE_BREATH[STATUS.breathState.Value].scalar.Value * STATE_STAMINA.base.Value * STATE_STAMINA[STATUS.staminaState.Value].scalar.Value)
 
 		local totalDecibel = (STATE_MOVE.base.Value * STATE_MOVE[shared.states.move.run].scalar.Value)
 		+ (STATE_BREATH.base.Value * STATE_BREATH[shared.states.breath.inhale].scalar.Value)

@@ -50,10 +50,6 @@ function NPC.new(npcModel, player)
 		end)
 	end)
 
-	self.navigation = Navigation.new(self)
-	self.soundDetection = NPCSoundDetection.new(self)
-
-
 	self.btRoot = BehaviorTreeCreator:Create(ReplicatedStorage.Trees.PS_NPC_Start, self)
 	self.btState = {
 		self = self,
@@ -62,9 +58,14 @@ function NPC.new(npcModel, player)
 			player = player,
 			targetPosition = Vector3.new(math.huge, math.huge, math.huge),
 			target = nil,
-			collisionGroup = "RayNPC"
+			collisionGroup = "RayNPC",
+			state = shared.npc.states.perception.calm,
+			isSoundHeard = false,
 		},
 	}
+
+	self.navigation = Navigation.new(self)
+	self.soundDetection = NPCSoundDetection.new(self)
 
     RunService.Heartbeat:Connect(function(time, deltaTime)
 		if not self.config.isOverride.Value then
