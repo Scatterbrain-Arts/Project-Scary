@@ -56,11 +56,14 @@ function NPC.new(npcModel, player)
 		Blackboard = {
 			defaultWaitTime = 2,
 			player = player,
-			targetPosition = Vector3.new(math.huge, math.huge, math.huge),
+			targetPosition = nil,
 			target = nil,
 			collisionGroup = "RayNPC",
 			state = shared.npc.states.perception.calm,
 			isSoundHeard = false,
+			isTargetLost = nil,
+			lastKnownPosition = nil,
+			lastKnownRegion = nil,
 		},
 	}
 

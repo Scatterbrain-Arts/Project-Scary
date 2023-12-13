@@ -332,7 +332,22 @@ function Navigation:FindDirectionToFace()
 end
 
 
-local function GetRandomPointInRegion(regions, currentPos)
+local function GetRandomPointInRegion(regionData)
+    local point = Vector3.new(
+        math.random(regionData.lowerbound.X, regionData.upperbound.X),
+        math.random(regionData.lowerbound.Y, regionData.upperbound.Y),
+        math.random(regionData.lowerbound.Z, regionData.upperbound.Z)
+    )
+
+    -- local part = GeneralUtil:CreatePart(Enum.PartType.Ball, Vector3.new(1,1,1), Color3.fromHex("fa22af"))
+    -- part.Position = point
+    -- part.Parent = workspace
+
+    return point
+end
+
+
+local function GetRandomPointInAnyRegion(regions)
     local rnd = math.random() * regions.totalWeight
     local selectedRegion = nil
 
@@ -361,13 +376,13 @@ local function GetRandomPointInRegion(regions, currentPos)
 end
 
 
-local function FindRandomPath(regions, path, startPosition)
+local function FindRandomPath(regions, path, startPosition, randomizer)
     local tries = 0
     local isPath = false
     local targetPosition = nil
 
     repeat
-        targetPosition = GetRandomPointInRegion(regions, startPosition)
+        targetPosition = randomizer(regions)
         isPath = ComputePath(path, startPosition, targetPosition)
 
         if tries >= 1 then
@@ -386,8 +401,46 @@ end
 
 
 function Navigation:PathToRandomPosition()
-    local tries = 0
-    local targetPosition = FindRandomPath(self.regions, self.path, self.root.Position)
+    local targetPosition = FindRandomPath(self.regions, self.path, self.root.Position, GetRandomPointInAnyRegion)
+
+    if not targetPosition then
+        return false
+    end
+
+    self.isTargetReached = false
+    self.waypoints = self.path:GetWaypoints()
+    self.index = 1
+
+    if self.moveConnection then
+        self.moveConnection:Disconnect()
+    end
+
+    self.moveConnection  = self.humanoid.MoveToFinished:Connect(function(reached)
+		if self.index < #self.waypoints then
+			self.index += 1
+			self.humanoid:MoveTo(self.waypoints[self.index].Position)
+		elseif self.index == #self.waypoints then
+            if self.moveConnection then
+                self.moveConnection:Disconnect()
+			    self.moveConnection = nil
+            end
+
+			self.isTargetReached = true
+        end
+	end)
+
+    self:MoveStart(self.waypoints[self.index].Position)
+
+    return targetPosition
+end
+
+
+function Navigation:FindRegionWithPlayer()
+    return GeneralUtil:FindRegionWithPart(self.regions.rooms, "RayChar", "CharPlayer")
+end
+
+function Navigation:PathToRandomPositionInRegion(regionIndex)
+    local targetPosition = FindRandomPath(self.regions.rooms[regionIndex], self.path, self.root.Position, GetRandomPointInRegion)
 
     if not targetPosition then
         return false

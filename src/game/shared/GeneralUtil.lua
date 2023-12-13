@@ -255,7 +255,7 @@ function GeneralUtil:QueryRadius(position, diameter, collisionGroup, isDraw)
 end
 
 
-function GeneralUtil:QueryBox(cframe, size, collisionGroup)
+function GeneralUtil:QueryRegion(cframe, size, collisionGroup)
 	local parameters = OverlapParams.new()
 	parameters.CollisionGroup = collisionGroup
 	parameters.RespectCanCollide = false
@@ -265,13 +265,13 @@ function GeneralUtil:QueryBox(cframe, size, collisionGroup)
 end
 
 
-function GeneralUtil:FindRegionWithPart(region, searchCollisionGroup, partCollisionGroup)
+function GeneralUtil:FindRegionWithPart(regions, searchCollisionGroup, partCollisionGroup)
 	local currentRegion = nil
-    for index, regionData in pairs(region) do
-        local objects = GeneralUtil:QueryBox(region.CFrame, region.Size, searchCollisionGroup)
+    for index, regionData in pairs(regions) do
+        local objects = GeneralUtil:QueryRegion(regionData.region.CFrame, regionData.region.Size, searchCollisionGroup)
         if next(objects) then
             for _, object in ipairs(objects) do
-                if object:IsA("BasePart") and object.CollisionGroupId == partCollisionGroup then
+                if object:IsA("BasePart") and object.CollisionGroup == partCollisionGroup then
                     currentRegion = index
                     break
                 end

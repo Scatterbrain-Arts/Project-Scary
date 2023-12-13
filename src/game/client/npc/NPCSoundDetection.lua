@@ -48,25 +48,19 @@ function SoundDetection.new(npc)
 		GuiNPCStatus = GeneralUtil:GetUI(GuiNPC, "Status"),
 	}
 
-	self.soundHeardThreshold = 3
-	self.statusCalmThreshold = 10
-	self.statusAlertThreshold = 25
-	self.statusHostileThreshold = 50
-
-	self.isSoundHeard = false
-
 	self.tickLastSoundHeard = tick()
-
 	self.soundAwareness = 0
+	self.soundHeardThreshold = 3
 
-	self.cycleLock = false
-	self.cycleRefresh = 1
-	self.cycleStartTime = tick()
+	self.statusCalmThreshold = 10
+	local statusAlertThreshold = 25
+	local statusHostileThreshold = 50
+
+	local secondsPerCycle = 1
+	local tickLastCycle = tick()
 	RunService.Heartbeat:Connect(function(deltaTime)
-		if tick() - self.cycleStartTime >= self.cycleRefresh then
+		if tick() - tickLastCycle >= secondsPerCycle then
 			self:Listen()
-			self.cycleStartTime = tick()
-
 
 			if tick() - self.tickLastSoundHeard >= 7 then
 				if self.soundAwareness < self.statusCalmThreshold then
@@ -77,22 +71,16 @@ function SoundDetection.new(npc)
 			self.guiNPC.GuiNPCBar.Size = UDim2.fromScale(self.soundAwareness / 100, 1)
 			self.guiNPC.GuiNPCPercent.Text = math.floor(self.soundAwareness) .. " pts"
 
-			if self.soundAwareness >= self.statusCalmThreshold then
-				self.blackboard.state = shared.npc.states.perception.alert
-				self.guiNPC.GuiNPCIsAlert.Visible = true
-				self.guiNPC.GuiNPCIsHostile.Visible = false
-				self.guiNPC.GuiNPCIsCalm.Visible = false
-				self.guiNPC.GuiNPCStatus.Text = "ALERT"
-				self.blackboard.isSoundHeard = true
-				self.isSoundHeard = true
-			else
-				self.blackboard.state = shared.npc.states.perception.calm
-				self.guiNPC.GuiNPCIsAlert.Visible = false
-				self.guiNPC.GuiNPCIsHostile.Visible = false
-				self.guiNPC.GuiNPCIsCalm.Visible = true
-				self.guiNPC.GuiNPCStatus.Text = "CALM"
+			if self.blackboard.state == shared.npc.states.perception.alert and self.blackboard.target then
+				if GeneralUtil:IsDistanceGreater(self.root.Position, self.blackboard.targetPosition, 30) then
+					self.blackboard.isTargetLost = true
+				end
 			end
+
+			tickLastCycle = tick()
 		end
+
+		
 	end)
 
 	return self
@@ -105,18 +93,24 @@ function SoundDetection:Listen()
 
 	local apparentSound = math.clamp(self.PLAYER_STATUS.currentDecibel.Value / inverseSquare, 0, 100)
 
-	--print("apparentSound:", apparentSound)
-
 	local normalizedSound = apparentSound / self.soundHeardThreshold
 	if normalizedSound >= 1 then
 		local detectionAmount = math.floor(normalizedSound%10)
-		print("heard:", detectionAmount)
-
 		self.soundAwareness += detectionAmount
 
-		self.tickLastSoundHeard = tick()
+		if self.blackboard.isSoundHeard == false and self.blackboard.state == shared.npc.states.perception.calm and self.soundAwareness >= self.statusCalmThreshold then
+			self.blackboard.isSoundHeard = true
+			self.tickLastSoundHeard = tick()
+		end
 	end
+end
 
+function SoundDetection:UpdateState()
+	local newState = self.blackboard.state
+	self.guiNPC.GuiNPCIsAlert.Visible = newState == shared.npc.states.perception.alert
+	self.guiNPC.GuiNPCIsHostile.Visible = newState == shared.npc.states.perception.hostile
+	self.guiNPC.GuiNPCIsCalm.Visible = newState == shared.npc.states.perception.calm
+	self.guiNPC.GuiNPCStatus.Text = string.upper( shared.npc.states.perceptionNames[newState] )
 end
 
 
