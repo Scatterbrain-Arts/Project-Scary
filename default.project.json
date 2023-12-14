@@ -5,38 +5,20 @@
     "$className": "DataModel",
 
     "ServerScriptService": {
-      "NevermoreEngine": {
+      "$className": "ServerScriptService",
+      "src": {
         "$className": "Folder",
         
-        "game": {
-          "$path": "src/modules"
+        "Game": {
+          "$path": "src/game"
         },
         "packages": {
-          "$path": "node_modules"
+          "$path": "node_modules/@quenty"
         }
       },
 
       "Main": {
-        "$path": "src/scripts/server"
-      }
-    },
-
-    "ServerStorage": {
-      "TreeTasks": {
-        "$className": "Folder",
-
-        "Idle": {
-          "$path": "src/tasks/idle"
-        },
-        "Move": {
-          "$path": "src/tasks/move"
-        },
-        "Attack": {
-          "$path": "src/tasks/attack"
-        },
-        "Search": {
-          "$path": "src/tasks/search"
-        }
+        "$path": "src/scripts/server/main"
       }
     },
     
@@ -52,6 +34,10 @@
           "$path": "src/scripts/client/character"
         }
       }
+    },
+
+    "ReplicatedStorage": {
+        "$path": "src/trees"
     }
   }
 }

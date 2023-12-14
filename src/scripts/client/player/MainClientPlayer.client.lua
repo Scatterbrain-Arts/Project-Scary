@@ -17,5 +17,13 @@ shared.states.breathNames = { "inhale", "exhale", "inhaleToHoldBreath", "holding
 for i,v in shared.states.breathNames do shared.states.breath[v] = i end
 for i = 1, #shared.states.breathNames do shared.states.breath[i] = i end
 
-require(packages.PuppetActivator)
+
+shared.npc = {}
+shared.npc.states = {}
+shared.npc.states.perception = {}
+shared.npc.states.perceptionNames = {"calm", "alert", "hostile"}
+for i,v in shared.npc.states.perceptionNames do shared.npc.states.perception[v] = i end
+for i = 1, #shared.npc.states.perceptionNames do shared.npc.states.perception[i] = i end
+
 require(packages.PlayerEntity)
+require(packages.NPCStarter)

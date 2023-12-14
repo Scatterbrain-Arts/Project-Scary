@@ -1,6 +1,8 @@
-local SocialService = game:GetService("SocialService")
-local GeneralUtil = {}
+local require = require(script.Parent.loader).load(script)
 
+local Draw = require("Draw")
+
+local GeneralUtil = {}
 
 function GeneralUtil:CreatePart(shape, size, color)
 	local part = Instance.new("Part")
@@ -120,7 +122,6 @@ function GeneralUtil:GetString(instance, name, isDebug)
 end
 
 
-
 function GeneralUtil:GetVector(instance, name, isDebug)
 	assert(instance ~= nil, "instance is nil for", name)
 	local vector = instance:FindFirstChild(name)
@@ -139,6 +140,7 @@ function GeneralUtil:GetVector(instance, name, isDebug)
 
 	return vector
 end
+
 
 function GeneralUtil:GetBool(instance, name, isDebug)
 	assert(instance ~= nil, "instance is nil for", name)
@@ -186,6 +188,7 @@ function GeneralUtil:GetUI(playerGui, name)
 	return gui
 end
 
+
 function GeneralUtil:GetSound(root, name)
 	assert(root ~= nil, "playerGui is nil for", name)
 	local sfx = root:FindFirstChild(name)
@@ -196,5 +199,115 @@ function GeneralUtil:GetSound(root, name)
 
 	return sfx
 end
+
+
+function GeneralUtil:SetNetworkOwner(entity, owner)
+	owner = owner or nil
+	for _, part in pairs(entity:GetChildren()) do
+		if part:IsA("BasePart") then
+			part:SetNetworkOwner(owner)
+		end
+	end
+end
+
+
+function GeneralUtil:CastRay(origin, direction, collisionGroup)
+	local raycastParams = RaycastParams.new()
+	raycastParams.CollisionGroup = collisionGroup
+	raycastParams.IgnoreWater = true
+	raycastParams.RespectCanCollide = false
+
+	return workspace:Raycast(origin, direction, raycastParams)
+end
+
+
+function GeneralUtil:CastSphere(origin, radius, direction, collisionGroup, isDraw, isCharacterOffset)
+	local parameters = RaycastParams.new()
+	parameters.CollisionGroup = collisionGroup
+	parameters.IgnoreWater = true
+	parameters.RespectCanCollide = false
+
+	isCharacterOffset = isCharacterOffset or true
+	if isCharacterOffset then
+		origin += direction.Unit * -radius/1.5
+	end
+
+	if isDraw then
+		Draw.sphereCast(origin, radius, direction, Color3.fromRGB(178, 31, 251), workspace)
+	end
+
+
+	return workspace:Spherecast(origin, radius, direction, parameters)
+end
+
+
+function GeneralUtil:QueryRadius(position, diameter, collisionGroup, isDraw)
+	local parameters = OverlapParams.new()
+	parameters.CollisionGroup = collisionGroup
+	parameters.RespectCanCollide = false
+	parameters.MaxParts = 20
+
+	if isDraw then
+		Draw.sphere(position, diameter/2, Color3.fromRGB(178, 31, 251), workspace)
+	end
+
+	return workspace:GetPartBoundsInRadius(position, diameter/2, parameters)
+end
+
+
+function GeneralUtil:QueryRegion(cframe, size, collisionGroup)
+	local parameters = OverlapParams.new()
+	parameters.CollisionGroup = collisionGroup
+	parameters.RespectCanCollide = false
+	parameters.MaxParts = 20
+
+	return workspace:GetPartBoundsInBox(cframe, size, parameters)
+end
+
+
+function GeneralUtil:FindRegionWithPart(regions, searchCollisionGroup, partCollisionGroup)
+	local currentRegion = nil
+    for index, regionData in pairs(regions) do
+        local objects = GeneralUtil:QueryRegion(regionData.region.CFrame, regionData.region.Size, searchCollisionGroup)
+        if next(objects) then
+            for _, object in ipairs(objects) do
+                if object:IsA("BasePart") and object.CollisionGroup == partCollisionGroup then
+                    currentRegion = index
+                    break
+                end
+            end
+        end
+    end
+	return currentRegion
+end
+
+
+function GeneralUtil:GetDistance(pos1, pos2)
+	return (pos1 - pos2).Magnitude
+end
+
+
+function GeneralUtil:IsDistanceGreater(pos1, pos2, range)
+	return GeneralUtil:GetDistance(pos1, pos2) >= range
+end
+
+function GeneralUtil:IsDistanceLess(pos1, pos2, range)
+	return GeneralUtil:GetDistance(pos1, pos2) <= range
+end
+
+
+function GeneralUtil:GetConditonFromTable(table, condition)
+	local desiredValue = math.huge
+	local desiredIndex = nil
+	for i, value in pairs(table) do
+		if condition(desiredValue, value) then
+			desiredValue = value
+			desiredIndex = i
+		end
+	end
+
+	return desiredIndex, desiredValue
+end
+
 
 return GeneralUtil
