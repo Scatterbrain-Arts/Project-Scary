@@ -15,6 +15,8 @@ local GeneralUtil = require("GeneralUtil")
 local Navigation = require("Navigation")
 local NPCSoundDetection = require("NPCSoundDetection")
 
+local STATE_CALM, STATE_ALERT, STATE_HOSTILE = shared.npc.states.perception.calm, shared.npc.states.perception.alert, shared.npc.states.perception.hostile
+
 local NPC = {}
 NPC.__index = NPC
 NPC.TAG_NAME = "NPC"
@@ -59,7 +61,7 @@ function NPC.new(npcModel, player)
 			targetPosition = nil,
 			target = nil,
 			collisionGroup = "RayNPC",
-			state = shared.npc.states.perception.calm,
+			state = STATE_CALM,
 			isSoundHeard = false,
 			isTargetLost = nil,
 			lastKnownPosition = nil,

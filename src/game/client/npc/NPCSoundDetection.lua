@@ -3,7 +3,8 @@ local RunService = game:GetService("RunService")
 local require = require(script.Parent.loader).load(script)
 
 local GeneralUtil = require("GeneralUtil")
-local Math = require("Math")
+
+local STATE_CALM, STATE_ALERT, STATE_HOSTILE = shared.npc.states.perception.calm, shared.npc.states.perception.alert, shared.npc.states.perception.hostile
 
 local SoundDetection = {}
 SoundDetection.__index = SoundDetection
@@ -18,8 +19,6 @@ function SoundDetection.new(npc)
     self.humanoid = npc.humanoid
     self.root = npc.root
 	self.blackboard = npc.btState.Blackboard
-
-	print(self.blackboard)
 
 	self.player = npc.player
 	self.playerCharacter = npc.playerCharacter
@@ -53,7 +52,7 @@ function SoundDetection.new(npc)
 	self.soundHeardThreshold = 3
 
 	self.statusCalmThreshold = 10
-	local statusAlertThreshold = 25
+	self.statusAlertThreshold = 20
 	local statusHostileThreshold = 50
 
 	local secondsPerCycle = 1
@@ -74,6 +73,7 @@ function SoundDetection.new(npc)
 			if self.blackboard.state == shared.npc.states.perception.alert and self.blackboard.target then
 				if GeneralUtil:IsDistanceGreater(self.root.Position, self.blackboard.targetPosition, 30) then
 					self.blackboard.isTargetLost = true
+					warn("Target Lost...")
 				end
 			end
 
@@ -98,19 +98,30 @@ function SoundDetection:Listen()
 		local detectionAmount = math.floor(normalizedSound%10)
 		self.soundAwareness += detectionAmount
 
-		if self.blackboard.isSoundHeard == false and self.blackboard.state == shared.npc.states.perception.calm and self.soundAwareness >= self.statusCalmThreshold then
-			self.blackboard.isSoundHeard = true
-			self.tickLastSoundHeard = tick()
+		if self.blackboard.isSoundHeard == false then
+			if self.blackboard.state == STATE_CALM and self.soundAwareness >= self.statusCalmThreshold then
+				self.blackboard.isSoundHeard = true
+				self.tickLastSoundHeard = tick()
+			end
+
+			if self.blackboard.state == STATE_ALERT then
+				self.blackboard.isSoundHeard = true
+				self.tickLastSoundHeard = tick()
+			end
 		end
 	end
 end
 
 function SoundDetection:UpdateState()
 	local newState = self.blackboard.state
-	self.guiNPC.GuiNPCIsAlert.Visible = newState == shared.npc.states.perception.alert
-	self.guiNPC.GuiNPCIsHostile.Visible = newState == shared.npc.states.perception.hostile
-	self.guiNPC.GuiNPCIsCalm.Visible = newState == shared.npc.states.perception.calm
+	self.guiNPC.GuiNPCIsCalm.Visible = newState == STATE_CALM
+	self.guiNPC.GuiNPCIsAlert.Visible = newState == STATE_ALERT
+	self.guiNPC.GuiNPCIsHostile.Visible = newState == STATE_HOSTILE
 	self.guiNPC.GuiNPCStatus.Text = string.upper( shared.npc.states.perceptionNames[newState] )
+
+	if newState == STATE_CALM then
+		self.soundAwareness = 0
+	end
 end
 
 
