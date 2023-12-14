@@ -69,6 +69,8 @@ function NPC.new(npcModel, player)
 		},
 	}
 
+	self.stateUI = self.character.Head.stategui.TextLabel
+
 	self.navigation = Navigation.new(self)
 	self.soundDetection = NPCSoundDetection.new(self)
 

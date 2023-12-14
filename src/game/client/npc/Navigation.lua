@@ -175,6 +175,7 @@ function Navigation:MoveStart(targetPosition)
 
                 if self.unstuck.lastPosition and GeneralUtil:IsDistanceLess(self.unstuck.lastPosition, self.root.Position, 2) then
                     warn("stuck")
+                    self.npc.stateUI.Text = ">||"
                     self:Stop()
                 end
 

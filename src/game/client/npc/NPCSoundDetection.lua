@@ -74,6 +74,7 @@ function SoundDetection.new(npc)
 				if GeneralUtil:IsDistanceGreater(self.root.Position, self.blackboard.targetPosition, 30) then
 					self.blackboard.isTargetLost = true
 					warn("Target Lost...")
+					self.npc.stateUI.Text = ":'("
 				end
 			end
 
