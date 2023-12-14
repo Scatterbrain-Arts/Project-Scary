@@ -255,13 +255,44 @@ function GeneralUtil:QueryRadius(position, diameter, collisionGroup, isDraw)
 end
 
 
+function GeneralUtil:QueryRegion(cframe, size, collisionGroup)
+	local parameters = OverlapParams.new()
+	parameters.CollisionGroup = collisionGroup
+	parameters.RespectCanCollide = false
+	parameters.MaxParts = 20
+
+	return workspace:GetPartBoundsInBox(cframe, size, parameters)
+end
+
+
+function GeneralUtil:FindRegionWithPart(regions, searchCollisionGroup, partCollisionGroup)
+	local currentRegion = nil
+    for index, regionData in pairs(regions) do
+        local objects = GeneralUtil:QueryRegion(regionData.region.CFrame, regionData.region.Size, searchCollisionGroup)
+        if next(objects) then
+            for _, object in ipairs(objects) do
+                if object:IsA("BasePart") and object.CollisionGroup == partCollisionGroup then
+                    currentRegion = index
+                    break
+                end
+            end
+        end
+    end
+	return currentRegion
+end
+
+
 function GeneralUtil:GetDistance(pos1, pos2)
 	return (pos1 - pos2).Magnitude
 end
 
 
-function GeneralUtil:IsDistanceInRange(pos1, pos2, range)
+function GeneralUtil:IsDistanceGreater(pos1, pos2, range)
 	return GeneralUtil:GetDistance(pos1, pos2) >= range
+end
+
+function GeneralUtil:IsDistanceLess(pos1, pos2, range)
+	return GeneralUtil:GetDistance(pos1, pos2) <= range
 end
 
 

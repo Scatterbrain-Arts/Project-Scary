@@ -12,7 +12,10 @@ local EventNPCSpawn = GetRemoteEvent("EventNPCSpawn")
 
 local NPCDebug = require("NPCDebug")
 local GeneralUtil = require("GeneralUtil")
-local NavigationUtil = require("NavigationUtil")
+local Navigation = require("Navigation")
+local NPCSoundDetection = require("NPCSoundDetection")
+
+local STATE_CALM, STATE_ALERT, STATE_HOSTILE = shared.npc.states.perception.calm, shared.npc.states.perception.alert, shared.npc.states.perception.hostile
 
 local NPC = {}
 NPC.__index = NPC
@@ -30,7 +33,7 @@ function NPC.new(npcModel, player)
 	self.root = npcModel:FindFirstChild("HumanoidRootPart") or warn("No root found for", self.name, "...")
 
 	local configFolder = GeneralUtil:Get("Folder", self.character, "config")
-	
+
 	self.config = {
 		isDebug = GeneralUtil:GetBool(configFolder, "_DEBUG"),
 		isOverride = GeneralUtil:GetBool(configFolder, "_OVERRIDE"),
@@ -40,20 +43,36 @@ function NPC.new(npcModel, player)
 		self.NPCDebug = NPCDebug.new(self)
 	end
 
-	self.navigation = NavigationUtil.new(self)
-
+	self.player = player
+	self.playerCharacter = player.Character or player.CharacterAdded:Wait()
+	Players.PlayerAdded:Connect(function(player)
+		self.player = player
+		player.CharacterAdded:Connect(function(character)
+			self.playerCharacter = character
+		end)
+	end)
 
 	self.btRoot = BehaviorTreeCreator:Create(ReplicatedStorage.Trees.PS_NPC_Start, self)
 	self.btState = {
 		self = self,
 		Blackboard = {
-			defaultWaitTime = 5,
+			defaultWaitTime = 2,
 			player = player,
-			targetPosition = Vector3.new(math.huge, math.huge, math.huge),
+			targetPosition = nil,
 			target = nil,
-			collisionGroup = "RayNPC"
+			collisionGroup = "RayNPC",
+			state = STATE_CALM,
+			isSoundHeard = false,
+			isTargetLost = nil,
+			lastKnownPosition = nil,
+			lastKnownRegion = nil,
 		},
 	}
+
+	self.stateUI = self.character.Head.stategui.TextLabel
+
+	self.navigation = Navigation.new(self)
+	self.soundDetection = NPCSoundDetection.new(self)
 
     RunService.Heartbeat:Connect(function(time, deltaTime)
 		if not self.config.isOverride.Value then
@@ -63,15 +82,6 @@ function NPC.new(npcModel, player)
 				self.NPCDebug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name, false)
 			end
 		end
-	end)
-
-	self.player = player
-	self.playerCharacter = player.Character or player.CharacterAdded:Wait()
-	Players.PlayerAdded:Connect(function(player)
-		self.player = player
-		player.CharacterAdded:Connect(function(character)
-			self.playerCharacter = character
-		end)
 	end)
 
 	EventNPCSpawn:FireServer(self.character)

@@ -144,7 +144,7 @@ function NPCDebug:CreateBehaviorTreeIndicator()
 	block.Anchored = false
 	block.Name = "BehaviorTreeIndicator"
 
-	local billboard = GeneralUtil:CreateBillboard(UDim2.fromScale(10,2.5), Vector3.new(0,2,0))
+	local billboard = GeneralUtil:CreateBillboard(UDim2.fromScale(10,2.5), Vector3.new(0,8,0))
 	billboard.Parent = block
 	billboard.Adornee = block
 
@@ -170,7 +170,6 @@ function NPCDebug:UpdateBehaviorTreeIndicator(updatedText, isPrint)
 
 		if isPrint then print(updatedText) end
 	end
-
 end
 
 function NPCDebug:StartTimer()
