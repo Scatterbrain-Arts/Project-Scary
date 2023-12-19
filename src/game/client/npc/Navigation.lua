@@ -162,6 +162,8 @@ end
 function Navigation:MoveStart(targetPosition)
     self.humanoid:MoveTo(targetPosition)
 
+    print(self.waypoints[self.index].Label)
+
     if self.unstuck.connection then
         self.unstuck.connection:Disconnect()
         self.unstuck.connection = nil
@@ -187,6 +189,22 @@ function Navigation:MoveStart(targetPosition)
 
 end
 
+function Navigation:MoveContinue()
+    if self.index < #self.waypoints then
+        self.index += 1
+        self.humanoid:MoveTo(self.waypoints[self.index].Position)
+
+        print(self.waypoints[self.index].Label)
+
+    elseif self.index == #self.waypoints then
+        if self.moveConnection then
+            self.moveConnection:Disconnect()
+            self.moveConnection = nil
+        end
+        self.isTargetReached = true
+    end
+end
+
 
 function Navigation:PathTo(targetPosition)
     local rayResult = GeneralUtil:CastSphere(self.root.Position, 4, Vector3.zero, "RayNPC")
@@ -207,18 +225,7 @@ function Navigation:PathTo(targetPosition)
         self.moveConnection:Disconnect()
     end
 
-    self.moveConnection  = self.humanoid.MoveToFinished:Connect(function(reached)
-		if self.index < #self.waypoints then
-			self.index += 1
-			self.humanoid:MoveTo(self.waypoints[self.index].Position)
-		elseif self.index == #self.waypoints then
-            if self.moveConnection then
-                self.moveConnection:Disconnect()
-			    self.moveConnection = nil
-            end
-			self.isTargetReached = true
-        end
-	end)
+    self.moveConnection = self.humanoid.MoveToFinished:Connect(function() self:MoveContinue() end)
 
     self:MoveStart(self.waypoints[self.index].Position)
 
@@ -416,19 +423,7 @@ function Navigation:PathToRandomPosition()
         self.moveConnection:Disconnect()
     end
 
-    self.moveConnection  = self.humanoid.MoveToFinished:Connect(function(reached)
-		if self.index < #self.waypoints then
-			self.index += 1
-			self.humanoid:MoveTo(self.waypoints[self.index].Position)
-		elseif self.index == #self.waypoints then
-            if self.moveConnection then
-                self.moveConnection:Disconnect()
-			    self.moveConnection = nil
-            end
-
-			self.isTargetReached = true
-        end
-	end)
+    self.moveConnection = self.humanoid.MoveToFinished:Connect(function() self:MoveContinue() end)
 
     self:MoveStart(self.waypoints[self.index].Position)
 
@@ -455,20 +450,7 @@ function Navigation:PathToRandomPositionInRegion(regionIndex)
         self.moveConnection:Disconnect()
     end
 
-    self.moveConnection  = self.humanoid.MoveToFinished:Connect(function(reached)
-		if self.index < #self.waypoints then
-			self.index += 1
-			self.humanoid:MoveTo(self.waypoints[self.index].Position)
-		elseif self.index == #self.waypoints then
-            if self.moveConnection then
-                self.moveConnection:Disconnect()
-			    self.moveConnection = nil
-            end
-
-			self.isTargetReached = true
-        end
-	end)
-
+    self.moveConnection = self.humanoid.MoveToFinished:Connect(function() self:MoveContinue() end)
     self:MoveStart(self.waypoints[self.index].Position)
 
     return targetPosition

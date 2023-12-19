@@ -9,6 +9,7 @@ ServiceBag:Start()
 
 require(Packages.ServerInit)
 require(Packages.NPCStarter)
+require(Packages.ObjectStarter)
 
 local Binder = require(Packages.Binder)
 local Locks = require(Packages.Locks)

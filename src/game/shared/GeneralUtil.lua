@@ -162,9 +162,9 @@ function GeneralUtil:GetBool(instance, name, isDebug)
 end
 
 
-function GeneralUtil:Get(defaultClass, instance, name)
+function GeneralUtil:Get(defaultClass, instance, name, isRecurisve)
 	assert(instance ~= nil, "instance is nil for", name)
-	local folder = instance:FindFirstChild(name)
+	local folder = instance:FindFirstChild(name, isRecurisve)
 
 	if not folder then
 		folder = Instance.new(defaultClass)
@@ -204,7 +204,7 @@ end
 function GeneralUtil:SetNetworkOwner(entity, owner)
 	owner = owner or nil
 	for _, part in pairs(entity:GetChildren()) do
-		if part:IsA("BasePart") then
+		if ( part:IsA("BasePart") or part:IsA("MeshPart") ) and part.Anchored == false then
 			part:SetNetworkOwner(owner)
 		end
 	end

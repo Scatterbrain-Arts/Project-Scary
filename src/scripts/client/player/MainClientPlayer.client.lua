@@ -27,3 +27,4 @@ for i = 1, #shared.npc.states.perceptionNames do shared.npc.states.perception[i]
 
 require(packages.PlayerEntity)
 require(packages.NPCStarter)
+require(packages.ObjectStarter)

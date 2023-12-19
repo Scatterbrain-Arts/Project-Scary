@@ -5,36 +5,34 @@ local CollectionService = game:GetService("CollectionService")
 
 local require = require(script.Parent.loader).load(script)
 
+local Binder = require("Binder")
 local GeneralUtil = require("GeneralUtil")
 local GetRemoteEvent = require("GetRemoteEvent")
 
-local EventNPCSpawn = GetRemoteEvent("EventNPCSpawn")
-
-local npcstarter = {}
+local EventObjectSpawn = GetRemoteEvent("EventObjectSpawn")
 
 if RunService:IsServer() then
-
 	Players.PlayerAdded:Connect(function(player)
 		player.CharacterAdded:Connect(function(character)
-			EventNPCSpawn:FireClient(player)
+			print("characted added - fire client to spawn")
+			EventObjectSpawn:FireClient(player)
 		end)
 	end)
 
-	EventNPCSpawn.OnServerEvent:Connect(function(player, npc)
-		GeneralUtil:SetNetworkOwner(npc, player)
+	EventObjectSpawn.OnServerEvent:Connect(function(player, object)
+		print("received --setting owner")
+		GeneralUtil:SetNetworkOwner(object, player)
 	end)
 end
 
 
 if RunService:IsClient() then
-	local NPC = require("NPC")
-	local NPCModel = CollectionService:GetTagged(NPC.TAG_NAME)[1]
+	local Doors = require("Doors")
 
-	EventNPCSpawn.OnClientEvent:Connect(function()
-		local NPCEntity = NPC.new(NPCModel, Players.LocalPlayer)
-	end)
+	print("recieved - spawning")
+	Doors.BINDER = Binder.new(Doors.TAG_NAME, Doors)
+	Doors.BINDER:Start()
 end
 
 
-
-return npcstarter
+return {}
