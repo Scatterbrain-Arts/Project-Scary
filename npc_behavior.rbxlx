@@ -4296,7 +4296,7 @@ return btTask
 						<int64 name="SourceAssetId">-1</int64>
 						<BinaryString name="Tags"></BinaryString>
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003de0</UniqueId>
-						<double name="Value">0.39999991655349731445</double>
+						<double name="Value">0.79999995231628417969</double>
 					</Properties>
 				</Item>
 				<Item class="Vector3Value" referent="RBXEF91BD7A2C9F4ACF889A86AB3982FB84">
@@ -4311,7 +4311,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003de1</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-415</Y>
+							<Y>-1438</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -4328,7 +4328,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003de2</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-384</Y>
+							<Y>-1231</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -8498,7 +8498,7 @@ return btTask
 						<UniqueId name="UniqueId">1a30c3f3c7478c58058a5d22001048e8</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>223</Y>
+							<Y>449</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -8515,7 +8515,7 @@ return btTask
 						<UniqueId name="UniqueId">1a30c3f3c7478c58058a5d22001048e9</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-567</Y>
+							<Y>-822</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>

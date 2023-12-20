@@ -2654,7 +2654,7 @@ return btTask
           <bool name="DefinesCapabilities">false</bool>
           <int64 name="SourceAssetId">-1</int64>
           <BinaryString name="Tags"></BinaryString>
-          <double name="Value">0.3999999165534973</double>
+          <double name="Value">0.7999999523162842</double>
         </Properties>
       </Item>
       <Item class="Vector3Value" referent="221">
@@ -2667,7 +2667,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-415</Y>
+            <Y>-1438</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
@@ -2682,7 +2682,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-384</Y>
+            <Y>-1231</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
@@ -6326,7 +6326,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>223</Y>
+            <Y>449</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
@@ -6341,7 +6341,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-567</Y>
+            <Y>-822</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
