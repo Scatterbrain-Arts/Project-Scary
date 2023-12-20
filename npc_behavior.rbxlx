@@ -5030,7 +5030,7 @@ function btTask.run(obj)
 		return FAIL
 	end
 	
-	isTargetReached = self.navigation.isTargetReached
+	isTargetReached = self.navigation.move.isTargetReached
 	
 	if Blackboard.isTargetLost then
 		return FAIL
@@ -5466,7 +5466,7 @@ function btTask.run(obj)
 		return FAIL
 	end
 	
-	isTargetReached = self.navigation.isTargetReached
+	isTargetReached = self.navigation.move.isTargetReached
 	
 	if Blackboard.player.Character then
 		if GeneralUtil:IsDistanceGreater(Blackboard.player.Character.PrimaryPart.Position, Blackboard.targetPosition, 5) then
@@ -6420,7 +6420,7 @@ function btTask.run(obj)
 		return FAIL
 	end
 
-	isTargetReached = self.navigation.isTargetReached
+	isTargetReached = self.navigation.move.isTargetReached
 
 	if isTargetReached == false then
 		return RUNNING
@@ -7335,7 +7335,7 @@ function btTask.run(obj)
 		return FAIL
 	end
 
-	isTargetReached = self.navigation.isTargetReached
+	isTargetReached = self.navigation.move.isTargetReached
 
 	if isTargetReached == false then
 		return RUNNING

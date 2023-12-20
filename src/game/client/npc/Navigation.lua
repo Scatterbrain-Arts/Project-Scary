@@ -41,11 +41,10 @@ function Navigation.new(npc)
         AgentCanClimb = self.config["AgentCanClimb"].Value,
         WaypointSpacing = self.config["WaypointSpacing"].Value,
         Costs = {
-            Plastic = 10,
             NonWalkableSurface = math.huge,
-            RoomHallway = 1,
-            RoomLarge = 1,
-            RoomSmall = 1,
+            Hallway = 1,
+            Large = 1,
+            Small = 1,
         },
     })
 
@@ -56,24 +55,43 @@ function Navigation.new(npc)
 
     self.regions = NavigationUtil:GetRegions(CollectionService:GetTagged(Navigation.TAG_NAME))
 
-    self.waypoints = {}
-    self.index = nil
-    self.isTargetReached = false
-    self.moveConnection = nil
-    
-    self.unstuck = {
+    self.move = {
+        index = nil,
+        waypoints = {},
         connection = nil,
+        targetPosition = nil,
+        isTargetReached = false,
+    }
+
+    self.action = {
+        index = nil,
+        waypoints = {},
+        connection = nil,
+        targetPosition = nil,
+        isTargetReached = false,
+    }
+
+    self.unstuck = {
+        lastPosition = nil,
         tickLast = tick(),
         tickInterval = 5,
-        lastPosition = nil
+        connection = nil,
     }
 
     return self
 end
 
 
-function Navigation:MoveStart(targetPosition)
-    self.humanoid:MoveTo(targetPosition)
+function Navigation:MoveStart()
+    local count = 0
+    for i,v in self.move.waypoints do
+        print(v)
+        print(v.Action)
+        print(v.Label)
+        -- if v.Label == "Door" then
+        --     count += 1
+        -- end
+    end
 
     if self.unstuck.connection then
         self.unstuck.connection:Disconnect()
@@ -82,7 +100,7 @@ function Navigation:MoveStart(targetPosition)
 
     self.unstuck.tickLast = tick()
     self.unstuck.connection = RunService.Heartbeat:Connect(function(deltaTime)
-        if not self.isTargetReached then
+        if not self.move.isTargetReached then
             if tick() - self.unstuck.tickLast >= self.unstuck.tickInterval then
 
                 if self.unstuck.lastPosition and GeneralUtil:IsDistanceLess(self.unstuck.lastPosition, self.root.Position, 2) then
@@ -96,19 +114,23 @@ function Navigation:MoveStart(targetPosition)
             end
         end
     end)
+
+    self.move.connection = self.humanoid.MoveToFinished:Connect(function() self:MoveContinue() end)
+
+    self.humanoid:MoveTo(self.move.waypoints[self.move.index].Position)
 end
 
 
 function Navigation:MoveContinue()
-    if self.index < #self.waypoints then
-        self.index += 1
-        self.humanoid:MoveTo(self.waypoints[self.index].Position)
-    elseif self.index == #self.waypoints then
-        if self.moveConnection then
-            self.moveConnection:Disconnect()
-            self.moveConnection = nil
+    if self.move.index < #self.move.waypoints then
+        self.move.index += 1
+        self.humanoid:MoveTo(self.move.waypoints[self.move.index].Position)
+    elseif self.move.index == #self.move.waypoints then
+        if self.move.connection then
+            self.move.connection:Disconnect()
+            self.move.connection = nil
         end
-        self.isTargetReached = true
+        self.move.isTargetReached = true
     end
 end
 
@@ -138,16 +160,17 @@ function Navigation:PathTo(targetPosition)
         return false
     end
 
-    self.isTargetReached = false
-    self.waypoints = self.path:GetWaypoints()
-    self.index = 1
+    self.move.targetPosition = targetPosition
+    self.move.isTargetReached = false
+    self.move.waypoints = self.path:GetWaypoints()
+    self.move.index = 1
 
-    if self.moveConnection then
-        self.moveConnection:Disconnect()
+    if self.move.connection then
+        self.move.connection:Disconnect()
+        self.move.connection = nil
     end
 
-    self.moveConnection = self.humanoid.MoveToFinished:Connect(function() self:MoveContinue() end)
-    self:MoveStart(self.waypoints[self.index].Position)
+    self:MoveStart()
 
     return true
 end
@@ -160,17 +183,18 @@ function Navigation:PathToRandomPosition()
         return false
     end
 
-    self.isTargetReached = false
-    self.waypoints = self.path:GetWaypoints()
-    self.index = 1
+    self.move.targetPosition = targetPosition
+    self.move.isTargetReached = false
+    self.move.waypoints = self.path:GetWaypoints()
+    self.move.index = 1
 
-    if self.moveConnection then
-        self.moveConnection:Disconnect()
+    if self.move.connection then
+        self.move.connection:Disconnect()
     end
 
-    self.moveConnection = self.humanoid.MoveToFinished:Connect(function() self:MoveContinue() end)
+    self.move.connection = self.humanoid.MoveToFinished:Connect(function() self:MoveContinue() end)
 
-    self:MoveStart(self.waypoints[self.index].Position)
+    self:MoveStart()
 
     return targetPosition
 end
@@ -183,16 +207,16 @@ function Navigation:PathToRandomPositionInRegion(regionIndex)
         return false
     end
 
-    self.isTargetReached = false
-    self.waypoints = self.path:GetWaypoints()
-    self.index = 1
+    self.move.isTargetReached = false
+    self.move.waypoints = self.path:GetWaypoints()
+    self.move.index = 1
 
-    if self.moveConnection then
-        self.moveConnection:Disconnect()
+    if self.move.connection then
+        self.move.connection:Disconnect()
     end
 
-    self.moveConnection = self.humanoid.MoveToFinished:Connect(function() self:MoveContinue() end)
-    self:MoveStart(self.waypoints[self.index].Position)
+    self.move.connection = self.humanoid.MoveToFinished:Connect(function() self:MoveContinue() end)
+    self:MoveStart()
 
     return targetPosition
 end
@@ -201,16 +225,16 @@ end
 function Navigation:MoveTo(targetPosition)
     self.isTargetReached = false
 
-    if self.moveConnection then
-        self.moveConnection:Disconnect()
+    if self.move.connection then
+        self.move.connection:Disconnect()
     end
 
-    self.moveConnection = self.humanoid.MoveToFinished:Connect(function(reached)
-		if self.moveConnection then
-            self.moveConnection:Disconnect()
-			self.moveConnection = nil
+    self.move.connection = self.humanoid.MoveToFinished:Connect(function(reached)
+		if self.move.connection then
+            self.move.connection:Disconnect()
+			self.move.connection = nil
         end
-        self.isTargetReached = true
+        self.move.isTargetReached = true
 	end)
 
     self:MoveStart(targetPosition)
@@ -222,9 +246,9 @@ end
 function Navigation:Stop()
     self.humanoid:MoveTo(self.root.Position)
 
-    if self.moveConnection then
-        self.moveConnection:Disconnect()
-        self.moveConnection = nil
+    if self.move.connection then
+        self.move.connection:Disconnect()
+        self.move.connection = nil
     end
 
     if self.unstuck.connection then
@@ -232,7 +256,7 @@ function Navigation:Stop()
         self.unstuck.connection = nil
     end
 
-    self.isTargetReached = nil
+    self.move.isTargetReached = nil
 
     return true
 end
