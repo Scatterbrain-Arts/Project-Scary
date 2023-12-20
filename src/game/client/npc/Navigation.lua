@@ -6,7 +6,7 @@ local require = require(script.Parent.loader).load(script)
 local next = next
 
 local GeneralUtil = require("GeneralUtil")
-
+local Doors = require("Doors")
 
 local Navigation = {}
 Navigation.__index = Navigation
@@ -189,13 +189,11 @@ function Navigation:MoveStart(targetPosition)
 
 end
 
+
 function Navigation:MoveContinue()
     if self.index < #self.waypoints then
         self.index += 1
         self.humanoid:MoveTo(self.waypoints[self.index].Position)
-
-        print(self.waypoints[self.index].Label)
-
     elseif self.index == #self.waypoints then
         if self.moveConnection then
             self.moveConnection:Disconnect()
@@ -205,6 +203,26 @@ function Navigation:MoveContinue()
     end
 end
 
+
+function Navigation:CheckAction()
+    if self.waypoints[self.index].Label == "Door" then
+        local doorInstance, doorObject = next(Doors.instances)
+        if doorObject.isClosed then
+
+            self.humanoid:MoveTo(self.root.Position)
+            task.wait(1)
+    
+            self.humanoid:MoveTo(doorObject.openPosition)
+            task.wait(2)
+
+            self.root.CFrame = CFrame.lookAt(self.root.Position, doorObject.model.Position)
+            task.wait(2)
+            
+            doorObject:activate()
+            task.wait(2)
+        end
+    end
+end
 
 function Navigation:PathTo(targetPosition)
     local rayResult = GeneralUtil:CastSphere(self.root.Position, 4, Vector3.zero, "RayNPC")
@@ -369,6 +387,8 @@ local function GetRandomPointInAnyRegion(regions)
         end
     end
 
+    selectedRegion = math.random() > 0.5 and "Large" or "Small"
+
     local regionData = regions.rooms[selectedRegion]
     local point = Vector3.new(
         math.random(regionData.lowerbound.X, regionData.upperbound.X),
@@ -423,7 +443,7 @@ function Navigation:PathToRandomPosition()
         self.moveConnection:Disconnect()
     end
 
-    self.moveConnection = self.humanoid.MoveToFinished:Connect(function() self:MoveContinue() end)
+    self.moveConnection = self.humanoid.MoveToFinished:Connect(function() print("checking") self:CheckAction() self:MoveContinue() end)
 
     self:MoveStart(self.waypoints[self.index].Position)
 

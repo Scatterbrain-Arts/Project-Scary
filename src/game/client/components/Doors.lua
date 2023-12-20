@@ -14,6 +14,7 @@ Doors.__index = Doors
 Doors.TAG_NAME = "Door"
 Doors.TEXT_OPEN = "Open"
 Doors.TEXT_CLOSE = "Close"
+Doors.instances = {}
 
 function Doors.new(doorInstance)
     local self = {}
@@ -25,8 +26,10 @@ function Doors.new(doorInstance)
 	self.model = GeneralUtil:Get("MeshPart", doorInstance, "Door", true)
 	self.prompt = GeneralUtil:Get("ProximityPrompt", doorInstance, "ProximityPrompt", true)
 	self.hinge = GeneralUtil:Get("HingeConstraint", doorInstance, "HingeConstraint", true)
+	self.openPosition = GeneralUtil:Get("BasePart", doorInstance, "StandHere", true).Position
 
 	self.isClosed = math.floor(self.hinge.CurrentAngle) == 0 and true or false
+	
 
 	self.prompt.ActionText = self.isClosed and Doors.TEXT_OPEN or Doors.TEXT_CLOSE
 	self.prompt.ObjectText = "Door"
@@ -36,7 +39,13 @@ function Doors.new(doorInstance)
 	self.hinge.ServoMaxTorque = math.huge
 
 	self.debounce = false
-	self.prompt.Triggered:Connect(function(player)
+	self.prompt.Triggered:Connect(function(player) self:activate() end)
+
+	function self:activate()
+		if self.debounce then
+			return
+		end
+
 		self.debounce = true
 		if self.isClosed then
 			print("open")
@@ -50,11 +59,12 @@ function Doors.new(doorInstance)
 			self.isClosed = true
 		end
 		self.debounce = false
-	end)
+	end
 
 	self.hinge.Enabled = true
-	print("spawned -- sending to server")
+
 	EventObjectSpawn:FireServer(self.entity)
+	Doors.instances[doorInstance] = self
 
 	return self
 end
