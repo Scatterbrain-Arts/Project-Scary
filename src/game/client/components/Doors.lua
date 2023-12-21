@@ -26,10 +26,9 @@ function Doors.new(doorInstance)
 	self.model = GeneralUtil:Get("MeshPart", doorInstance, "Door", true)
 	self.prompt = GeneralUtil:Get("ProximityPrompt", doorInstance, "ProximityPrompt", true)
 	self.hinge = GeneralUtil:Get("HingeConstraint", doorInstance, "HingeConstraint", true)
-	self.openPosition = Vector3.zero
+	self.position = self.model.Position
 
 	self.isClosed = math.floor(self.hinge.CurrentAngle) == 0 and true or false
-	
 
 	self.prompt.ActionText = self.isClosed and Doors.TEXT_OPEN or Doors.TEXT_CLOSE
 	self.prompt.ObjectText = "Door"

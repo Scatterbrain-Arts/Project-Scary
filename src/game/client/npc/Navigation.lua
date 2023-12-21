@@ -113,7 +113,10 @@ function Navigation:StartPathing()
 
             local nextWaypoint = self.move.waypoints[self.move.index]
             if nextWaypoint.Action == Enum.PathWaypointAction.Custom and nextWaypoint.Label == "Door" then
-                local doorInstance, doorObject = next(Doors.instances)
+                local _, doorObject = GeneralUtil:GetConditonFromTable(Doors.instances, function(a, b)
+                    return type(a) ~= "table" and true or GeneralUtil:GetDistance(self.root.Position, a.position) > GeneralUtil:GetDistance(self.root.Position, b.position)
+                end)
+
                 if doorObject.isClosed then
                     self:StartPause()
                     doorObject:activate()
@@ -121,7 +124,7 @@ function Navigation:StartPathing()
                     self:EndPause()
                 end
 
-                self.move.connection:Disconnect()
+                NavigationUtil:EndService(self.move)
                 self.move.connection = self.humanoid.MoveToFinished:Connect(function()
                     self:PathToTarget(self.move.targetPosition)
                 end)
