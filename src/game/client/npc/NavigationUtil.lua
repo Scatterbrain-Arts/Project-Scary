@@ -122,7 +122,7 @@ local function ComputePath(path, startPosition, targetPosition)
 end
 
 
-function NavigationUtil:FindPathToTarget(path, startPosition, targetPosition)
+function NavigationUtil:FindPath(path, startPosition, targetPosition)
     local tries = 0
     local isPath = false
 
@@ -144,7 +144,7 @@ function NavigationUtil:FindPathToTarget(path, startPosition, targetPosition)
 end
 
 
-function NavigationUtil:FindPathToRandom(path, startPosition, randomizer, regions)
+function NavigationUtil:FindPathRandom(path, startPosition, randomizer, regions)
     local tries = 0
     local isPath = false
     local targetPosition = nil
@@ -165,6 +165,14 @@ function NavigationUtil:FindPathToRandom(path, startPosition, randomizer, region
     end
 
     return targetPosition
+end
+
+
+function NavigationUtil:EndService(service)
+    if service.connection then
+        service.connection:Disconnect()
+        service.connection = nil
+    end
 end
 
 

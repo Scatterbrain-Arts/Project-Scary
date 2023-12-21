@@ -2654,7 +2654,7 @@ return btTask
           <bool name="DefinesCapabilities">false</bool>
           <int64 name="SourceAssetId">-1</int64>
           <BinaryString name="Tags"></BinaryString>
-          <double name="Value">0.7999999523162842</double>
+          <double name="Value">0.8999999761581421</double>
         </Properties>
       </Item>
       <Item class="Vector3Value" referent="221">
@@ -2667,7 +2667,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-1438</Y>
+            <Y>-1594</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
@@ -2682,7 +2682,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-1231</Y>
+            <Y>-1346</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
@@ -3279,7 +3279,7 @@ function btTask.start(obj)
 		return
 	end
 	
-	isMoving = self.navigation:PathTo(Blackboard.targetPosition)
+	isMoving = self.navigation:PathToTarget(Blackboard.targetPosition)
 end
 
 
@@ -3669,7 +3669,7 @@ function btTask.start(obj)
 		return
 	end
 	
-	isMoving = self.navigation:MoveTo(Blackboard.targetPosition)
+	isMoving = self.navigation:MoveToTarget(Blackboard.targetPosition)
 end
 
 
@@ -4160,7 +4160,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-392</Y>
+            <Y>-410</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
@@ -4175,7 +4175,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-455</Y>
+            <Y>-583</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
@@ -4489,7 +4489,7 @@ function btTask.start(obj)
 	local self = obj.self
 
 	Blackboard.target = nil
-	Blackboard.targetPosition = self.navigation:PathToRandomPosition()
+	Blackboard.targetPosition = self.navigation:PathToRandomTarget()
 end
 
 
@@ -5295,7 +5295,7 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	Blackboard.targetPosition = self.navigation:PathToRandomPositionInRegion(Blackboard.lastKnownRegion)
+	Blackboard.targetPosition = self.navigation:PathToRandomTargetInRegion(Blackboard.lastKnownRegion)
 	Blackboard.isSoundHeard = false
 end
 
@@ -6326,7 +6326,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>449</Y>
+            <Y>339</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>
@@ -6341,7 +6341,7 @@ return btTask
           <BinaryString name="Tags"></BinaryString>
           <Vector3 name="Value">
             <X>0.5</X>
-            <Y>-822</Y>
+            <Y>-786</Y>
             <Z>0</Z>
           </Vector3>
         </Properties>

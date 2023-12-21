@@ -83,10 +83,7 @@ end
 
 
 function Navigation:StartUnstuckService()
-    if self.unstuck.connection then
-        self.unstuck.connection:Disconnect()
-        self.unstuck.connection = nil
-    end
+    NavigationUtil:EndService(self.unstuck)
 
     self.unstuck.tickLast = tick()
     self.unstuck.connection = RunService.Heartbeat:Connect(function(deltaTime)
@@ -108,10 +105,7 @@ end
 
 
 function Navigation:StartPathing()
-    if self.move.connection then
-        self.move.connection:Disconnect()
-        self.move.connection = nil
-    end
+    NavigationUtil:EndService(self.move)
 
     self.move.connection = self.humanoid.MoveToFinished:Connect(function()
         if self.move.index < #self.move.waypoints then
@@ -121,24 +115,22 @@ function Navigation:StartPathing()
             if nextWaypoint.Action == Enum.PathWaypointAction.Custom and nextWaypoint.Label == "Door" then
                 local doorInstance, doorObject = next(Doors.instances)
                 if doorObject.isClosed then
-                    self:PauseStart()
+                    self:StartPause()
                     doorObject:activate()
                     task.wait(1)
-                    self:PauseEnd()
+                    self:EndPause()
                 end
 
                 self.move.connection:Disconnect()
                 self.move.connection = self.humanoid.MoveToFinished:Connect(function()
-                    self:PathTo(self.move.targetPosition)
+                    self:PathToTarget(self.move.targetPosition)
                 end)
             end
             self.humanoid:MoveTo(nextWaypoint.Position)
 
         elseif self.move.index == #self.move.waypoints then
-            if self.move.connection then
-                self.move.connection:Disconnect()
-                self.move.connection = nil
-            end
+            NavigationUtil:EndService(self.move)
+            NavigationUtil:EndService(self.unstuck)
             self.move.isTargetReached = true
         end
     end)
@@ -148,16 +140,11 @@ end
 
 
 function Navigation:StartMoving()
-    if self.move.connection then
-        self.move.connection:Disconnect()
-        self.move.connection = nil
-    end
+    NavigationUtil:EndService(self.move)
 
     self.move.connection = self.humanoid.MoveToFinished:Connect(function(reached)
-		if self.move.connection then
-            self.move.connection:Disconnect()
-			self.move.connection = nil
-        end
+		NavigationUtil:EndService(self.move)
+        NavigationUtil:EndService(self.unstuck)
         self.move.isTargetReached = true
 	end)
 
@@ -165,8 +152,30 @@ function Navigation:StartMoving()
 end
 
 
-function Navigation:PathTo(targetPosition)
-    if not NavigationUtil:FindPathToTarget(self.path, self.root.Position, targetPosition) then
+function Navigation:Stop()
+    NavigationUtil:EndService(self.move)
+    NavigationUtil:EndService(self.unstuck)
+
+    self.humanoid:MoveTo(self.root.Position)
+    self.move.isTargetReached = nil
+
+    return true
+end
+
+
+function Navigation:StartPause()
+    self.walkSpeed = self.humanoid.WalkSpeed
+    self.humanoid.WalkSpeed = 0
+end
+
+
+function Navigation:EndPause()
+    self.humanoid.WalkSpeed = self.walkSpeed
+end
+
+
+function Navigation:PathToTarget(targetPosition)
+    if not NavigationUtil:FindPath(self.path, self.root.Position, targetPosition) then
         return false
     end
 
@@ -182,8 +191,8 @@ function Navigation:PathTo(targetPosition)
 end
 
 
-function Navigation:PathToRandomPosition()
-    local targetPosition = NavigationUtil:FindPathToRandom(self.path, self.root.Position, NavigationUtil.RandomPointAnyRegion, self.regions)
+function Navigation:PathToRandomTarget()
+    local targetPosition = NavigationUtil:FindPathRandom(self.path, self.root.Position, NavigationUtil.RandomPointAnyRegion, self.regions)
 
     if not targetPosition then
         return false
@@ -201,8 +210,8 @@ function Navigation:PathToRandomPosition()
 end
 
 
-function Navigation:PathToRandomPositionInRegion(regionIndex)
-    local targetPosition = NavigationUtil:FindPathToRandom(self.path, self.root.Position, NavigationUtil.RandomPointInRegion, self.regions.rooms[regionIndex])
+function Navigation:PathToRandomTargetInRegion(regionIndex)
+    local targetPosition = NavigationUtil:FindPathRandom(self.path, self.root.Position, NavigationUtil.RandomPointInRegion, self.regions.rooms[regionIndex])
 
     if not targetPosition then
         return false
@@ -220,7 +229,7 @@ function Navigation:PathToRandomPositionInRegion(regionIndex)
 end
 
 
-function Navigation:MoveTo(targetPosition)
+function Navigation:MoveToTarget(targetPosition)
     self.move.targetPosition = targetPosition
     self.move.isTargetReached = false
     self.move.waypoints = nil
@@ -228,36 +237,6 @@ function Navigation:MoveTo(targetPosition)
 
     self:StartUnstuckService()
     self:StartMoving()
-
-    return true
-end
-
-
-function Navigation:PauseStart()
-    self.walkSpeed = self.humanoid.WalkSpeed
-    self.humanoid.WalkSpeed = 0
-end
-
-function Navigation:PauseEnd()
-    self.humanoid.WalkSpeed = self.walkSpeed
-end
-
-
-
-function Navigation:Stop()
-    self.humanoid:MoveTo(self.root.Position)
-
-    if self.move.connection then
-        self.move.connection:Disconnect()
-        self.move.connection = nil
-    end
-
-    if self.unstuck.connection then
-        self.unstuck.connection:Disconnect()
-        self.unstuck.connection = nil
-    end
-
-    self.move.isTargetReached = nil
 
     return true
 end

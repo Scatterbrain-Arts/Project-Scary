@@ -100,15 +100,15 @@ function SoundDetection:Listen()
 		self.soundAwareness += detectionAmount
 
 		if self.blackboard.isSoundHeard == false then
-			if self.blackboard.state == STATE_CALM and self.soundAwareness >= self.statusCalmThreshold then
-				self.blackboard.isSoundHeard = true
-				self.tickLastSoundHeard = tick()
-			end
+			-- if self.blackboard.state == STATE_CALM and self.soundAwareness >= self.statusCalmThreshold then
+			-- 	self.blackboard.isSoundHeard = true
+			-- 	self.tickLastSoundHeard = tick()
+			-- end
 
-			if self.blackboard.state == STATE_ALERT then
-				self.blackboard.isSoundHeard = true
-				self.tickLastSoundHeard = tick()
-			end
+			-- if self.blackboard.state == STATE_ALERT then
+			-- 	self.blackboard.isSoundHeard = true
+			-- 	self.tickLastSoundHeard = tick()
+			-- end
 		end
 	end
 end
