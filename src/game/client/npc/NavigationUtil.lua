@@ -86,7 +86,7 @@ local function GetRandomPointInRegion(regionData)
 end
 NavigationUtil.RandomPointInRegion = GetRandomPointInRegion
 
-
+local last = "Large"
 local function GetRandomPointInAnyRegion(regions)
     local rnd = math.random() * regions.totalWeight
     local selectedRegion = nil
@@ -101,7 +101,8 @@ local function GetRandomPointInAnyRegion(regions)
         end
     end
 
-    selectedRegion = math.random() > 0.5 and "Large" or "Large" --testing remove later
+    selectedRegion = last == "Large" and "Small" or "Large" --testing remove later
+	last = selectedRegion
 
     return GetRandomPointInRegion(regions.rooms[selectedRegion])
 end
