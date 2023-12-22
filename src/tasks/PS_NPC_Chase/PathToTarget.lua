@@ -36,12 +36,9 @@ function btTask.run(obj)
 		return FAIL
 	end
 
-	if Blackboard.isSoundHeard then
-		return FAIL
-	end
-
 	if Blackboard.target:IsA("Player") and Blackboard.target.Character and Blackboard.target.Character.PrimaryPart then
 		if GeneralUtil:IsDistanceGreater(Blackboard.target.Character.PrimaryPart.Position, Blackboard.targetPosition, 5) then
+
 			return FAIL
 		end
 

@@ -12,7 +12,7 @@ function btTask.start(obj)
 
 	self.stateUI.Text = "???"
 	task.wait(1)
-	self.stateUI.Text = "<))"
+	self.stateUI.Text = "<))🔊"
 end
 
 
