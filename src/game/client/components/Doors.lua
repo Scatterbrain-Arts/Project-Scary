@@ -30,8 +30,8 @@ function Doors.new(doorInstance)
 
 	self.isClosed = math.floor(self.hinge.CurrentAngle) == 0 and true or false
 
-	self.prompt.ActionText = self.isClosed and Doors.TEXT_OPEN or Doors.TEXT_CLOSE
 	self.prompt.ObjectText = "Door"
+	self.prompt.ActionText = self.isClosed and Doors.TEXT_OPEN or Doors.TEXT_CLOSE
 
 	self.hinge.AngularResponsiveness = 20
 	self.hinge.AngularSpeed = 40
@@ -47,12 +47,10 @@ function Doors.new(doorInstance)
 
 		self.debounce = true
 		if self.isClosed then
-			print("open")
 			self.hinge.TargetAngle = self.hinge.UpperAngle
 			self.prompt.ActionText = Doors.TEXT_CLOSE
 			self.isClosed = false
 		else
-			print("close")
 			self.hinge.TargetAngle = self.hinge.LowerAngle
 			self.prompt.ActionText = Doors.TEXT_OPEN
 			self.isClosed = true
