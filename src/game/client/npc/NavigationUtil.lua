@@ -101,8 +101,8 @@ local function GetRandomPointInAnyRegion(regions)
         end
     end
 
-    selectedRegion = last == "Large" and "Small" or "Large" --testing remove later
-	last = selectedRegion
+    --selectedRegion = last == "Large" and "Small" or "Large" --testing remove later
+	--last = selectedRegion
 
     return GetRandomPointInRegion(regions.rooms[selectedRegion])
 end

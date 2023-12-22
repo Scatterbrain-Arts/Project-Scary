@@ -60,12 +60,15 @@ function NPC.new(npcModel, player)
 			player = player,
 			targetPosition = nil,
 			target = nil,
-			collisionGroup = "RayNPC",
+			collisionGroupRay = "RayNPC",
 			state = STATE_CALM,
 			isSoundHeard = false,
 			isTargetLost = nil,
 			lastKnownPosition = nil,
 			lastKnownRegion = nil,
+
+			isLineOfSight = nil,
+			isActive = false,
 		},
 	}
 

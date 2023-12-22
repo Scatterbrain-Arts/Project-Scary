@@ -22,6 +22,7 @@ function Navigation.new(npc)
     self.character = npc.character
     self.humanoid = npc.humanoid
     self.root = npc.root
+    self.blackboard = npc.btState.Blackboard
 
     local configFolder = GeneralUtil:Get("Folder", self.character, "config")
 	local configNavigation = GeneralUtil:Get("Configuration", configFolder, "navigation")
@@ -87,7 +88,7 @@ function Navigation:StartUnstuckService()
 
     self.unstuck.tickLast = tick()
     self.unstuck.connection = RunService.Heartbeat:Connect(function(deltaTime)
-        if not self.move.isTargetReached then
+        if not self.blackboard.isTargetReached then
             if tick() - self.unstuck.tickLast >= self.unstuck.tickInterval then
 
                 if self.unstuck.lastPosition and GeneralUtil:IsDistanceLess(self.unstuck.lastPosition, self.root.Position, 2) then
@@ -134,7 +135,7 @@ function Navigation:StartPathing()
         elseif self.move.index == #self.move.waypoints then
             NavigationUtil:EndService(self.move)
             NavigationUtil:EndService(self.unstuck)
-            self.move.isTargetReached = true
+            self.blackboard.isTargetReached = true
         end
     end)
 
@@ -148,10 +149,10 @@ function Navigation:StartMoving()
     self.move.connection = self.humanoid.MoveToFinished:Connect(function(reached)
 		NavigationUtil:EndService(self.move)
         NavigationUtil:EndService(self.unstuck)
-        self.move.isTargetReached = true
+        self.blackboard.isTargetReached = true
 	end)
 
-    self.humanoid:MoveTo(self.move.waypoints[self.move.index].Position)
+    self.humanoid:MoveTo(self.move.targetPosition)
 end
 
 
@@ -160,7 +161,7 @@ function Navigation:Stop()
     NavigationUtil:EndService(self.unstuck)
 
     self.humanoid:MoveTo(self.root.Position)
-    self.move.isTargetReached = nil
+    self.blackboard.isTargetReached = nil
 
     return true
 end
@@ -183,14 +184,14 @@ function Navigation:PathToTarget(targetPosition)
     end
 
     self.move.targetPosition = targetPosition
-    self.move.isTargetReached = false
+    self.blackboard.isTargetReached = false
     self.move.waypoints = self.path:GetWaypoints()
     self.move.index = 1
 
     self:StartUnstuckService()
     self:StartPathing()
 
-    return true
+    return targetPosition
 end
 
 
@@ -202,7 +203,7 @@ function Navigation:PathToRandomTarget()
     end
 
     self.move.targetPosition = targetPosition
-    self.move.isTargetReached = false
+    self.blackboard.isTargetReached = false
     self.move.waypoints = self.path:GetWaypoints()
     self.move.index = 1
 
@@ -221,7 +222,7 @@ function Navigation:PathToRandomTargetInRegion(regionIndex)
     end
 
     self.move.targetPosition = targetPosition
-    self.move.isTargetReached = false
+    self.blackboard.isTargetReached = false
     self.move.waypoints = self.path:GetWaypoints()
     self.move.index = 1
 
@@ -234,14 +235,14 @@ end
 
 function Navigation:MoveToTarget(targetPosition)
     self.move.targetPosition = targetPosition
-    self.move.isTargetReached = false
+    self.blackboard.isTargetReached = false
     self.move.waypoints = nil
     self.move.index = nil
 
     self:StartUnstuckService()
     self:StartMoving()
 
-    return true
+    return targetPosition
 end
 
 
