@@ -79,6 +79,38 @@ function Navigation.new(npc)
         connection = nil,
     }
 
+    self.graphRooms = {
+        ["Large"] = { ["Hallway"] = 1, ["Outside"] = 1 },
+        ["Hallway"] = { ["Large"] = 1, ["Small"] = 1 },
+        ["Small"] = { ["Hallway"] = 1 },
+    }
+
+    task.delay(2, function()
+    -- Inside: Direction door is pulled in towards
+    -- Outside: Other side of door
+    self.doorsRooms = {
+        ["Large"] = {
+            ["Hallway"] = Doors.names["Door_LargeIN_HallwayOUT"].instance.NavOutside,
+            ["Outside"] = Doors.names["Door_LargeIN_OutsideOUT"].instance.NavOutside,
+        },
+        ["Hallway"] = {
+            ["Large"] = Doors.names["Door_LargeIN_HallwayOUT"].instance.NavInside,
+            ["Small"] = Doors.names["Door_SmallIN_HallwayOUT"].instance.NavInside,
+        },
+        ["Small"] = {
+            ["Hallway"] = Doors.names["Door_SmallIN_HallwayOUT"].instance.NavOutside,
+        },
+    }
+    --print(self.doorsRooms)
+    end)
+
+    self.objective = {
+        goal = nil, --room index
+        current = nil, -- current room index
+        path = {},
+    }
+
+
     return self
 end
 
@@ -247,7 +279,17 @@ end
 
 
 function Navigation:FindRegionWithPlayer()
-    return NavigationUtil:FindRegionWithPart(self.regions.rooms, "RayChar", "CharPlayer")
+    return NavigationUtil:FindRegionWithPart(self.regions.rooms, "RayFindChars", "CharPlayer")
+end
+
+
+function Navigation:FindRegionWithNPC()
+    return NavigationUtil:FindRegionWithPart(self.regions.rooms, "RayFindChars", "CharNPC")
+end
+
+
+function Navigation:FindShortestPath(startRoom, endRoom)
+    return NavigationUtil:GraphDijkstra(self.graphRooms, startRoom, endRoom, false)
 end
 
 

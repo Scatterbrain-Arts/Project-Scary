@@ -19,7 +19,7 @@ function btTask.start(obj)
 		return
 	end
 
-	rayLineOfSight = GeneralUtil:CastSphere(self.root.Position, 2, Blackboard.targetPosition - self.root.Position, Blackboard.collisionGroupRay, false)
+	rayLineOfSight = GeneralUtil:CastSphere(self.root.Position, 2, Blackboard.targetPosition - self.root.Position, Blackboard.collisionGroupRayLoS, false)
 end
 
 

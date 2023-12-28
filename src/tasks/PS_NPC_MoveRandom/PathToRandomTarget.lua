@@ -1,3 +1,6 @@
+local packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
+local GeneralUtil = require(packages.GeneralUtil)
+
 local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
@@ -8,7 +11,7 @@ function btTask.start(obj)
 	local self = obj.self
 
 	Blackboard.target = nil
-	Blackboard.targetPosition = self.navigation:PathToRandomTarget()
+	Blackboard.targetPosition = self.navigation:PathToTarget(GeneralUtil:Get(nil, game.Workspace, "DoorTest", true).NavInside.Position)
 end
 
 

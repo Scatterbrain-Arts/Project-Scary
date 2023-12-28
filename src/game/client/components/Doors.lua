@@ -15,6 +15,7 @@ Doors.TAG_NAME = "Door"
 Doors.TEXT_OPEN = "Open"
 Doors.TEXT_CLOSE = "Close"
 Doors.instances = {}
+Doors.names = {}
 
 function Doors.new(doorInstance)
     local self = {}
@@ -22,7 +23,7 @@ function Doors.new(doorInstance)
 
 	self.maid = Maid.new()
 	self.name = doorInstance.Name
-	self.entity = doorInstance
+	self.instance = doorInstance
 	self.model = GeneralUtil:Get("MeshPart", doorInstance, "Door", true)
 	self.prompt = GeneralUtil:Get("ProximityPrompt", doorInstance, "ProximityPrompt", true)
 	self.hinge = GeneralUtil:Get("HingeConstraint", doorInstance, "HingeConstraint", true)
@@ -60,16 +61,12 @@ function Doors.new(doorInstance)
 
 	self.hinge.Enabled = true
 
-	EventObjectSpawn:FireServer(self.entity)
+	EventObjectSpawn:FireServer(self.instance)
 	Doors.instances[doorInstance] = self
+	Doors.names[doorInstance.Name] = self
 
 	return self
 end
-
-
-
-
-
 
 
 return Doors

@@ -59,7 +59,7 @@ function SoundDetection.new(npc)
 	local tickLastCycle = tick()
 	RunService.Heartbeat:Connect(function(deltaTime)
 		if tick() - tickLastCycle >= secondsPerCycle then
-			self:Listen()
+			--self:Listen()
 
 			if tick() - self.tickLastSoundHeard >= 7 then
 				if self.soundAwareness < self.statusCalmThreshold then

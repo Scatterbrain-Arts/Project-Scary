@@ -61,12 +61,16 @@ end
 function NavigationUtil:FindRegionWithPart(regions, searchCollisionGroup, partCollisionGroup)
 	local currentRegion = nil
     for index, regionData in pairs(regions) do
-        local objects = GeneralUtil:QueryRegion(regionData.region.CFrame, regionData.region.Size, searchCollisionGroup)
+        local objects = GeneralUtil:QueryRegion(regionData.region.CFrame, regionData.region.Size + Vector3.new(0,5,0), searchCollisionGroup)
         if next(objects) then
             for _, object in ipairs(objects) do
-                if object:IsA("BasePart") and object.CollisionGroup == partCollisionGroup then
-                    currentRegion = index
-                    break
+                if object:IsA("BasePart") or object:IsA("MeshPart") then
+                    if object.CollisionGroup == partCollisionGroup then
+                        currentRegion = index
+                        break
+                    end
+                else
+                    warn("unknown type to reference...")
                 end
             end
         end
@@ -176,11 +180,79 @@ function NavigationUtil:EndService(service)
 end
 
 
+-- Fill in paths in the opposite direction to the stated edges
+function NavigationUtil:GraphComplete(graph)
+    for node, edges in pairs(graph) do
+        for edge, distance in pairs(edges) do
+            if not graph[edge] then graph[edge] = {} end
+            graph[edge][node] = distance
+        end
+    end
+end
+
+
+-- Create path string from table of previous nodes
+function NavigationUtil:GraphFollow(trail, destination)
+    local path, nextStep = destination, trail[destination]
+    local reverseTable = {}
+    table.insert(reverseTable, path)
+    while nextStep do
+        path = nextStep .. " " .. path
+        table.insert(reverseTable, nextStep)
+        nextStep = trail[nextStep]
+    end
+
+    -- local result = {}
+    -- for i = #t, 1, -1 do
+    --     table.insert(result, t[i])
+    -- end
+
+    return reverseTable
+end
+
+
+-- Find the shortest path between the current and destination nodes
+function NavigationUtil:GraphDijkstra(graph, current, destination, directed)
+    if not directed then NavigationUtil:GraphComplete(graph) end
+
+    local unvisited, distanceTo, trail = {}, {}, {}
+    local nearest, nextNode, tentative
+
+    for node, edgeDists in pairs(graph) do
+        if node == current then
+            distanceTo[node] = 0
+            trail[current] = false
+        else
+            distanceTo[node] = math.huge
+            unvisited[node] = true
+        end
+    end
+
+    repeat
+        nearest = math.huge
+        for neighbour, pathDist in pairs(graph[current]) do
+            if unvisited[neighbour] then
+                tentative = distanceTo[current] + pathDist
+                if tentative < distanceTo[neighbour] then
+                    distanceTo[neighbour] = tentative
+                    trail[neighbour] = current
+                end
+                if tentative < nearest then
+                    nearest = tentative
+                    nextNode = neighbour
+                end
+            end
+        end
+
+        unvisited[current] = false
+        current = nextNode
+    until unvisited[destination] == false or nearest == math.huge
+
+    return distanceTo[destination], NavigationUtil:GraphFollow(trail, destination)
+end
+
 
 return NavigationUtil
-
-
-
 
 
 

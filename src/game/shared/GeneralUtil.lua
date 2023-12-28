@@ -166,7 +166,7 @@ function GeneralUtil:Get(defaultClass, instance, name, isRecurisve)
 	assert(instance ~= nil, "instance is nil for", name)
 	local folder = instance:FindFirstChild(name, isRecurisve)
 
-	if not folder then
+	if not folder and defaultClass ~= nil then
 		folder = Instance.new(defaultClass)
 		folder.Parent = instance
 		folder.Name = name
