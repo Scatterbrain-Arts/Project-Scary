@@ -2,21 +2,22 @@ local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
-local tickLast = nil
+local isForceFail = false
 
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	self.navigation:Stop()
-	tickLast = tick()
+	print("start")
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+
+	print("end")
 end
 
 
@@ -24,7 +25,9 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	return tick() - tickLast > Blackboard.defaultWaitTime and SUCCESS or RUNNING
+	print("run")
+
+	return Blackboard.objective.currentRoom == Blackboard.objective.goalRoom and SUCCESS or FAIL
 end
 
 

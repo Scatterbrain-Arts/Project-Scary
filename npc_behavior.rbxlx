@@ -1956,7 +1956,7 @@ function btTask.run(obj)
 	
 	if Blackboard.isSoundHeard == true then
 		self.stateUI.Text = "!!!"
-		Blackboard.state = shared.npc.states.perception.alert
+		Blackboard.state = shared.npc.states.detection.alert
 		Blackboard.isSoundHeard = false
 		self.soundDetection:UpdateState()
 		return SUCCESS
@@ -6892,7 +6892,7 @@ function btTask.run(obj)
 
 	if Blackboard.isSoundHeard == true then
 		self.stateUI.Text = "!!!"
-		Blackboard.state = shared.npc.states.perception.alert
+		Blackboard.state = shared.npc.states.detection.alert
 		self.soundDetection:UpdateState()
 		Blackboard.isSoundHeard = false
 		Blackboard.isTargetLost = false
@@ -8192,7 +8192,7 @@ return btTask]]></ProtectedString>
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
-local STATE_CALM, STATE_ALERT, STATE_HOSTILE = shared.npc.states.perception.calm, shared.npc.states.perception.alert, shared.npc.states.perception.hostile
+local STATE_CALM, STATE_ALERT, STATE_HOSTILE = shared.npc.states.detection.calm, shared.npc.states.detection.alert, shared.npc.states.detection.hostile
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard

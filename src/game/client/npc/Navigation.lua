@@ -104,12 +104,6 @@ function Navigation.new(npc)
     --print(self.doorsRooms)
     end)
 
-    self.objective = {
-        goal = nil, --room index
-        current = nil, -- current room index
-        path = {},
-    }
-
     self.isPause = false
 
 

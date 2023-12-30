@@ -8,39 +8,44 @@ local SUCCESS,FAIL,RUNNING = 1,2,3
 
 local isForceFail = false
 
+
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
-	local objective = self.navigation.objective
+	local objective = Blackboard.objective
 
-	-- if not Blackboard.target or not Blackboard.targetPosition then
-	-- 	warn("Target or TargetPosition is nil...")
-	-- 	isForceFail = true
-	-- 	return
-	-- end
+	print("start")
 
-	local nextRoom = self.navigation.doorsRooms[objective.current][Blackboard.reversePath[#Blackboard.reversePath]]
-	if nextRoom then
-		self.navigation:PathToTarget(nextRoom.Position)
-		table.remove(Blackboard.reversePath, #Blackboard.reversePath)
-	else
+	print("at: ", objective.currentRoom, " trying: ", objective.reversePathToGoalRoom[#objective.reversePathToGoalRoom])
+
+	local doorOutsideOfNextRoom = self.navigation.doorsRooms[objective.currentRoom][objective.reversePathToGoalRoom[#objective.reversePathToGoalRoom]]
+	if not doorOutsideOfNextRoom or not doorOutsideOfNextRoom:IsA("BasePart") then
+		warn("Door Outside is nil...")
+		warn("currentRoom: ", objective.currentRoom, " goalRoom: ", objective.goalRoom, " reversePathToGoalRoom: ", objective.reversePathToGoalRoom)
 		isForceFail = true
+		return
 	end
 
-	print(nextRoom)
+	self.navigation:PathToTarget(doorOutsideOfNextRoom.Position)
+	table.remove(objective.reversePathToGoalRoom, #objective.reversePathToGoalRoom)
+
+	isForceFail = false
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+
+	print("end", status)
 end
 
 
 function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
-	local objective = self.navigation.objective
+	local objective = Blackboard.objective
+
 
 	if isForceFail then
 		return FAIL
@@ -48,17 +53,20 @@ function btTask.run(obj)
 
 	if Blackboard.isTargetReached then
 		local reachedRoom = self.navigation:FindRegionWithNPC()
-		if objective.current ~= reachedRoom then
-			objective.current = reachedRoom
+		print("reached: ", reachedRoom)
+		if objective.currentRoom ~= reachedRoom then
+			objective.currentRoom = reachedRoom
 		end
 
-		if objective.current ~= objective.goal then
-			local nextRoom = self.navigation.doorsRooms[objective.current][Blackboard.reversePath[#Blackboard.reversePath]]
+		if objective.currentRoom ~= objective.goalRoom then
+			print("--at: ", objective.currentRoom, " trying: ", objective.reversePathToGoalRoom[#objective.reversePathToGoalRoom])
+			local nextRoom = self.navigation.doorsRooms[objective.currentRoom][objective.reversePathToGoalRoom[#objective.reversePathToGoalRoom]]
 			self.navigation:PathToTarget(nextRoom.Position)
-			table.remove(Blackboard.reversePath, #Blackboard.reversePath)
+			table.remove(objective.reversePathToGoalRoom, #objective.reversePathToGoalRoom)
 			return RUNNING
 
-		elseif objective.current == objective.goal then
+		elseif objective.currentRoom == objective.goalRoom then
+			Blackboard.isObjectiveRoomReached = true
 			return SUCCESS
 		end
 	end

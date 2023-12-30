@@ -2,23 +2,24 @@ local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 local tickStartListen = nil
-local isInitalize = false
+local isInitialized = false
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	self.navigation:Stop()
+	--self.navigation:StartPause()
 
-	self.stateUI.Text = "???"
+	self.stateUI.Text = ":o"
 	task.wait(1)
-	self.stateUI.Text = "<))🔊"
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+
+	--self.navigation:EndPause()
 end
 
 
@@ -26,22 +27,23 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	if not isInitalize then
+	if not isInitialized then
 		Blackboard.isSoundHeard = false
 		tickStartListen = tick()
-		isInitalize = true
+		isInitialized = true
 	end
 
 	if Blackboard.isSoundHeard == true then
 		self.stateUI.Text = "!!!"
-		Blackboard.state = shared.npc.states.perception.alert
+		Blackboard.state = shared.npc.states.detection.alert
 		self.soundDetection:UpdateState()
 		Blackboard.isSoundHeard = false
+		Blackboard.isTargetLost = false
 		return SUCCESS
 	end
 
 	if tick() - tickStartListen > 3 and Blackboard.isSoundHeard == false then
-		self.stateUI.Text = "..."
+		self.stateUI.Text = ":("
 		return FAIL
 	else
 		return RUNNING

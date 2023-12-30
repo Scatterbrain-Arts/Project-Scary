@@ -15,7 +15,7 @@ local GeneralUtil = require("GeneralUtil")
 local Navigation = require("Navigation")
 local NPCSoundDetection = require("NPCSoundDetection")
 
-local STATE_CALM, STATE_ALERT, STATE_HOSTILE = shared.npc.states.perception.calm, shared.npc.states.perception.alert, shared.npc.states.perception.hostile
+local STATE_CALM, STATE_ALERT, STATE_HOSTILE = shared.npc.states.detection.calm, shared.npc.states.detection.alert, shared.npc.states.detection.hostile
 
 local NPC = {}
 NPC.__index = NPC
@@ -52,7 +52,7 @@ function NPC.new(npcModel, player)
 		end)
 	end)
 
-	self.btRoot = BehaviorTreeCreator:Create(ReplicatedStorage.Trees.PS_NPC_Start, self)
+	self.btRoot = BehaviorTreeCreator:Create(ReplicatedStorage.Tree.PS_NPC_Start, self)
 	self.btState = {
 		self = self,
 		Blackboard = {
@@ -69,6 +69,32 @@ function NPC.new(npcModel, player)
 
 			isLineOfSight = nil,
 			isActive = false,
+
+
+			--calm behavior
+			detectionState = nil,
+			calmBehaviorState = nil,
+
+			behaviorStates = {
+				calm = {
+					[shared.npc.states.behavior.calm.hungry] = false,
+					[shared.npc.states.behavior.calm.mourning] = false,
+					[shared.npc.states.behavior.calm.angry] = false,
+					[shared.npc.states.behavior.calm.patrol] = false,
+				},
+			},
+
+			objective = {
+				goal = "",
+				goalRoom = nil,
+				currentRoom = nil,
+				reversePathToGoalRoom = {},
+
+				goalCondition = nil,
+				goalActions = {},
+			},
+
+			isObjectiveRoomReached = false
 		},
 	}
 
@@ -83,7 +109,7 @@ function NPC.new(npcModel, player)
 			self.navigation:EndPause()
 
 			if self.config.isDebug.Value then
-				self.NPCDebug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name, false)
+				self.NPCDebug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name, true)
 			end
 		else
 			self.navigation:StartPause()

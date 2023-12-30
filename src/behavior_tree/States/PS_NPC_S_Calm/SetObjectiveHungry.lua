@@ -2,22 +2,23 @@ local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
-local tickLast = nil
+local ObjectiveName = "Hungry"
 
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	tickLast = tick()
+	Blackboard.objective.goal = ObjectiveName
+	--TODo: default condition is complete all actions once
+	Blackboard.objective.goalCondition = nil
+	Blackboard.objective.goalActions = { "Think", "Search For Object", "Eat" }
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
-
-	Blackboard.isActive = true
 end
 
 
@@ -25,11 +26,7 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	if Blackboard.isActive then
-		return SUCCESS
-	end
-
-	return tick() - tickLast > 1 and SUCCESS or RUNNING
+	return Blackboard.objective.goal == ObjectiveName and SUCCESS or FAIL
 end
 
 

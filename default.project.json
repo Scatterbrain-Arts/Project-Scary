@@ -37,8 +37,8 @@
     },
 
     "ReplicatedStorage": {
-      "Tasks": {
-        "$path": "src/tasks"
+      "Tree src": {
+        "$path": "src/behavior_tree"
       }
     }
   }

@@ -248,7 +248,7 @@ function NavigationUtil:GraphDijkstra(graph, current, destination, directed)
         current = nextNode
     until unvisited[destination] == false or nearest == math.huge
 
-    return distanceTo[destination], NavigationUtil:GraphFollow(trail, destination)
+    return NavigationUtil:GraphFollow(trail, destination), distanceTo[destination]
 end
 
 

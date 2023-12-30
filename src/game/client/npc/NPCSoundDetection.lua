@@ -4,7 +4,7 @@ local require = require(script.Parent.loader).load(script)
 
 local GeneralUtil = require("GeneralUtil")
 
-local STATE_CALM, STATE_ALERT, STATE_HOSTILE = shared.npc.states.perception.calm, shared.npc.states.perception.alert, shared.npc.states.perception.hostile
+local STATE_CALM, STATE_ALERT, STATE_HOSTILE = shared.npc.states.detection.calm, shared.npc.states.detection.alert, shared.npc.states.detection.hostile
 
 local SoundDetection = {}
 SoundDetection.__index = SoundDetection
@@ -70,7 +70,7 @@ function SoundDetection.new(npc)
 			self.guiNPC.GuiNPCBar.Size = UDim2.fromScale(self.soundAwareness / 100, 1)
 			self.guiNPC.GuiNPCPercent.Text = math.floor(self.soundAwareness) .. " pts"
 
-			if self.blackboard.state == shared.npc.states.perception.alert and self.blackboard.target then
+			if self.blackboard.state == shared.npc.states.detection.alert and self.blackboard.target then
 				if GeneralUtil:IsDistanceGreater(self.root.Position, self.blackboard.targetPosition, 30) then
 					self.blackboard.isTargetLost = true
 					warn("Target Lost...")
@@ -118,7 +118,7 @@ function SoundDetection:UpdateState()
 	self.guiNPC.GuiNPCIsCalm.Visible = newState == STATE_CALM
 	self.guiNPC.GuiNPCIsAlert.Visible = newState == STATE_ALERT
 	self.guiNPC.GuiNPCIsHostile.Visible = newState == STATE_HOSTILE
-	self.guiNPC.GuiNPCStatus.Text = string.upper( shared.npc.states.perceptionNames[newState] )
+	self.guiNPC.GuiNPCStatus.Text = string.upper( shared.npc.states.detectionNames[newState] )
 
 	if newState == STATE_CALM then
 		self.soundAwareness = 0
