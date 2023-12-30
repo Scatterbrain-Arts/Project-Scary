@@ -80,10 +80,13 @@ function NPC.new(npcModel, player)
     RunService.Heartbeat:Connect(function(time, deltaTime)
 		if not self.config.isOverride.Value then
 			self.btRoot:Run(self.btState)
+			self.navigation:EndPause()
 
 			if self.config.isDebug.Value then
 				self.NPCDebug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name, false)
 			end
+		else
+			self.navigation:StartPause()
 		end
 	end)
 

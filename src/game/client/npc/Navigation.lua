@@ -110,6 +110,8 @@ function Navigation.new(npc)
         path = {},
     }
 
+    self.isPause = false
+
 
     return self
 end
@@ -120,7 +122,7 @@ function Navigation:StartUnstuckService()
 
     self.unstuck.tickLast = tick()
     self.unstuck.connection = RunService.Heartbeat:Connect(function(deltaTime)
-        if not self.blackboard.isTargetReached then
+        if not self.isPause and not self.blackboard.isTargetReached then
             if tick() - self.unstuck.tickLast >= self.unstuck.tickInterval then
 
                 if self.unstuck.lastPosition and GeneralUtil:IsDistanceLess(self.unstuck.lastPosition, self.root.Position, 2) then
@@ -200,13 +202,15 @@ end
 
 
 function Navigation:StartPause()
-    self.walkSpeed = self.humanoid.WalkSpeed
+    --self.walkSpeed = self.humanoid.WalkSpeed
     self.humanoid.WalkSpeed = 0
+    self.isPause = true
 end
 
 
 function Navigation:EndPause()
-    self.humanoid.WalkSpeed = self.walkSpeed
+    self.humanoid.WalkSpeed = 12 --self.walkSpeed
+    self.isPause = false
 end
 
 

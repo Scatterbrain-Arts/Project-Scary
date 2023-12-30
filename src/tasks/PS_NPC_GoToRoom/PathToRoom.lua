@@ -20,8 +20,14 @@ function btTask.start(obj)
 	-- end
 
 	local nextRoom = self.navigation.doorsRooms[objective.current][Blackboard.reversePath[#Blackboard.reversePath]]
-	self.navigation:PathToTarget(nextRoom.Position)
-	table.remove(Blackboard.reversePath, #Blackboard.reversePath)
+	if nextRoom then
+		self.navigation:PathToTarget(nextRoom.Position)
+		table.remove(Blackboard.reversePath, #Blackboard.reversePath)
+	else
+		isForceFail = true
+	end
+
+	print(nextRoom)
 end
 
 
@@ -35,6 +41,10 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 	local objective = self.navigation.objective
+
+	if isForceFail then
+		return FAIL
+	end
 
 	if Blackboard.isTargetReached then
 		local reachedRoom = self.navigation:FindRegionWithNPC()
@@ -55,11 +65,6 @@ function btTask.run(obj)
 
 	return Blackboard.isTargetReached ~= nil and RUNNING or FAIL
 
-
-
-	-- if isForceFail or not Blackboard.target or not Blackboard.targetPosition then
-	-- 	return FAIL
-	-- end
 
 	-- if Blackboard.target:IsA("Player") and Blackboard.target.Character and Blackboard.target.Character.PrimaryPart then
 	-- 	if GeneralUtil:IsDistanceGreater(Blackboard.target.Character.PrimaryPart.Position, Blackboard.targetPosition, 5) then
