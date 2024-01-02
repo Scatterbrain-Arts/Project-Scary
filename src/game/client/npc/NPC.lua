@@ -109,7 +109,7 @@ function NPC.new(npcModel, player)
 			self.navigation:EndPause()
 
 			if self.config.isDebug.Value then
-				self.NPCDebug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name, true)
+				self.NPCDebug:UpdateBehaviorTreeIndicator(self.btState.Blackboard.node.Name, false)
 			end
 		else
 			self.navigation:StartPause()

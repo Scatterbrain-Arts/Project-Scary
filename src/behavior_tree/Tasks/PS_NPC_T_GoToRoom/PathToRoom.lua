@@ -14,10 +14,6 @@ function btTask.start(obj)
 	local self = obj.self
 	local objective = Blackboard.objective
 
-	print("start")
-
-	print("at: ", objective.currentRoom, " trying: ", objective.reversePathToGoalRoom[#objective.reversePathToGoalRoom])
-
 	local doorOutsideOfNextRoom = self.navigation.doorsRooms[objective.currentRoom][objective.reversePathToGoalRoom[#objective.reversePathToGoalRoom]]
 	if not doorOutsideOfNextRoom or not doorOutsideOfNextRoom:IsA("BasePart") then
 		warn("Door Outside is nil...")
@@ -36,8 +32,6 @@ end
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
-
-	print("end", status)
 end
 
 
@@ -53,15 +47,20 @@ function btTask.run(obj)
 
 	if Blackboard.isTargetReached then
 		local reachedRoom = self.navigation:FindRegionWithNPC()
-		print("reached: ", reachedRoom)
 		if objective.currentRoom ~= reachedRoom then
 			objective.currentRoom = reachedRoom
 		end
 
 		if objective.currentRoom ~= objective.goalRoom then
-			print("--at: ", objective.currentRoom, " trying: ", objective.reversePathToGoalRoom[#objective.reversePathToGoalRoom])
-			local nextRoom = self.navigation.doorsRooms[objective.currentRoom][objective.reversePathToGoalRoom[#objective.reversePathToGoalRoom]]
-			self.navigation:PathToTarget(nextRoom.Position)
+			local doorOutsideOfNextRoom = self.navigation.doorsRooms[objective.currentRoom][objective.reversePathToGoalRoom[#objective.reversePathToGoalRoom]]
+			if not doorOutsideOfNextRoom or not doorOutsideOfNextRoom:IsA("BasePart") then
+				warn("Door Outside is nil...")
+				warn("currentRoom: ", objective.currentRoom, " goalRoom: ", objective.goalRoom, " reversePathToGoalRoom: ", objective.reversePathToGoalRoom)
+				isForceFail = true
+				return
+			end
+
+			self.navigation:PathToTarget(doorOutsideOfNextRoom.Position)
 			table.remove(objective.reversePathToGoalRoom, #objective.reversePathToGoalRoom)
 			return RUNNING
 

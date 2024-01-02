@@ -4,20 +4,20 @@ local SUCCESS,FAIL,RUNNING = 1,2,3
 
 local isForceFail = false
 
+
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	-- TODO: heuristic to choose from list of room with food
-	Blackboard.objective.goalRoom = "Small"
-	Blackboard.objective.currentRoom = self.navigation:FindRegionWithNPC()
-
-	if not Blackboard.objective.currentRoom then
-		warn("Did not find NPC...")
+	if not Blackboard.objective or not Blackboard.objective.goal or Blackboard.objective.current then
+		warn("Objective is nil...")
 		isForceFail = true
 		return
 	end
 	isForceFail = false
+
+	Blackboard.objective.currentRoom = self.navigation:FindRegionWithNPC()
+	Blackboard.isObjectiveRoomReached = Blackboard.objective.currentRoom == Blackboard.objective.goalRoom
 end
 
 
@@ -32,12 +32,10 @@ function btTask.run(obj)
 	local self = obj.self
 
 	if isForceFail then
-		warn("Did not find NPC...")
-		isForceFail = true
-		return
+		return FAIL
 	end
 
-	return Blackboard.isObjectiveRoomReached ~= nil and SUCCESS or FAIL
+	return Blackboard.isObjectiveRoomReached and SUCCESS or FAIL
 end
 
 

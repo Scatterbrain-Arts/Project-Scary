@@ -16,7 +16,7 @@ function btTask.start(obj)
 		return
 	end
 	count = 1
-	print("loop:", count)
+	print("bt loop:", count)
 	tickLast = tick()
 end
 
@@ -27,7 +27,7 @@ function btTask.finish(obj, status)
 
 	if isInit then
 		count += 1
-		print("loop:", count)
+		print("bt loop:", count)
 		return
 	end
 

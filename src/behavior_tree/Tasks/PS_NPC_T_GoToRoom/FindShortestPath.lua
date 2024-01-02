@@ -9,17 +9,15 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	if not Blackboard.objective or not Blackboard.objective.goal or Blackboard.objective.current then
-		warn("Objective is nil...")
+	if Blackboard.isObjectiveRoomReached or not Blackboard.objective or not Blackboard.objective.goal or Blackboard.objective.current then
+		warn("Objective is nil or Room is reached...")
 		isForceFail = true
 		return
 	end
+	isForceFail = false
 
-	Blackboard.objective.currentRoom = self.navigation:FindRegionWithNPC()
 	Blackboard.objective.reversePathToGoalRoom = self.navigation:FindShortestPath(Blackboard.objective.currentRoom, Blackboard.objective.goalRoom)
 	table.remove(Blackboard.objective.reversePathToGoalRoom, #Blackboard.objective.reversePathToGoalRoom)
-
-	isForceFail = false
 end
 
 
