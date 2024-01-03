@@ -61,7 +61,7 @@ function Doors.new(doorInstance)
 
 	self.hinge.Enabled = true
 
-	EventObjectSpawn:FireServer(self.instance)
+	EventObjectSpawn:FireServer(self.instance, "Door")
 	Doors.instances[doorInstance] = self
 	Doors.names[doorInstance.Name] = self
 

@@ -55,7 +55,7 @@ function Objects.new(objectInstance)
 		self.debounce = false
 	end
 
-	EventObjectSpawn:FireServer(self.entity)
+	EventObjectSpawn:FireServer(self.entity, "Object")
 	Objects.instances[objectInstance] = self
 
 	return self

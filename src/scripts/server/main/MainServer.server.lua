@@ -7,6 +7,7 @@ local ServiceBag = require(Packages.ServiceBag).new()
 ServiceBag:Init()
 ServiceBag:Start()
 
+require(Packages.NPCService)
 require(Packages.ServerInit)
 require(Packages.NPCStarter)
 require(Packages.ObjectStarter)

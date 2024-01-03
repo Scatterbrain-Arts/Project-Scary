@@ -1,16 +1,15 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 
 local require = require(script.Parent.loader).load(script)
 
 local GeneralUtil = require("GeneralUtil")
 local GetRemoteEvent = require("GetRemoteEvent")
+local NPCService = require("NPCService")
 
 local EventNPCSpawn = GetRemoteEvent("EventNPCSpawn")
 
-local npcstarter = {}
 
 if RunService:IsServer() then
 
@@ -22,6 +21,7 @@ if RunService:IsServer() then
 
 	EventNPCSpawn.OnServerEvent:Connect(function(player, npc)
 		GeneralUtil:SetNetworkOwner(npc, player)
+		NPCService.SignalAddNPC:Fire(npc)
 	end)
 end
 
@@ -37,4 +37,4 @@ end
 
 
 
-return npcstarter
+return {}
