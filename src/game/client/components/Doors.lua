@@ -4,22 +4,26 @@ local require = require(script.Parent.loader).load(script)
 
 local GeneralUtil = require("GeneralUtil")
 local Maid = require("Maid")
-local Binder = require("Binder")
-local GetRemoteEvent = require("GetRemoteEvent")
-
-local EventObjectSpawn = GetRemoteEvent("EventObjectSpawn")
+local ServiceBag = require("ServiceBag")
 
 local Doors = {}
 Doors.__index = Doors
 Doors.TAG_NAME = "Door"
 Doors.TEXT_OPEN = "Open"
 Doors.TEXT_CLOSE = "Close"
+Doors.totalDoors = #CollectionService:GetTagged(Doors.TAG_NAME)
+Doors.count = 0
+
 Doors.instances = {}
 Doors.names = {}
 
-function Doors.new(doorInstance)
+function Doors.new(doorInstance, serviceBag)
+	assert(ServiceBag.isServiceBag(serviceBag), "Not valid a service bag...")
+
     local self = {}
     setmetatable(self, Doors)
+
+	self._objectService = serviceBag:GetService(require("ObjectService"))
 
 	self.maid = Maid.new()
 	self.name = doorInstance.Name
@@ -61,9 +65,14 @@ function Doors.new(doorInstance)
 
 	self.hinge.Enabled = true
 
-	EventObjectSpawn:FireServer(self.instance, "Door")
+	Doors.count += 1
+	self._objectService:ObjectSpawnAdd(Doors.TAG_NAME, self, self.instance)
 	Doors.instances[doorInstance] = self
 	Doors.names[doorInstance.Name] = self
+
+	if Doors.count == Doors.totalDoors then
+		self._objectService:ObjectSpawnComplete(Doors.TAG_NAME)
+	end
 
 	return self
 end

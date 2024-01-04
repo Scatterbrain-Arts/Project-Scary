@@ -4,13 +4,15 @@ local Packages = require(Loader).bootstrapGame(ServerScriptService.src)
 
 local ServiceBag = require(Packages.ServiceBag).new()
 
+ServiceBag:GetService(Packages.GameServicesServer)
+
 ServiceBag:Init()
 ServiceBag:Start()
 
-require(Packages.NPCService)
-require(Packages.ServerInit)
-require(Packages.NPCStarter)
-require(Packages.ObjectStarter)
+-- require(Packages.NPCService)
+-- require(Packages.ServerInit)
+-- require(Packages.NPCStarter)
+-- require(Packages.ObjectStarter)
 
 local Binder = require(Packages.Binder)
 local Locks = require(Packages.Locks)
