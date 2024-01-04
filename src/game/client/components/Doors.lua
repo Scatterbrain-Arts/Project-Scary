@@ -18,11 +18,10 @@ Doors.instances = {}
 Doors.names = {}
 
 function Doors.new(doorInstance, serviceBag)
-	assert(ServiceBag.isServiceBag(serviceBag), "Not valid a service bag...")
-
     local self = {}
     setmetatable(self, Doors)
 
+	assert(ServiceBag.isServiceBag(serviceBag), "Not valid a service bag...")
 	self._objectService = serviceBag:GetService(require("ObjectService"))
 
 	self.maid = Maid.new()

@@ -7,8 +7,7 @@ local require = require(script.Parent.loader).load(script)
 local BehaviorTreeCreator = require("BehaviorTreeCreator")
 local GetRemoteEvent = require("GetRemoteEvent")
 local Maid = require("Maid")
-
-local EventNPCSpawn = GetRemoteEvent("EventNPCSpawn")
+local ServiceBag = require("ServiceBag")
 
 local NPCDebug = require("NPCDebug")
 local GeneralUtil = require("GeneralUtil")
@@ -21,9 +20,12 @@ local NPC = {}
 NPC.__index = NPC
 NPC.TAG_NAME = "NPC"
 
-function NPC.new(npcModel, player)
+function NPC.new(npcModel, serviceBag)
     local self = {}
     setmetatable(self, NPC)
+
+	assert(ServiceBag.isServiceBag(serviceBag), "Not valid a service bag...")
+	self._objectService = serviceBag:GetService(require("ObjectService"))
 
 	self.name = "Pepe"
 	self.maid = Maid.new()
@@ -43,8 +45,8 @@ function NPC.new(npcModel, player)
 		self.NPCDebug = NPCDebug.new(self)
 	end
 
-	self.player = player
-	self.playerCharacter = player.Character or player.CharacterAdded:Wait()
+	self.player = Players.LocalPlayer
+	self.playerCharacter = Players.LocalPlayer.Character or Players.LocalPlayer.CharacterAdded:Wait()
 	Players.PlayerAdded:Connect(function(player)
 		self.player = player
 		player.CharacterAdded:Connect(function(character)
@@ -57,7 +59,7 @@ function NPC.new(npcModel, player)
 		self = self,
 		Blackboard = {
 			defaultWaitTime = 2,
-			player = player,
+			player = self.player,
 			targetPosition = nil,
 			target = nil,
 			collisionGroupRayLoS = "RayNPCLoS",
@@ -116,7 +118,8 @@ function NPC.new(npcModel, player)
 		end
 	end)
 
-	EventNPCSpawn:FireServer(self.character)
+	self._objectService:ObjectSpawnAdd(NPC.TAG_NAME, self, self.character)
+	self._objectService:ObjectSpawnComplete(NPC.TAG_NAME)
 
 	return self
 end
