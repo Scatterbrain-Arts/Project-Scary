@@ -2,9 +2,10 @@ local CollectionService = game:GetService("CollectionService")
 
 local require = require(script.Parent.loader).load(script)
 
-local GeneralUtil = require("GeneralUtil")
 local Maid = require("Maid")
 local ServiceBag = require("ServiceBag")
+
+local GeneralUtil = require("GeneralUtil")
 
 local Doors = {}
 Doors.__index = Doors
@@ -65,12 +66,12 @@ function Doors.new(doorInstance, serviceBag)
 	self.hinge.Enabled = true
 
 	Doors.count += 1
-	self._objectService:ObjectSpawnAdd(Doors.TAG_NAME, self, self.instance)
+	self._objectService:AddObject(Doors.TAG_NAME, self, self.instance)
 	Doors.instances[doorInstance] = self
 	Doors.names[doorInstance.Name] = self
 
 	if Doors.count == Doors.totalDoors then
-		self._objectService:ObjectSpawnComplete(Doors.TAG_NAME)
+		self._objectService:FinishObject(Doors.TAG_NAME)
 	end
 
 	return self

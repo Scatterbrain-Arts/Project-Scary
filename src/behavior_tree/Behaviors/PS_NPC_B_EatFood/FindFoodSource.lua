@@ -9,11 +9,17 @@ function btTask.start(obj)
 	local self = obj.self
 
 	-- TODO: heuristic to choose from list of room with food
-	Blackboard.objective.goalRoom = "Small"
-	Blackboard.objective.currentRoom = self.navigation:FindRegionWithNPC()
 
-	if not Blackboard.objective.currentRoom then
-		warn("Did not find NPC...")
+	local foodObject = self:FindFood()
+	if foodObject then
+		Blackboard.objective.actionObject = foodObject
+		Blackboard.objective.actionPosition = foodObject.navStart.Position
+		Blackboard.objective.goalRoom = foodObject.room
+		Blackboard.objective.currentRoom = self.navigation:FindRegionWithNPC()
+	end
+
+	if not Blackboard.objective.currentRoom or not Blackboard.objective.goalRoom then
+		warn("Failed to find food...")
 		isForceFail = true
 		return
 	end

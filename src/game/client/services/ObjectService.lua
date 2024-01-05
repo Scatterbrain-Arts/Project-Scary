@@ -21,7 +21,7 @@ function ObjectService:Init(serviceBag)
 end
 
 
-function ObjectService:ObjectSpawnAdd(type, object, instance)
+function ObjectService:AddObject(type, object, instance)
 	if not self.instancesAdded[type] then
 		self.instancesAdded[type] = {}
 	end
@@ -35,9 +35,14 @@ function ObjectService:ObjectSpawnAdd(type, object, instance)
 end
 
 
-function ObjectService:ObjectSpawnComplete(type)
+function ObjectService:FinishObject(type)
 	EventObjectLoaded:FireServer(self.instancesAdded[type])
 	self.instancesAdded[type] = nil
+end
+
+
+function ObjectService:GetType(type)
+	return self.objects[type]
 end
 
 

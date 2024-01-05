@@ -1,20 +1,16 @@
+local Packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
+local GeneralUtil = require(Packages.GeneralUtil)
+
 local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
 local isForceFail = false
 
+
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
-
-
-	if not Blackboard.objective.currentRoom then
-		warn("Did not find NPC...")
-		isForceFail = true
-		return
-	end
-	isForceFail = false
 end
 
 
@@ -28,13 +24,8 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	if isForceFail then
-		warn("Did not find NPC...")
-		isForceFail = true
-		return
-	end
-
-	return Blackboard.isObjectiveRoomReached ~= nil and SUCCESS or FAIL
+	Blackboard.isActionPositionReached = GeneralUtil:IsDistanceLess(self.root.Position, Blackboard.objective.actionPosition, 1)
+	return Blackboard.isActionPositionReached and SUCCESS or FAIL
 end
 
 

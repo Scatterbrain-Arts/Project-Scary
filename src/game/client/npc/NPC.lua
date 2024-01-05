@@ -5,7 +5,6 @@ local Players = game:GetService("Players")
 local require = require(script.Parent.loader).load(script)
 
 local BehaviorTreeCreator = require("BehaviorTreeCreator")
-local GetRemoteEvent = require("GetRemoteEvent")
 local Maid = require("Maid")
 local ServiceBag = require("ServiceBag")
 
@@ -94,8 +93,12 @@ function NPC.new(npcModel, serviceBag)
 
 				goalCondition = nil,
 				goalActions = {},
+
+				actionObject = nil,
+				actionPosition = nil,
 			},
 
+			isActionPositionReached = false,
 			isObjectiveRoomReached = false
 		},
 	}
@@ -118,10 +121,16 @@ function NPC.new(npcModel, serviceBag)
 		end
 	end)
 
-	self._objectService:ObjectSpawnAdd(NPC.TAG_NAME, self, self.character)
-	self._objectService:ObjectSpawnComplete(NPC.TAG_NAME)
+	self._objectService:AddObject(NPC.TAG_NAME, self, self.character)
+	self._objectService:FinishObject(NPC.TAG_NAME)
 
 	return self
+end
+
+
+function NPC:FindFood()
+	local foodObjects = self._objectService:GetType("Food")
+	return foodObjects[1]
 end
 
 

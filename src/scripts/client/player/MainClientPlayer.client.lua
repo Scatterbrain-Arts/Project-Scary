@@ -24,6 +24,10 @@ local Doors = require(Packages.Doors)
 Doors.BINDER = Binder.new(Doors.TAG_NAME, Doors, ServiceBag)
 Doors.BINDER:Start()
 
+local Food = require(Packages.Food)
+Food.BINDER = Binder.new(Food.TAG_NAME, Food, ServiceBag)
+Food.BINDER:Start()
+
 local NPC = require(Packages.NPC)
 NPC.BINDER = Binder.new(NPC.TAG_NAME, NPC, ServiceBag)
 NPC.BINDER:Start()
