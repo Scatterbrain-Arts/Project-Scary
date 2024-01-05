@@ -17,10 +17,8 @@ repeat
 until Players.LocalPlayer:HasAppearanceLoaded()
 
 
-
 require(Packages.PlayerEntity)
---require(Packages.ObjectBinder)
---require(Packages.NPCStarter)
+
 
 local Doors = require(Packages.Doors)
 Doors.BINDER = Binder.new(Doors.TAG_NAME, Doors, ServiceBag)
