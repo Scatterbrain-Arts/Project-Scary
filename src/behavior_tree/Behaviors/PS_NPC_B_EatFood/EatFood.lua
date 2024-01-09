@@ -1,16 +1,22 @@
-local Packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
-local GeneralUtil = require(Packages.GeneralUtil)
-
 local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
 local isForceFail = false
 
-
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+
+	if not Blackboard.objective.actionObject then
+		warn("Failed to find food...")
+		isForceFail = true
+		return
+	end
+	isForceFail = false
+
+	Blackboard.objective.actionObject:EatObject(self.character.RightHand)
+	Blackboard.objective.goalCondition = true
 end
 
 
@@ -24,8 +30,11 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	Blackboard.isActionPositionReached = GeneralUtil:IsDistanceLess(self.root.Position, Blackboard.objective.actionPosition, 1)
-	return Blackboard.isActionPositionReached and SUCCESS or FAIL
+	if isForceFail then
+		return FAIL
+	end
+
+	return Blackboard.objective.goalCondition and SUCCESS or FAIL
 end
 
 

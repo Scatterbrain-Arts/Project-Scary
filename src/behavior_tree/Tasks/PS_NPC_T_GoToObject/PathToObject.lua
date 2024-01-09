@@ -20,7 +20,7 @@ function btTask.start(obj)
 	end
 	isForceFail = false
 
-	self.navigation:PathToTarget(Blackboard.objective.actionPosition)
+	self.navigation:PathToTarget(Blackboard.objective.actionPosition.Position)
 end
 
 

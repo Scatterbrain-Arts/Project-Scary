@@ -10,9 +10,7 @@ function btTask.start(obj)
 	local self = obj.self
 
 	Blackboard.objective.goal = ObjectiveName
-	--TODo: default condition is complete all actions once
-	Blackboard.objective.goalCondition = nil
-	Blackboard.objective.goalActions = { "Think", "Search For Object", "Eat" }
+	Blackboard.objective.goalCondition = false
 end
 
 

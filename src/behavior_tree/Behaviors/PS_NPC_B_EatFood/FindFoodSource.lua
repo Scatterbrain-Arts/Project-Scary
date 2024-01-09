@@ -13,7 +13,7 @@ function btTask.start(obj)
 	local foodObject = self:FindFood()
 	if foodObject then
 		Blackboard.objective.actionObject = foodObject
-		Blackboard.objective.actionPosition = foodObject.navStart.Position
+		Blackboard.objective.actionPosition = foodObject.navStart
 		Blackboard.objective.goalRoom = foodObject.room
 		Blackboard.objective.currentRoom = self.navigation:FindRegionWithNPC()
 	end
@@ -38,9 +38,7 @@ function btTask.run(obj)
 	local self = obj.self
 
 	if isForceFail then
-		warn("Did not find NPC...")
-		isForceFail = true
-		return
+		return FAIL
 	end
 
 	return Blackboard.isObjectiveRoomReached ~= nil and SUCCESS or FAIL

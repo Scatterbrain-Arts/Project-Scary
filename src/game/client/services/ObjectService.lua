@@ -30,14 +30,33 @@ function ObjectService:AddObject(type, object, instance)
 	if not self.objects[type] then
 		self.objects[type] = {}
 	end
+
+	local index = #self.objects[type] + 1
 	table.insert(self.objects[type], object)	-- array of objects
-	self.objects[type][instance] = object		-- set of objects, indexed by instance
+	self.objects[type][instance] = index		-- set object indexes, indexed by instance
 end
 
 
-function ObjectService:FinishObject(type)
+function ObjectService:FinishAddObject(type)
 	EventObjectLoaded:FireServer(self.instancesAdded[type])
 	self.instancesAdded[type] = nil
+end
+
+
+function ObjectService:RemoveObject(type, instance)
+	if not self.objects[type][instance] then
+		warn("Object not found...")
+		return
+	end
+
+	local index = self.objects[type][instance]
+	self.objects[type][index] = nil
+	self.objects[type][instance] = nil
+end
+
+
+function ObjectService:PrintObjects(type)
+	print(self.objects[type])
 end
 
 

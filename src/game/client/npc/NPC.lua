@@ -122,7 +122,7 @@ function NPC.new(npcModel, serviceBag)
 	end)
 
 	self._objectService:AddObject(NPC.TAG_NAME, self, self.character)
-	self._objectService:FinishObject(NPC.TAG_NAME)
+	self._objectService:FinishAddObject(NPC.TAG_NAME)
 
 	return self
 end
@@ -130,7 +130,16 @@ end
 
 function NPC:FindFood()
 	local foodObjects = self._objectService:GetType("Food")
-	return foodObjects[1]
+
+	for i,v in ipairs(foodObjects) do
+		print(i,v)
+	end
+
+	for i,v in ipairs(foodObjects) do
+		if v ~= nil then
+			return v
+		end
+	end
 end
 
 

@@ -71,7 +71,7 @@ function Doors.new(doorInstance, serviceBag)
 	Doors.names[doorInstance.Name] = self
 
 	if Doors.count == Doors.totalDoors then
-		self._objectService:FinishObject(Doors.TAG_NAME)
+		self._objectService:FinishAddObject(Doors.TAG_NAME)
 	end
 
 	return self

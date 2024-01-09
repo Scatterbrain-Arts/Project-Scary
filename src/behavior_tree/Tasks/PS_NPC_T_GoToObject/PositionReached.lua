@@ -11,15 +11,6 @@ local isForceFail = false
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
-
-	if not Blackboard.objective or not Blackboard.objective.actionObject or not Blackboard.objective.actionPosition then
-		warn("Objective is nil...")
-		isForceFail = true
-		return
-	end
-	isForceFail = false
-
-	Blackboard.isActionPositionReached = GeneralUtil:IsDistanceLess(self.root.Position, Blackboard.objective.actionPosition, 1)
 end
 
 
@@ -33,9 +24,7 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	if isForceFail then
-		return FAIL
-	end
+	Blackboard.isActionPositionReached = GeneralUtil:IsDistanceLess(self.root.Position, Blackboard.objective.actionPosition.Position, 1, true)
 
 	return Blackboard.isActionPositionReached and SUCCESS or FAIL
 end

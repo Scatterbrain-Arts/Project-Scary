@@ -265,17 +265,32 @@ function GeneralUtil:QueryRegion(cframe, size, collisionGroup)
 end
 
 
-function GeneralUtil:GetDistance(pos1, pos2)
+function GeneralUtil:GetDistance(pos1, pos2, isIgnoreY)
+	if isIgnoreY then
+		pos1 = Vector3.new(pos1.X, 0, pos1.Z)
+		pos2 = Vector3.new(pos2.X, 0, pos2.Z)
+	end
+
 	return (pos1 - pos2).Magnitude
 end
 
 
-function GeneralUtil:IsDistanceGreater(pos1, pos2, range)
+function GeneralUtil:IsDistanceGreater(pos1, pos2, range, isIgnoreY)
+	if isIgnoreY then
+		pos1 = Vector3.new(pos1.X, 0, pos1.Z)
+		pos2 = Vector3.new(pos2.X, 0, pos2.Z)
+	end
+
 	return GeneralUtil:GetDistance(pos1, pos2) >= range
 end
 
 
-function GeneralUtil:IsDistanceLess(pos1, pos2, range)
+function GeneralUtil:IsDistanceLess(pos1, pos2, range, isIgnoreY)
+	if isIgnoreY then
+		pos1 = Vector3.new(pos1.X, 0, pos1.Z)
+		pos2 = Vector3.new(pos2.X, 0, pos2.Z)
+	end
+
 	return GeneralUtil:GetDistance(pos1, pos2) <= range
 end
 
