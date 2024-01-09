@@ -42,7 +42,7 @@ function btTask.run(obj)
 	end
 
 
-	if GeneralUtil:IsDistanceLess(self.root.Orientation, Blackboard.objective.actionPosition.Attachment.Orientation, 1, true) then
+	if GeneralUtil:GetAngleDifference(self.root.Orientation.Y, Blackboard.objective.actionPosition.Attachment.Orientation.Y) <= 1 then
 		return SUCCESS
 	end
 

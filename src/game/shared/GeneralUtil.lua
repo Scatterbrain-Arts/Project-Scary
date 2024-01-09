@@ -265,6 +265,16 @@ function GeneralUtil:QueryRegion(cframe, size, collisionGroup)
 end
 
 
+function GeneralUtil:GetAngleDifference(angle1, angle2)
+	local diff = (angle1 - angle2) % 360
+	if diff > 180 then
+		diff = 360 - diff
+	end
+
+	return diff
+end
+
+
 function GeneralUtil:GetDistance(pos1, pos2, isIgnoreY)
 	if isIgnoreY then
 		pos1 = Vector3.new(pos1.X, 0, pos1.Z)
