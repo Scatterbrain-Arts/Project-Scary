@@ -131,11 +131,6 @@ end
 
 function NPC:FindFood()
 	local foodObjects = self._objectService:GetType("Food")
-
-	for i,v in ipairs(foodObjects) do
-		print(i,v)
-	end
-
 	return foodObjects[#foodObjects]
 end
 
