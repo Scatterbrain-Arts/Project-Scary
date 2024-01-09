@@ -1,29 +1,33 @@
-local packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
+local Packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
 
-shared.states = {}
-shared.states.move = {}
-shared.states.moveNames = { "idle", "idleCrouch", "walkCrouch", "walk", "run" }
-for i,v in shared.states.moveNames do shared.states.move[v] = i end
-for i = 1, #shared.states.moveNames do shared.states.move[i] = i end
+local ServiceBag = require(Packages.ServiceBag).new()
 
-shared.states.stamina = {}
-shared.states.staminaNames = { "min", "low", "med", "high", "max" }
-for i,v in shared.states.staminaNames do shared.states.stamina[v] = i end
-for i = 1, #shared.states.staminaNames do shared.states.stamina[i] = i end
+ServiceBag:GetService(Packages.GameServicesClient)
+
+ServiceBag:Init()
+ServiceBag:Start()
 
 
-shared.states.breath = {}
-shared.states.breathNames = { "inhale", "exhale", "inhaleToHoldBreath", "holding" }
-for i,v in shared.states.breathNames do shared.states.breath[v] = i end
-for i = 1, #shared.states.breathNames do shared.states.breath[i] = i end
+local Players = game:GetService("Players")
+local Binder = require(Packages.Binder)
+
+-- force wait for character + gui to load
+repeat
+	task.wait(0.1)
+until Players.LocalPlayer:HasAppearanceLoaded()
 
 
-shared.npc = {}
-shared.npc.states = {}
-shared.npc.states.perception = {}
-shared.npc.states.perceptionNames = {"calm", "alert", "hostile"}
-for i,v in shared.npc.states.perceptionNames do shared.npc.states.perception[v] = i end
-for i = 1, #shared.npc.states.perceptionNames do shared.npc.states.perception[i] = i end
+require(Packages.PlayerEntity)
 
-require(packages.PlayerEntity)
-require(packages.NPCStarter)
+
+local Doors = require(Packages.Doors)
+Doors.BINDER = Binder.new(Doors.TAG_NAME, Doors, ServiceBag)
+Doors.BINDER:Start()
+
+local Food = require(Packages.Food)
+Food.BINDER = Binder.new(Food.TAG_NAME, Food, ServiceBag)
+Food.BINDER:Start()
+
+local NPC = require(Packages.NPC)
+NPC.BINDER = Binder.new(NPC.TAG_NAME, NPC, ServiceBag)
+NPC.BINDER:Start()

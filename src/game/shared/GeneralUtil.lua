@@ -162,11 +162,11 @@ function GeneralUtil:GetBool(instance, name, isDebug)
 end
 
 
-function GeneralUtil:Get(defaultClass, instance, name)
+function GeneralUtil:Get(defaultClass, instance, name, isRecurisve)
 	assert(instance ~= nil, "instance is nil for", name)
-	local folder = instance:FindFirstChild(name)
+	local folder = instance:FindFirstChild(name, isRecurisve)
 
-	if not folder then
+	if not folder and defaultClass ~= nil then
 		folder = Instance.new(defaultClass)
 		folder.Parent = instance
 		folder.Name = name
@@ -204,7 +204,7 @@ end
 function GeneralUtil:SetNetworkOwner(entity, owner)
 	owner = owner or nil
 	for _, part in pairs(entity:GetChildren()) do
-		if part:IsA("BasePart") then
+		if ( part:IsA("BasePart") or part:IsA("MeshPart") ) and part.Anchored == false then
 			part:SetNetworkOwner(owner)
 		end
 	end
@@ -265,33 +265,42 @@ function GeneralUtil:QueryRegion(cframe, size, collisionGroup)
 end
 
 
-function GeneralUtil:FindRegionWithPart(regions, searchCollisionGroup, partCollisionGroup)
-	local currentRegion = nil
-    for index, regionData in pairs(regions) do
-        local objects = GeneralUtil:QueryRegion(regionData.region.CFrame, regionData.region.Size, searchCollisionGroup)
-        if next(objects) then
-            for _, object in ipairs(objects) do
-                if object:IsA("BasePart") and object.CollisionGroup == partCollisionGroup then
-                    currentRegion = index
-                    break
-                end
-            end
-        end
-    end
-	return currentRegion
+function GeneralUtil:GetAngleDifference(angle1, angle2)
+	local diff = (angle1 - angle2) % 360
+	if diff > 180 then
+		diff = 360 - diff
+	end
+
+	return diff
 end
 
 
-function GeneralUtil:GetDistance(pos1, pos2)
+function GeneralUtil:GetDistance(pos1, pos2, isIgnoreY)
+	if isIgnoreY then
+		pos1 = Vector3.new(pos1.X, 0, pos1.Z)
+		pos2 = Vector3.new(pos2.X, 0, pos2.Z)
+	end
+
 	return (pos1 - pos2).Magnitude
 end
 
 
-function GeneralUtil:IsDistanceGreater(pos1, pos2, range)
+function GeneralUtil:IsDistanceGreater(pos1, pos2, range, isIgnoreY)
+	if isIgnoreY then
+		pos1 = Vector3.new(pos1.X, 0, pos1.Z)
+		pos2 = Vector3.new(pos2.X, 0, pos2.Z)
+	end
+
 	return GeneralUtil:GetDistance(pos1, pos2) >= range
 end
 
-function GeneralUtil:IsDistanceLess(pos1, pos2, range)
+
+function GeneralUtil:IsDistanceLess(pos1, pos2, range, isIgnoreY)
+	if isIgnoreY then
+		pos1 = Vector3.new(pos1.X, 0, pos1.Z)
+		pos2 = Vector3.new(pos2.X, 0, pos2.Z)
+	end
+
 	return GeneralUtil:GetDistance(pos1, pos2) <= range
 end
 
