@@ -98,6 +98,7 @@ function NPC.new(npcModel, serviceBag)
 				actionPosition = nil,
 			},
 
+			isActionPositionAligned = false,
 			isActionPositionReached = false,
 			isObjectiveRoomReached = false
 		},
@@ -135,12 +136,15 @@ function NPC:FindFood()
 		print(i,v)
 	end
 
-	for i,v in ipairs(foodObjects) do
-		if v ~= nil then
-			return v
-		end
-	end
+	return foodObjects[#foodObjects]
 end
+
+
+function NPC:IsFoodAvailable()
+	return #self._objectService:GetType("Food") >= 1
+end
+
+
 
 
 

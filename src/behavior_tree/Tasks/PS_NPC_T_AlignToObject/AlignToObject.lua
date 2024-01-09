@@ -19,6 +19,8 @@ function btTask.start(obj)
 	end
 	isForceFail = false
 
+	Blackboard.isActionPositionAligned = false
+
 	Blackboard.objective.actionPosition.AlignPosition.Attachment0 = self.root.RootAttachment
 	Blackboard.objective.actionPosition.AlignPosition.Attachment1 = Blackboard.objective.actionPosition.Attachment
 
@@ -41,10 +43,21 @@ function btTask.run(obj)
 		return FAIL
 	end
 
+	local isAlignedOrientation = GeneralUtil:GetAngleDifference(self.root.Orientation.Y, Blackboard.objective.actionPosition.Attachment.Orientation.Y) <= 1
+	local isAlignedPosition = GeneralUtil:IsDistanceLess(self.root.Position, Blackboard.objective.actionPosition.Position, 1, true)
 
-	if GeneralUtil:GetAngleDifference(self.root.Orientation.Y, Blackboard.objective.actionPosition.Attachment.Orientation.Y) <= 1 then
+	if isAlignedOrientation and isAlignedPosition then
+		Blackboard.objective.actionPosition.AlignOrientation.Attachment0 = nil
+		Blackboard.objective.actionPosition.AlignOrientation.Attachment1 = nil
+
+		Blackboard.objective.actionPosition.AlignPosition.Attachment0 = nil
+		Blackboard.objective.actionPosition.AlignPosition.Attachment1 = nil
+
+		Blackboard.isActionPositionAligned = true
+
 		return SUCCESS
 	end
+
 
 	return RUNNING
 end
