@@ -6,62 +6,12 @@ local require = require(script.Parent.loader).load(script)
 local next = next
 
 local GeneralUtil = require("GeneralUtil")
-
+local NavigationUtil = require("NavigationUtil")
+local Doors = require("Doors")
 
 local Navigation = {}
 Navigation.__index = Navigation
 Navigation.TAG_NAME = "Room"
-
-local function GetRegions(rooms)
-    local regions = {
-        rooms = {},
-        totalWeight = 0,
-    }
-
-    local largestArea = 0
-    for index, room in rooms do
-        local regionFolder = GeneralUtil:Get("Folder", room.NavMesh, "Region"):GetChildren()
-
-        if #regionFolder ~= 2 then
-            error("Region folders must have 2 corner parts...")
-        end
-
-        local corner1 = regionFolder[1]
-        local corner2 = regionFolder[2]
-
-        local regionData = {}
-        regionData.lowerbound = Vector3.new(
-            math.min(corner1.Position.X, corner2.Position.X),
-            math.min(corner1.Position.Y, corner2.Position.Y),
-            math.min(corner1.Position.Z, corner2.Position.Z)
-        )
-        regionData.upperbound = Vector3.new(
-            math.max(corner1.Position.X, corner2.Position.X),
-            math.max(corner1.Position.Y, corner2.Position.Y),
-            math.max(corner1.Position.Z, corner2.Position.Z)
-        )
-
-        regionData.region = Region3.new(regionData.lowerbound, regionData.upperbound)
-        regionData.area = regionData.region.Size.X * regionData.region.Size.Z
-
-        if regionData.area > largestArea then
-            largestArea = regionData.area
-        end
-
-        regions.rooms[room.Name] = regionData
-    end
-
-    local totalWeight = 0
-    for i, regionData in regions.rooms do
-        local ratio = (regionData.area/largestArea) * 10
-        regionData.weight = math.floor( math.clamp(ratio, 1, 10) )
-        totalWeight += regionData.weight
-    end
-
-    regions.totalWeight = totalWeight
-
-    return regions
-end
 
 function Navigation.new(npc)
     local self = {}
@@ -72,6 +22,7 @@ function Navigation.new(npc)
     self.character = npc.character
     self.humanoid = npc.humanoid
     self.root = npc.root
+    self.blackboard = npc.btState.Blackboard
 
     local configFolder = GeneralUtil:Get("Folder", self.character, "config")
 	local configNavigation = GeneralUtil:Get("Configuration", configFolder, "navigation")
@@ -91,11 +42,10 @@ function Navigation.new(npc)
         AgentCanClimb = self.config["AgentCanClimb"].Value,
         WaypointSpacing = self.config["WaypointSpacing"].Value,
         Costs = {
-            Plastic = 10,
             NonWalkableSurface = math.huge,
-            RoomHallway = 1,
-            RoomLarge = 1,
-            RoomSmall = 1,
+            Hallway = 1,
+            Large = 1,
+            Small = 1,
         },
     })
 
@@ -104,73 +54,69 @@ function Navigation.new(npc)
         self.NPCDebug:CreateAgentCylinder("agent", self.root, self.config["AgentRadius"].Value/2, self.config["AgentHeight"].Value, Color3.fromRGB(255, 255, 0))
     end
 
-    self.regions = GetRegions(CollectionService:GetTagged(Navigation.TAG_NAME))
+    self.regions = NavigationUtil:GetRegions(CollectionService:GetTagged(Navigation.TAG_NAME))
 
-    self.waypoints = {}
-    self.index = nil
-    self.isTargetReached = false
-    self.moveConnection = nil
-    
-    self.unstuck = {
+    self.move = {
+        index = nil,
+        waypoints = {},
         connection = nil,
+        targetPosition = nil,
+        isTargetReached = false,
+    }
+
+    self.action = {
+        index = nil,
+        waypoints = {},
+        connection = nil,
+        targetPosition = nil,
+        isTargetReached = false,
+    }
+
+    self.unstuck = {
+        lastPosition = nil,
         tickLast = tick(),
         tickInterval = 5,
-        lastPosition = nil
+        connection = nil,
     }
+
+    self.graphRooms = {
+        ["Large"] = { ["Hallway"] = 1, ["Outside"] = 1 },
+        ["Hallway"] = { ["Large"] = 1, ["Small"] = 1 },
+        ["Small"] = { ["Hallway"] = 1 },
+    }
+
+    task.delay(2, function()
+    -- Inside: Direction door is pulled in towards
+    -- Outside: Other side of door
+    self.doorsRooms = {
+        ["Large"] = {
+            ["Hallway"] = Doors.names["Door_LargeIN_HallwayOUT"].instance.NavOutside,
+            ["Outside"] = Doors.names["Door_LargeIN_OutsideOUT"].instance.NavOutside,
+        },
+        ["Hallway"] = {
+            ["Large"] = Doors.names["Door_LargeIN_HallwayOUT"].instance.NavInside,
+            ["Small"] = Doors.names["Door_SmallIN_HallwayOUT"].instance.NavInside,
+        },
+        ["Small"] = {
+            ["Hallway"] = Doors.names["Door_SmallIN_HallwayOUT"].instance.NavOutside,
+        },
+    }
+    --print(self.doorsRooms)
+    end)
+
+    self.isPause = false
+
 
     return self
 end
 
 
-
-
-local function ComputePath(path, startPosition, targetPosition)
-    local success, errorMessage = pcall(function()
-        path:ComputeAsync(startPosition, targetPosition)
-    end)
-
-    if success and path.Status == Enum.PathStatus.Success then
-        return true
-    else
-        return false
-    end
-end
-
-
-local function FindPath(path, startPosition, targetPosition)
-    local tries = 0
-    local isPath = false
-
-    repeat
-        isPath = ComputePath(path, startPosition, targetPosition)
-
-        if tries >= 1 then
-            task.wait()
-        end
-        tries+=1
-    until isPath or tries > 3
-
-    if not isPath then
-        print("No Path Found...")
-        return false
-    end
-
-    return true
-end
-
-
-function Navigation:MoveStart(targetPosition)
-    self.humanoid:MoveTo(targetPosition)
-
-    if self.unstuck.connection then
-        self.unstuck.connection:Disconnect()
-        self.unstuck.connection = nil
-    end
+function Navigation:StartUnstuckService()
+    NavigationUtil:EndService(self.unstuck)
 
     self.unstuck.tickLast = tick()
     self.unstuck.connection = RunService.Heartbeat:Connect(function(deltaTime)
-        if not self.isTargetReached then
-
+        if not self.isPause and not self.blackboard.isTargetReached then
             if tick() - self.unstuck.tickLast >= self.unstuck.tickInterval then
 
                 if self.unstuck.lastPosition and GeneralUtil:IsDistanceLess(self.unstuck.lastPosition, self.root.Position, 2) then
@@ -184,296 +130,165 @@ function Navigation:MoveStart(targetPosition)
             end
         end
     end)
-
 end
 
 
-function Navigation:PathTo(targetPosition)
-    local rayResult = GeneralUtil:CastSphere(self.root.Position, 4, Vector3.zero, "RayNPC")
+function Navigation:StartPathing()
+    NavigationUtil:EndService(self.move)
 
-    if rayResult then
-        print(rayResult.Instance)
-    end
+    self.move.connection = self.humanoid.MoveToFinished:Connect(function()
+        if self.move.index < #self.move.waypoints then
+            self.move.index += 1
 
-    if not FindPath(self.path, self.root.Position, targetPosition) then
-        return false
-    end
+            local nextWaypoint = self.move.waypoints[self.move.index]
+            if nextWaypoint.Action == Enum.PathWaypointAction.Custom and nextWaypoint.Label == "Door" then
+                local _, doorObject = GeneralUtil:GetConditonFromTable(Doors.instances, function(a, b)
+                    return type(a) ~= "table" and true or GeneralUtil:GetDistance(self.root.Position, a.position) > GeneralUtil:GetDistance(self.root.Position, b.position)
+                end)
 
-    self.isTargetReached = false
-    self.waypoints = self.path:GetWaypoints()
-    self.index = 1
+                if doorObject.isClosed then
+                    self:StartPause()
+                    doorObject:activate()
+                    task.wait(1)
+                    self:EndPause()
+                end
 
-    if self.moveConnection then
-        self.moveConnection:Disconnect()
-    end
-
-    self.moveConnection  = self.humanoid.MoveToFinished:Connect(function(reached)
-		if self.index < #self.waypoints then
-			self.index += 1
-			self.humanoid:MoveTo(self.waypoints[self.index].Position)
-		elseif self.index == #self.waypoints then
-            if self.moveConnection then
-                self.moveConnection:Disconnect()
-			    self.moveConnection = nil
+                NavigationUtil:EndService(self.move)
+                self.move.connection = self.humanoid.MoveToFinished:Connect(function()
+                    self:PathToTarget(self.move.targetPosition)
+                end)
             end
-			self.isTargetReached = true
+            self.humanoid:MoveTo(nextWaypoint.Position)
+
+        elseif self.move.index == #self.move.waypoints then
+            NavigationUtil:EndService(self.move)
+            NavigationUtil:EndService(self.unstuck)
+            self.blackboard.isTargetReached = true
         end
-	end)
+    end)
 
-    self:MoveStart(self.waypoints[self.index].Position)
-
-    return true
+    self.humanoid:MoveTo(self.move.waypoints[self.move.index].Position)
 end
 
 
-function Navigation:MoveTo(targetPosition)
-    self.isTargetReached = false
+function Navigation:StartMoving()
+    NavigationUtil:EndService(self.move)
 
-    if self.moveConnection then
-        self.moveConnection:Disconnect()
-    end
-
-    self.moveConnection = self.humanoid.MoveToFinished:Connect(function(reached)
-		if self.moveConnection then
-            self.moveConnection:Disconnect()
-			self.moveConnection = nil
-        end
-        self.isTargetReached = true
+    self.move.connection = self.humanoid.MoveToFinished:Connect(function(reached)
+		NavigationUtil:EndService(self.move)
+        NavigationUtil:EndService(self.unstuck)
+        self.blackboard.isTargetReached = true
 	end)
 
-    self:MoveStart(targetPosition)
-
-    return true
+    self.humanoid:MoveTo(self.move.targetPosition)
 end
 
 
 function Navigation:Stop()
+    NavigationUtil:EndService(self.move)
+    NavigationUtil:EndService(self.unstuck)
+
     self.humanoid:MoveTo(self.root.Position)
-
-    if self.moveConnection then
-        self.moveConnection:Disconnect()
-        self.moveConnection = nil
-    end
-
-    if self.unstuck.connection then
-        self.unstuck.connection:Disconnect()
-        self.unstuck.connection = nil
-    end
-
-    self.isTargetReached = nil
+    self.blackboard.isTargetReached = nil
 
     return true
 end
 
-local Axis8Directions = {
-    north = Vector3.new(0, 0, -1), east = Vector3.new(1, 0, 0), northeast = Vector3.new(1, 0, -1), southwest = Vector3.new(-1, 0, 1),
-    south = Vector3.new(0, 0, 1), west = Vector3.new(-1, 0, 0), southeast = Vector3.new(1, 0, 1), northwest = Vector3.new(-1, 0, -1),
-}
 
-local ThreadLookDirection = coroutine.create(function(npcRoot, targetDirection)
-	while true do
-        while true do
-            local targetCFrame = CFrame.new(npcRoot.Position, npcRoot.Position + targetDirection)
-            
-            npcRoot.CFrame = npcRoot.CFrame:Lerp(targetCFrame, 0.1)
-            if (targetCFrame.LookVector - npcRoot.CFrame.LookVector).Magnitude <= 0.1 then
-                break
-            end
-
-          -- print(npcRoot.CFrame.LookVector)
-
-            task.wait()
-        end
-		coroutine.yield()
-	end
-end)
-
-
-function Navigation:FaceTo(targetDirection)
-    coroutine.resume(ThreadLookDirection, self.root, targetDirection)
+function Navigation:StartPause()
+    --self.walkSpeed = self.humanoid.WalkSpeed
+    self.humanoid.WalkSpeed = 0
+    self.isPause = true
 end
 
 
-function Navigation:FindDirectionToFace()
-    local partsInRadius = GeneralUtil:QueryRadius(self.root.Position, 8, "RayNPC", false)
-    if not partsInRadius then
-        return
-    end
-
-    local directionScores = {
-        north = 0, east = 0,
-        south = 0, west = 0,
-    }
-
-    for _, part in pairs(partsInRadius) do
-        local directionToPart = (part.Position - self.root.Position).Unit
-        local angle = math.deg(math.atan2(directionToPart.X, directionToPart.Z))
-
-        angle = angle % 360
-
-        if angle >= 135.6 and angle <= 225.4 then
-            directionScores.north += 1
-
-        elseif angle >= 225.6 and angle <= 315.4 then
-            directionScores.west += 1
-
-        elseif angle >= 315.6 and angle <= 360 or angle >= 0 and angle <= 45.4 then
-            directionScores.south += 1
-
-        elseif angle >= 45.6 and angle <= 135.4 then
-            directionScores.east += 1
-        end
-    end
-
-    local i, v = GeneralUtil:GetConditonFromTable(directionScores, function(a,b) return a > b end)
-
-    print("final direction:", i)
-
-    return Axis8Directions[i]
+function Navigation:EndPause()
+    self.humanoid.WalkSpeed = 12 --self.walkSpeed
+    self.isPause = false
 end
 
 
-local function GetRandomPointInRegion(regionData)
-    local point = Vector3.new(
-        math.random(regionData.lowerbound.X, regionData.upperbound.X),
-        math.random(regionData.lowerbound.Y, regionData.upperbound.Y),
-        math.random(regionData.lowerbound.Z, regionData.upperbound.Z)
-    )
-
-    -- local part = GeneralUtil:CreatePart(Enum.PartType.Ball, Vector3.new(1,1,1), Color3.fromHex("fa22af"))
-    -- part.Position = point
-    -- part.Parent = workspace
-
-    return point
-end
-
-
-local function GetRandomPointInAnyRegion(regions)
-    local rnd = math.random() * regions.totalWeight
-    local selectedRegion = nil
-
-    local cumulativeWeight = 0
-    for index, regionData in regions.rooms do
-        cumulativeWeight += regionData.weight
-
-        if rnd <= cumulativeWeight then
-            selectedRegion = index
-            break
-        end
-    end
-
-    local regionData = regions.rooms[selectedRegion]
-    local point = Vector3.new(
-        math.random(regionData.lowerbound.X, regionData.upperbound.X),
-        math.random(regionData.lowerbound.Y, regionData.upperbound.Y),
-        math.random(regionData.lowerbound.Z, regionData.upperbound.Z)
-    )
-
-    -- local part = GeneralUtil:CreatePart(Enum.PartType.Ball, Vector3.new(1,1,1), Color3.fromHex("fa22af"))
-    -- part.Position = point
-    -- part.Parent = workspace
-
-    return point
-end
-
-
-local function FindRandomPath(regions, path, startPosition, randomizer)
-    local tries = 0
-    local isPath = false
-    local targetPosition = nil
-
-    repeat
-        targetPosition = randomizer(regions)
-        isPath = ComputePath(path, startPosition, targetPosition)
-
-        if tries >= 1 then
-            task.wait()
-        end
-        tries+=1
-    until isPath or tries > 3
-
-    if not isPath then
-        print("No Path Found...")
+function Navigation:PathToTarget(targetPosition)
+    if not NavigationUtil:FindPath(self.path, self.root.Position, targetPosition) then
         return false
     end
+
+    self.move.targetPosition = targetPosition
+    self.blackboard.isTargetReached = false
+    self.move.waypoints = self.path:GetWaypoints()
+    self.move.index = 1
+
+    self:StartUnstuckService()
+    self:StartPathing()
 
     return targetPosition
 end
 
 
-function Navigation:PathToRandomPosition()
-    local targetPosition = FindRandomPath(self.regions, self.path, self.root.Position, GetRandomPointInAnyRegion)
+function Navigation:PathToRandomTarget()
+    local targetPosition = NavigationUtil:FindPathRandom(self.path, self.root.Position, NavigationUtil.RandomPointAnyRegion, self.regions)
 
     if not targetPosition then
         return false
     end
 
-    self.isTargetReached = false
-    self.waypoints = self.path:GetWaypoints()
-    self.index = 1
+    self.move.targetPosition = targetPosition
+    self.blackboard.isTargetReached = false
+    self.move.waypoints = self.path:GetWaypoints()
+    self.move.index = 1
 
-    if self.moveConnection then
-        self.moveConnection:Disconnect()
+    self:StartUnstuckService()
+    self:StartPathing()
+
+    return targetPosition
+end
+
+
+function Navigation:PathToRandomTargetInRegion(regionIndex)
+    local targetPosition = NavigationUtil:FindPathRandom(self.path, self.root.Position, NavigationUtil.RandomPointInRegion, self.regions.rooms[regionIndex])
+
+    if not targetPosition then
+        return false
     end
 
-    self.moveConnection  = self.humanoid.MoveToFinished:Connect(function(reached)
-		if self.index < #self.waypoints then
-			self.index += 1
-			self.humanoid:MoveTo(self.waypoints[self.index].Position)
-		elseif self.index == #self.waypoints then
-            if self.moveConnection then
-                self.moveConnection:Disconnect()
-			    self.moveConnection = nil
-            end
+    self.move.targetPosition = targetPosition
+    self.blackboard.isTargetReached = false
+    self.move.waypoints = self.path:GetWaypoints()
+    self.move.index = 1
 
-			self.isTargetReached = true
-        end
-	end)
+    self:StartUnstuckService()
+    self:StartPathing()
 
-    self:MoveStart(self.waypoints[self.index].Position)
+    return targetPosition
+end
+
+
+function Navigation:MoveToTarget(targetPosition)
+    self.move.targetPosition = targetPosition
+    self.blackboard.isTargetReached = false
+    self.move.waypoints = nil
+    self.move.index = nil
+
+    self:StartUnstuckService()
+    self:StartMoving()
 
     return targetPosition
 end
 
 
 function Navigation:FindRegionWithPlayer()
-    return GeneralUtil:FindRegionWithPart(self.regions.rooms, "RayChar", "CharPlayer")
+    return NavigationUtil:FindRegionWithPart(self.regions.rooms, "RayFindChars", "CharPlayer")
 end
 
-function Navigation:PathToRandomPositionInRegion(regionIndex)
-    local targetPosition = FindRandomPath(self.regions.rooms[regionIndex], self.path, self.root.Position, GetRandomPointInRegion)
 
-    if not targetPosition then
-        return false
-    end
-
-    self.isTargetReached = false
-    self.waypoints = self.path:GetWaypoints()
-    self.index = 1
-
-    if self.moveConnection then
-        self.moveConnection:Disconnect()
-    end
-
-    self.moveConnection  = self.humanoid.MoveToFinished:Connect(function(reached)
-		if self.index < #self.waypoints then
-			self.index += 1
-			self.humanoid:MoveTo(self.waypoints[self.index].Position)
-		elseif self.index == #self.waypoints then
-            if self.moveConnection then
-                self.moveConnection:Disconnect()
-			    self.moveConnection = nil
-            end
-
-			self.isTargetReached = true
-        end
-	end)
-
-    self:MoveStart(self.waypoints[self.index].Position)
-
-    return targetPosition
+function Navigation:FindRegionWithNPC()
+    return NavigationUtil:FindRegionWithPart(self.regions.rooms, "RayFindChars", "CharNPC")
 end
 
+
+function Navigation:FindShortestPath(startRoom, endRoom)
+    return NavigationUtil:GraphDijkstra(self.graphRooms, startRoom, endRoom, false)
+end
 
 
 return Navigation

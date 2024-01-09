@@ -1956,7 +1956,7 @@ function btTask.run(obj)
 	
 	if Blackboard.isSoundHeard == true then
 		self.stateUI.Text = "!!!"
-		Blackboard.state = shared.npc.states.perception.alert
+		Blackboard.state = shared.npc.states.detection.alert
 		Blackboard.isSoundHeard = false
 		self.soundDetection:UpdateState()
 		return SUCCESS
@@ -4296,7 +4296,7 @@ return btTask
 						<int64 name="SourceAssetId">-1</int64>
 						<BinaryString name="Tags"></BinaryString>
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003de0</UniqueId>
-						<double name="Value">0.39999991655349731445</double>
+						<double name="Value">0.89999997615814208984</double>
 					</Properties>
 				</Item>
 				<Item class="Vector3Value" referent="RBXEF91BD7A2C9F4ACF889A86AB3982FB84">
@@ -4311,7 +4311,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003de1</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-415</Y>
+							<Y>-1594</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -4328,7 +4328,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003de2</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-384</Y>
+							<Y>-1346</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -5008,7 +5008,7 @@ function btTask.start(obj)
 		return
 	end
 	
-	isMoving = self.navigation:PathTo(Blackboard.targetPosition)
+	isMoving = self.navigation:PathToTarget(Blackboard.targetPosition)
 end
 
 
@@ -5030,7 +5030,7 @@ function btTask.run(obj)
 		return FAIL
 	end
 	
-	isTargetReached = self.navigation.isTargetReached
+	isTargetReached = self.navigation.move.isTargetReached
 	
 	if Blackboard.isTargetLost then
 		return FAIL
@@ -5444,7 +5444,7 @@ function btTask.start(obj)
 		return
 	end
 	
-	isMoving = self.navigation:MoveTo(Blackboard.targetPosition)
+	isMoving = self.navigation:MoveToTarget(Blackboard.targetPosition)
 end
 
 
@@ -5466,7 +5466,7 @@ function btTask.run(obj)
 		return FAIL
 	end
 	
-	isTargetReached = self.navigation.isTargetReached
+	isTargetReached = self.navigation.move.isTargetReached
 	
 	if Blackboard.player.Character then
 		if GeneralUtil:IsDistanceGreater(Blackboard.player.Character.PrimaryPart.Position, Blackboard.targetPosition, 5) then
@@ -6016,7 +6016,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fbc</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-392</Y>
+							<Y>-410</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -6033,7 +6033,7 @@ return btTask
 						<UniqueId name="UniqueId">11755ee6a08ffde3057039e200003fbd</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-455</Y>
+							<Y>-583</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -6398,7 +6398,7 @@ function btTask.start(obj)
 	local self = obj.self
 
 	Blackboard.target = nil
-	Blackboard.targetPosition = self.navigation:PathToRandomPosition()
+	Blackboard.targetPosition = self.navigation:PathToRandomTarget()
 end
 
 
@@ -6420,7 +6420,7 @@ function btTask.run(obj)
 		return FAIL
 	end
 
-	isTargetReached = self.navigation.isTargetReached
+	isTargetReached = self.navigation.move.isTargetReached
 
 	if isTargetReached == false then
 		return RUNNING
@@ -6892,7 +6892,7 @@ function btTask.run(obj)
 
 	if Blackboard.isSoundHeard == true then
 		self.stateUI.Text = "!!!"
-		Blackboard.state = shared.npc.states.perception.alert
+		Blackboard.state = shared.npc.states.detection.alert
 		self.soundDetection:UpdateState()
 		Blackboard.isSoundHeard = false
 		Blackboard.isTargetLost = false
@@ -7306,7 +7306,7 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	Blackboard.targetPosition = self.navigation:PathToRandomPositionInRegion(Blackboard.lastKnownRegion)
+	Blackboard.targetPosition = self.navigation:PathToRandomTargetInRegion(Blackboard.lastKnownRegion)
 	Blackboard.isSoundHeard = false
 end
 
@@ -7335,7 +7335,7 @@ function btTask.run(obj)
 		return FAIL
 	end
 
-	isTargetReached = self.navigation.isTargetReached
+	isTargetReached = self.navigation.move.isTargetReached
 
 	if isTargetReached == false then
 		return RUNNING
@@ -8192,7 +8192,7 @@ return btTask]]></ProtectedString>
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
-local STATE_CALM, STATE_ALERT, STATE_HOSTILE = shared.npc.states.perception.calm, shared.npc.states.perception.alert, shared.npc.states.perception.hostile
+local STATE_CALM, STATE_ALERT, STATE_HOSTILE = shared.npc.states.detection.calm, shared.npc.states.detection.alert, shared.npc.states.detection.hostile
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
@@ -8498,7 +8498,7 @@ return btTask
 						<UniqueId name="UniqueId">1a30c3f3c7478c58058a5d22001048e8</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>223</Y>
+							<Y>339</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>
@@ -8515,7 +8515,7 @@ return btTask
 						<UniqueId name="UniqueId">1a30c3f3c7478c58058a5d22001048e9</UniqueId>
 						<Vector3 name="Value">
 							<X>0.5</X>
-							<Y>-567</Y>
+							<Y>-786</Y>
 							<Z>0</Z>
 						</Vector3>
 					</Properties>

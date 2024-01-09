@@ -17,6 +17,7 @@
     "@quenty/draw": "^4.3.0",
     "@quenty/loader": "^6.3.0",
     "@quenty/math": "^2.5.0",
+    "@quenty/playerhumanoidbinder": "^9.3.0",
     "@quenty/remoting": "^6.11.0",
     "@quenty/servicebag": "^6.9.0",
     "@quenty/spring": "^6.4.0"
