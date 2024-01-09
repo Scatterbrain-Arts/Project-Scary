@@ -8,7 +8,7 @@ local npc = nil
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	if input.KeyCode== Enum.KeyCode.O then
-		npc = npc or workspace:FindFirstChild("Pepe 0.4")
+		npc = npc or workspace:FindFirstChild("Pepe 0.5")
 		npc.config["_OVERRIDE"].Value = not npc.config["_OVERRIDE"].Value
 
 		if npc.config["_OVERRIDE"].Value then
