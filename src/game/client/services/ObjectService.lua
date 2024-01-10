@@ -31,9 +31,7 @@ function ObjectService:AddObject(type, object, instance)
 		self.objects[type] = {}
 	end
 
-	local index = #self.objects[type] + 1
-	table.insert(self.objects[type], object)	-- array of objects
-	self.objects[type][instance] = index		-- set object indexes, indexed by instance
+	self.objects[type][instance] = object
 end
 
 
@@ -44,14 +42,15 @@ end
 
 
 function ObjectService:RemoveObject(type, instance)
-	if not self.objects[type][instance] then
+	local object = self.objects[type][instance]
+
+	if not object then
 		warn("Object not found...")
 		return
 	end
 
-	local index = self.objects[type][instance]
-	self.objects[type][index] = nil
 	self.objects[type][instance] = nil
+	instance:Destroy()
 end
 
 

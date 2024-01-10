@@ -28,6 +28,10 @@ local Food = require(Packages.Food)
 Food.BINDER = Binder.new(Food.TAG_NAME, Food, ServiceBag)
 Food.BINDER:Start()
 
+local Talisman = require(Packages.Talisman)
+Talisman.BINDER = Binder.new(Talisman.TAG_NAME, Talisman, ServiceBag)
+Talisman.BINDER:Start()
+
 local NPC = require(Packages.NPC)
 NPC.BINDER = Binder.new(NPC.TAG_NAME, NPC, ServiceBag)
 NPC.BINDER:Start()

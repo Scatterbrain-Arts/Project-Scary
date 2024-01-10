@@ -130,13 +130,13 @@ end
 
 
 function NPC:FindFood()
-	local foodObjects = self._objectService:GetType("Food")
-	return foodObjects[#foodObjects]
+	local foodInstance, foodObject = next(self._objectService:GetType("Food"))
+	return foodObject
 end
 
 
 function NPC:IsFoodAvailable()
-	return #self._objectService:GetType("Food") >= 1
+	return next(self._objectService:GetType("Food")) ~= nil
 end
 
 
