@@ -81,7 +81,7 @@ function NPC.new(npcModel, serviceBag)
 			behaviorConditions = {
 				calm = {
 					[shared.npc.states.behavior.calm.hungry] = function()
-						return next(self._objectService:GetType("Food")) == nil
+						return next(self._objectService:GetType("Food")) ~= nil
 					end,
 					[shared.npc.states.behavior.calm.patrol] = function()
 						return true
@@ -151,7 +151,6 @@ function NPC:FindTalisman()
 		end
 	end
 
-	print("copy:", self.talismanToCheck)
 	local rnd = math.random(1, #self.talismanToCheck)
 	self.talismanLast = table.remove(self.talismanToCheck, rnd)
 
