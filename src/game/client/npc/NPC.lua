@@ -55,7 +55,7 @@ function NPC.new(npcModel, serviceBag)
 		end)
 	end)
 
-	self.btRoot = BehaviorTreeCreator:Create(ReplicatedStorage.Tree.PS_NPC_Start, self)
+	self.btRoot = BehaviorTreeCreator:Create(ReplicatedStorage.Tree["0_PS_NPC_Start"], self)
 	self.btState = {
 		self = self,
 		Blackboard = {
