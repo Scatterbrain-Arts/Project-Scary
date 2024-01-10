@@ -582,6 +582,14 @@ function TreeProto:run(obj,...)
 			end
 
 			if status == RUNNING then
+				-- NPC global sound detection
+				if blackboard.detectionState == 1 and blackboard.isSoundHeard then
+					status = FAIL
+					if node.finish then
+						node.finish(obj,status, ...)
+					end
+					data.index = node.onfail
+				end
 				data.paused = true
 				break
 			elseif status == SUCCESS then
