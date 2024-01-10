@@ -13,6 +13,8 @@ local GeneralUtil = require("GeneralUtil")
 local Navigation = require("Navigation")
 local NPCSoundDetection = require("NPCSoundDetection")
 
+local next = next
+
 local STATE_CALM, STATE_ALERT, STATE_HOSTILE = shared.npc.states.detection.calm, shared.npc.states.detection.alert, shared.npc.states.detection.hostile
 
 local NPC = {}
@@ -76,12 +78,14 @@ function NPC.new(npcModel, serviceBag)
 			detectionState = nil,
 			calmBehaviorState = nil,
 
-			behaviorStates = {
+			behaviorConditions = {
 				calm = {
-					[shared.npc.states.behavior.calm.hungry] = false,
-					[shared.npc.states.behavior.calm.mourning] = false,
-					[shared.npc.states.behavior.calm.angry] = false,
-					[shared.npc.states.behavior.calm.patrol] = false,
+					[shared.npc.states.behavior.calm.hungry] = function()
+						return next(self._objectService:GetType("Food")) == nil
+					end,
+					[shared.npc.states.behavior.calm.patrol] = function()
+						return true
+					end,
 				},
 			},
 
@@ -124,20 +128,36 @@ function NPC.new(npcModel, serviceBag)
 
 	self._objectService:AddObject(NPC.TAG_NAME, self, self.character)
 	self._objectService:FinishAddObject(NPC.TAG_NAME)
+	self.talismanToCheck = {}
+	self.talismanLast = nil
 
 	return self
 end
 
 
 function NPC:FindFood()
-	local foodInstance, foodObject = next(self._objectService:GetType("Food"))
-	return foodObject
+	local instance, object = next(self._objectService:GetType("Food"))
+	return object
 end
 
 
-function NPC:IsFoodAvailable()
-	return next(self._objectService:GetType("Food")) ~= nil
+function NPC:FindTalisman()
+	local talismen = self._objectService:GetType("Talisman")
+	if not next(self.talismanToCheck) then
+		for instance, _ in talismen do
+			if instance ~= self.talismanLast then
+				table.insert(self.talismanToCheck, instance)
+			end
+		end
+	end
+
+	print("copy:", self.talismanToCheck)
+	local rnd = math.random(1, #self.talismanToCheck)
+	self.talismanLast = table.remove(self.talismanToCheck, rnd)
+
+	return talismen[self.talismanLast]
 end
+
 
 
 

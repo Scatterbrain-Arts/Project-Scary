@@ -319,4 +319,32 @@ function GeneralUtil:GetConditonFromTable(table, condition)
 end
 
 
+function GeneralUtil:DeepCopy(table)
+    local copy = {}
+    for key, value in pairs(table) do
+        if type(value) == "table" then
+            copy[key] = GeneralUtil:DeepCopy(value)  -- Recursive call for nested tables
+        else
+            copy[key] = value
+        end
+    end
+
+    return copy
+end
+
+
+function GeneralUtil:ShallowCopy(table)
+    local copy = {}
+    for key, value in pairs(table) do
+        if type(value) == "table" then
+            copy[key] = GeneralUtil:DeepCopy(value)  -- Recursive call for nested tables
+        else
+            copy[key] = value
+        end
+    end
+
+    return copy
+end
+
+
 return GeneralUtil
