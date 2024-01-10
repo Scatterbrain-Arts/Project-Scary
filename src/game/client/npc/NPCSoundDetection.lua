@@ -59,24 +59,24 @@ function SoundDetection.new(npc)
 	local tickLastCycle = tick()
 	RunService.Heartbeat:Connect(function(deltaTime)
 		if tick() - tickLastCycle >= secondsPerCycle then
-			--self:Listen()
+			self:Listen()
 
-			if tick() - self.tickLastSoundHeard >= 7 then
-				if self.soundAwareness < self.statusCalmThreshold then
-					self.soundAwareness = math.clamp(self.soundAwareness - 1, 0, 100)
-				end
-			end
+			-- if tick() - self.tickLastSoundHeard >= 7 then
+			-- 	if self.soundAwareness < self.statusCalmThreshold then
+			-- 		self.soundAwareness = math.clamp(self.soundAwareness - 1, 0, 100)
+			-- 	end
+			-- end
 
 			self.guiNPC.GuiNPCBar.Size = UDim2.fromScale(self.soundAwareness / 100, 1)
 			self.guiNPC.GuiNPCPercent.Text = math.floor(self.soundAwareness) .. " pts"
 
-			if self.blackboard.state == shared.npc.states.detection.alert and self.blackboard.target then
-				if GeneralUtil:IsDistanceGreater(self.root.Position, self.blackboard.targetPosition, 30) then
-					self.blackboard.isTargetLost = true
-					warn("Target Lost...")
-					self.npc.stateUI.Text = ":'("
-				end
-			end
+			-- if self.blackboard.state == shared.npc.states.detection.alert and self.blackboard.target then
+			-- 	if GeneralUtil:IsDistanceGreater(self.root.Position, self.blackboard.targetPosition, 30) then
+			-- 		self.blackboard.isTargetLost = true
+			-- 		warn("Target Lost...")
+			-- 		self.npc.stateUI.Text = ":'("
+			-- 	end
+			-- end
 
 			tickLastCycle = tick()
 		end
@@ -94,21 +94,28 @@ function SoundDetection:Listen()
 
 	local apparentSound = math.clamp(self.PLAYER_STATUS.currentDecibel.Value / inverseSquare, 0, 100)
 
+	-- print("distance: ", distanceToSound)
+	-- print("inverse: ", inverseSquare)
+	-- print("apparent: ", apparentSound)
+	
+
 	local normalizedSound = apparentSound / self.soundHeardThreshold
 	if normalizedSound >= 1 then
 		local detectionAmount = math.floor(normalizedSound%10)
 		self.soundAwareness += detectionAmount
 
 		if self.blackboard.isSoundHeard == false then
-			if self.blackboard.state == STATE_CALM and self.soundAwareness >= self.statusCalmThreshold then
-				self.blackboard.isSoundHeard = true
-				self.tickLastSoundHeard = tick()
-			end
+			self.blackboard.isSoundHeard = true
+			print("Sound Heard")
+			-- if self.blackboard.state == STATE_CALM and self.soundAwareness >= self.statusCalmThreshold then
+			-- 	self.blackboard.isSoundHeard = true
+			-- 	self.tickLastSoundHeard = tick()
+			-- end
 
-			if self.blackboard.state == STATE_ALERT then
-				self.blackboard.isSoundHeard = true
-				self.tickLastSoundHeard = tick()
-			end
+			-- if self.blackboard.state == STATE_ALERT then
+			-- 	self.blackboard.isSoundHeard = true
+			-- 	self.tickLastSoundHeard = tick()
+			-- end
 		end
 	end
 end
