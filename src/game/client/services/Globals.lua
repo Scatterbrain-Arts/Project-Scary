@@ -35,7 +35,7 @@ function Globals:Init(serviceBag)
 
 	shared.npc.states.behavior = {}
 	shared.npc.states.behavior.calm = {}
-	shared.npc.states.behavior.calmNames = {"hungry", "mourning", "angry", "patrol"}
+	shared.npc.states.behavior.calmNames = {"hungry", "patrol"}
 	for i,v in shared.npc.states.behavior.calmNames do shared.npc.states.behavior.calm[v] = i end
 	for i = 1, #shared.npc.states.behavior.calmNames do shared.npc.states.behavior.calm[i] = i end
 

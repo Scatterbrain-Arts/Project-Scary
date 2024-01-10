@@ -8,18 +8,18 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	if Blackboard.objective.goal ~= "Hungry" or Blackboard.objective.goalCondition then
+	if Blackboard.objective.goal ~= shared.npc.states.behavior.calmNames[shared.npc.states.behavior.calm.patrol] or Blackboard.objective.goalCondition then
 		warn("objective is not correct...")
 		isForceFail = true
 		return
 	end
 	isForceFail = false
 
-	local foodObject = self:FindFood()
-	if foodObject then
-		Blackboard.objective.actionObject = foodObject
-		Blackboard.objective.actionPosition = foodObject.navStart
-		Blackboard.objective.goalRoom = foodObject.room
+	local talismanObject = self:FindTalisman()
+	if talismanObject then
+		Blackboard.objective.actionObject = talismanObject
+		Blackboard.objective.actionPosition = talismanObject.navStart
+		Blackboard.objective.goalRoom = talismanObject.room
 	end
 end
 

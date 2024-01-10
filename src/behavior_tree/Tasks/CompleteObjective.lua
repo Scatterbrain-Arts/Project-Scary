@@ -2,8 +2,6 @@ local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
-local ObjectiveName = "Hungry"
-
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard

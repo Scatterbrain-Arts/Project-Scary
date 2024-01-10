@@ -10,16 +10,16 @@ ServiceBag:Init()
 ServiceBag:Start()
 
 
-local Binder = require(Packages.Binder)
-local Locks = require(Packages.Locks)
-local Keys = require(Packages.Keys)
-local Talismans = require(Packages.Talismans)
+--local Binder = require(Packages.Binder)
+-- local Locks = require(Packages.Locks)
+-- local Keys = require(Packages.Keys)
+-- local Talismans = require(Packages.Talismans)
 
-Locks.BINDER = Binder.new(Locks.TAG_NAME, Locks, ServiceBag)
-Locks.BINDER:Start()
+-- Locks.BINDER = Binder.new(Locks.TAG_NAME, Locks, ServiceBag)
+-- Locks.BINDER:Start()
 
-Keys.BINDER = Binder.new(Keys.TAG_NAME, Keys, ServiceBag)
-Keys.BINDER:Start()
+-- Keys.BINDER = Binder.new(Keys.TAG_NAME, Keys, ServiceBag)
+-- Keys.BINDER:Start()
 
-Talismans.BINDER = Binder.new(Talismans.TAG_NAME, Talismans, ServiceBag)
-Talismans.BINDER:Start()
+-- Talismans.BINDER = Binder.new(Talismans.TAG_NAME, Talismans, ServiceBag)
+-- Talismans.BINDER:Start()

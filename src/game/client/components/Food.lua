@@ -32,8 +32,7 @@ function Food.new(objectInstance, serviceBag)
 
 		task.wait(2)
 
-		self._objectService:RemoveObject(Food.TAG_NAME, self.instance)
-		self.model:Destroy()
+		self._objectService:RemoveObject(Food.TAG_NAME, self.instance, self)
 		self = nil
 		Food.count -= 1
 	end
