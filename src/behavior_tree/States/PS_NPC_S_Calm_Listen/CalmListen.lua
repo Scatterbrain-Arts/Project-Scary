@@ -37,6 +37,7 @@ function btTask.run(obj)
 		self.stateUI.Text = "❕"
 		Blackboard.isSoundHeard = false
 		Blackboard.detectionState = shared.npc.states.detection.alert
+		Blackboard.alertBehaviorState = shared.npc.states.behavior.alert.investigate
 		return SUCCESS
 	end
 

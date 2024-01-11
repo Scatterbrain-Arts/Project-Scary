@@ -9,17 +9,17 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	while not Blackboard.behaviorConditions.calm[Blackboard.calmBehaviorState]() do
-		if Blackboard.calmBehaviorState+1 > #shared.npc.states.behavior.calmNames then
+	while not Blackboard.behaviorConditions.alert[Blackboard.alertBehaviorState]() do
+		if Blackboard.alertBehaviorState+1 > #shared.npc.states.behavior.alertNames then
 			isForceFail = true
 			return
 		end
 		isForceFail = false
 
-		Blackboard.calmBehaviorState += 1
+		Blackboard.alertBehaviorState += 1
 	end
 
-	Blackboard.objective.goal = shared.npc.states.behavior.calmNames[Blackboard.calmBehaviorState]
+	Blackboard.objective.goal = shared.npc.states.behavior.alertNames[Blackboard.alertBehaviorState]
 	Blackboard.objective.goalCondition = false
 end
 
@@ -38,7 +38,7 @@ function btTask.run(obj)
 		return FAIL
 	end
 
-	return Blackboard.behaviorConditions.calm[Blackboard.calmBehaviorState] and SUCCESS or FAIL
+	return Blackboard.behaviorConditions.alert[Blackboard.alertBehaviorState] and SUCCESS or FAIL
 end
 
 

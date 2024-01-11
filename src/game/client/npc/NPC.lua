@@ -78,6 +78,8 @@ function NPC.new(npcModel, serviceBag)
 			detectionState = nil,
 			calmBehaviorState = nil,
 
+			alertBehaviorState = nil,
+
 			behaviorConditions = {
 				calm = {
 					[shared.npc.states.behavior.calm.hungry] = function()
@@ -87,6 +89,12 @@ function NPC.new(npcModel, serviceBag)
 						return true
 					end,
 				},
+
+				alert = {
+					[shared.npc.states.behavior.alert.investigate] = function()
+						return true
+					end,
+				}
 			},
 
 			objective = {

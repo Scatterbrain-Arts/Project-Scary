@@ -8,7 +8,6 @@ Globals.ServiceName = "Globals"
 function Globals:Init(serviceBag)
 	assert(ServiceBag.isServiceBag(serviceBag), "Not valid a service bag...")
 
-	--Internal
 	shared.states = {}
 	shared.states.move = {}
 	shared.states.moveNames = { "idle", "idleCrouch", "walkCrouch", "walk", "run" }
@@ -39,6 +38,10 @@ function Globals:Init(serviceBag)
 	for i,v in shared.npc.states.behavior.calmNames do shared.npc.states.behavior.calm[v] = i end
 	for i = 1, #shared.npc.states.behavior.calmNames do shared.npc.states.behavior.calm[i] = i end
 
+	shared.npc.states.behavior.alert = {}
+	shared.npc.states.behavior.alertNames = {"investigate"}
+	for i,v in shared.npc.states.behavior.alertNames do shared.npc.states.behavior.alert[v] = i end
+	for i = 1, #shared.npc.states.behavior.alertNames do shared.npc.states.behavior.alert[i] = i end
 end
 
 
