@@ -166,6 +166,9 @@ function NPC:FindTalisman()
 end
 
 
+function NPC:FindPlayer()
+	return nil
+end
 
 
 
