@@ -291,4 +291,12 @@ function Navigation:FindShortestPath(startRoom, endRoom)
 end
 
 
+function Navigation:FindRoomFromPosition(position)
+    return NavigationUtil:FindRoomFromPosition(self.regions.rooms, position)
+end
+
+function Navigation:FindWalkablePosition(targetPosition, partSize, maxRadius)
+    return NavigationUtil:FindWalkablePosition(self.root.Position, targetPosition, partSize, maxRadius)
+end
+
 return Navigation

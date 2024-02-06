@@ -47,6 +47,12 @@ function SoundDetection.new(npc)
 		GuiNPCStatus = GeneralUtil:GetUI(GuiNPC, "Status"),
 	}
 
+	local soundStorage = game.ReplicatedStorage.NPC:FindFirstChild("SoundDetection")
+	self.navSounds = {
+		walkToPosition = soundStorage:FindFirstChild("SoundWalkToPosition"),
+		heardPosition = soundStorage:FindFirstChild("SoundHeardPosition"),
+	}
+
 	self.tickLastSoundHeard = tick()
 	self.soundAwareness = 0
 	self.soundHeardThreshold = 3
@@ -137,7 +143,15 @@ function SoundDetection:UpdateState()
 	-- end
 end
 
+function SoundDetection:SetWalkToPosition(soundPosition, walkToPosition)
+	local offset = Vector3.new(0,2,0)
 
+	self.navSounds.walkToPosition.Parent = game.Workspace
+	self.navSounds.walkToPosition.PrimaryPart.Position = walkToPosition
+
+	self.navSounds.heardPosition.Parent = game.Workspace
+	self.navSounds.heardPosition.PrimaryPart.Position = soundPosition + offset
+end
 
 
 return SoundDetection

@@ -12,6 +12,7 @@ local NPCDebug = require("NPCDebug")
 local GeneralUtil = require("GeneralUtil")
 local Navigation = require("Navigation")
 local NPCSoundDetection = require("NPCSoundDetection")
+local NodeMap = require("NodeMap")
 
 local next = next
 
@@ -66,9 +67,10 @@ function NPC.new(npcModel, serviceBag)
 			collisionGroupRayLoS = "RayNPCLoS",
 			state = STATE_CALM,
 			isSoundHeard = false,
-			isTargetLost = nil,
-			lastKnownPosition = nil,
-			lastKnownRegion = nil,
+			lastSoundHeardPosition = nil,
+			-- isTargetLost = nil,
+			-- lastKnownPosition = nil,
+			-- lastKnownRegion = nil,
 
 			isLineOfSight = nil,
 			isActive = false,
@@ -103,6 +105,8 @@ function NPC.new(npcModel, serviceBag)
 				currentRoom = nil,
 				reversePathToGoalRoom = {},
 
+				searchPath = {},
+
 				goalCondition = nil,
 				goalActions = {},
 
@@ -120,6 +124,7 @@ function NPC.new(npcModel, serviceBag)
 
 	self.navigation = Navigation.new(self)
 	self.soundDetection = NPCSoundDetection.new(self)
+	self.nodeMap = NodeMap.new(self)
 
     RunService.Heartbeat:Connect(function(time, deltaTime)
 		if not self.config.isOverride.Value then
@@ -170,6 +175,17 @@ function NPC:FindPlayer()
 	return nil
 end
 
+
+function NPC:LocateSound(lastSoundHeardPosition)
+	local partSize = self.soundDetection.navSounds.walkToPosition.PrimaryPart.Size.X
+	local walkToPosition = self.navigation:FindWalkablePosition(lastSoundHeardPosition, partSize, partSize*4)
+	if not walkToPosition then
+		warn("Can't walkable position for sound....")
+		return
+	end
+
+	self.soundDetection:SetWalkToPosition(lastSoundHeardPosition, walkToPosition)
+end
 
 
 

@@ -15,7 +15,8 @@ function btTask.start(obj)
 		return
 	end
 	isForceFail = false
-
+	-- print(Blackboard.objective.currentRoom)
+	-- print(Blackboard.objective.goalRoom)
 	Blackboard.objective.reversePathToGoalRoom = self.navigation:FindShortestPath(Blackboard.objective.currentRoom, Blackboard.objective.goalRoom)
 	table.remove(Blackboard.objective.reversePathToGoalRoom, #Blackboard.objective.reversePathToGoalRoom)
 end

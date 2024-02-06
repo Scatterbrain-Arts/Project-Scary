@@ -35,6 +35,9 @@ function btTask.run(obj)
 
 	if Blackboard.isSoundHeard == true then
 		self.stateUI.Text = "❕"
+		task.wait(0.5)
+
+		Blackboard.lastSoundHeardPosition = Blackboard.player.Character.RightFoot.Position
 		Blackboard.isSoundHeard = false
 		Blackboard.detectionState = shared.npc.states.detection.alert
 		Blackboard.alertBehaviorState = shared.npc.states.behavior.alert.investigate
@@ -43,6 +46,7 @@ function btTask.run(obj)
 
 	if tick() - tickStartListen > 3 and Blackboard.isSoundHeard == false then
 		self.stateUI.Text = "🤷‍♀️"
+		task.wait(0.5)
 		return FAIL
 	end
 

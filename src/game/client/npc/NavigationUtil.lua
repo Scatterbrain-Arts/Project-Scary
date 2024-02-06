@@ -35,6 +35,17 @@ function NavigationUtil:GetRegions(rooms)
             math.max(corner1.Position.Z, corner2.Position.Z)
         )
 
+        regionData.lowerboundFloor = Vector3.new(
+            math.floor(regionData.lowerbound.X),
+            math.floor(regionData.lowerbound.Y),
+            math.floor(regionData.lowerbound.Z)
+        )
+        regionData.upperboundFloor = Vector3.new(
+            math.floor(regionData.upperbound.X),
+            math.floor(regionData.upperbound.Y),
+            math.floor(regionData.upperbound.Z)
+        )
+
         regionData.region = Region3.new(regionData.lowerbound, regionData.upperbound)
         regionData.area = regionData.region.Size.X * regionData.region.Size.Z
 
@@ -55,6 +66,65 @@ function NavigationUtil:GetRegions(rooms)
     regions.totalWeight = totalWeight
 
     return regions
+end
+
+
+function NavigationUtil:FindRoomFromPosition(regions, position)
+    position = Vector3.new(position.X, math.floor(position.Y), position.Z)
+
+    for roomName, regionData in pairs(regions) do
+
+        local lowerBound = regionData.lowerbound
+        local upperBound = regionData.upperbound
+
+        -- print(roomName)
+
+        -- print(position.X, lowerBound.X, upperBound.X, position.X >= lowerBound.X and position.X <= upperBound.X)
+        -- print(position.Y, lowerBound.Y, upperBound.Y, position.Y >= lowerBound.Y and position.Y <= upperBound.Y)
+        -- print(position.Z, lowerBound.Z, upperBound.Z, position.Z >= lowerBound.Z and position.Z <= upperBound.Z)
+
+
+        if position.X >= lowerBound.X and position.X <= upperBound.X and
+           position.Y >= math.floor(lowerBound.Y) and position.Y <= math.floor(upperBound.Y) and
+           position.Z >= lowerBound.Z and position.Z <= upperBound.Z then
+            return roomName -- The position is within this room's bounds
+        end
+    end
+
+    return nil
+end
+
+
+function NavigationUtil:FindWalkablePosition(startPosition, targetPosition, partSize, maxRadius)
+    local angle = 0
+    local radius = partSize
+	local step = partSize / 2
+
+    -- Calculate initial direction from NPC to sound
+    local directionVector = (targetPosition - startPosition).unit
+    local initialAngle = math.atan2(directionVector.X, directionVector.Z)
+
+    while radius <= maxRadius do
+        -- Convert polar coordinates (angle, radius) to Cartesian coordinates (x, y)
+        local x = radius * math.cos(initialAngle + angle)
+        local z = radius * math.sin(initialAngle + angle)
+        local checkPosition = targetPosition + Vector3.new(x, 0, z) -- Adjust Y coordinate as needed
+
+		local partsInRegion = GeneralUtil:QueryRadius(checkPosition, partSize, "RayFindWalkPos", true)
+        if not next(partsInRegion) then -- If no parts are found in the region, it's a potential spot
+            return checkPosition
+        end
+
+        -- Update angle and radius for the next iteration
+        angle += math.asin(step/radius)
+
+        if angle >= (2 * math.pi) then
+            angle -= (2 * math.pi)
+            radius += step
+        end
+    end
+
+    return nil
 end
 
 
@@ -213,6 +283,8 @@ end
 
 -- Find the shortest path between the current and destination nodes
 function NavigationUtil:GraphDijkstra(graph, current, destination, directed)
+    print(graph)
+
     if not directed then NavigationUtil:GraphComplete(graph) end
 
     local unvisited, distanceTo, trail = {}, {}, {}
