@@ -152,10 +152,6 @@ function NPC.new(npcModel, serviceBag)
 	return self
 end
 
-function NPC:InitState()
-	
-end
-
 
 function NPC:FindFood()
 	local instance, object = next(self._objectService:GetType("Food"))
@@ -185,17 +181,17 @@ function NPC:FindPlayer()
 end
 
 
-function NPC:LocateSound(lastSoundHeardPosition)
+function NPC:FindSound(lastSoundHeardPosition)
 	local partSize = self.soundDetection.navSounds.walkToPosition.PrimaryPart.Size.X
-	local walkToPosition = self.navigation:FindWalkablePosition(lastSoundHeardPosition, partSize, partSize*4)
+	local walkToPosition, room = self.navigation:FindWalkablePosition(lastSoundHeardPosition, partSize, partSize*4)
 	if not walkToPosition then
 		warn("Can't walkable position for sound....")
 		return
 	end
 
-	self.soundDetection:SetWalkToPosition(lastSoundHeardPosition, walkToPosition)
+	local heardInstance, walkToInstance = self.soundDetection:SetWalkToPosition(lastSoundHeardPosition, walkToPosition)
 
-	return walkToPosition
+	return heardInstance, walkToInstance, room
 end
 
 

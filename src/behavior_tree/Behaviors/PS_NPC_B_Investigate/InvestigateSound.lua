@@ -3,23 +3,21 @@ local btTask = {}
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
 local isForceFail = false
-local behaviorState = 1
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	while not Blackboard.behaviorConditions.alert[behaviorState]() do
-		if behaviorState+1 > #shared.npc.states.behavior.alertNames then
-			isForceFail = true
-			return
-		end
-
-		behaviorState += 1
+	if not Blackboard.objective.interactObject then
+		warn("Failed to find food...")
+		isForceFail = true
+		return
 	end
 
-	Blackboard.alertBehaviorState = behaviorState
-	Blackboard.objective.isComplete = false
+	Blackboard.objective.interactObject.PrimaryPart.Transparency = 1
+	task.wait(2)
+	Blackboard.objective.isComplete = true
+	self.stateUI.Text = "🤷‍♀️"
 end
 
 
@@ -38,8 +36,8 @@ function btTask.run(obj)
 	if isForceFail then
 		return FAIL
 	end
-	
-	return Blackboard.behaviorConditions.alert[Blackboard.alertBehaviorState]() and SUCCESS or FAIL
+
+	return Blackboard.objective.isComplete and SUCCESS or FAIL
 end
 
 

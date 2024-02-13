@@ -296,7 +296,8 @@ function Navigation:FindRoomFromPosition(position)
 end
 
 function Navigation:FindWalkablePosition(targetPosition, partSize, maxRadius)
-    return NavigationUtil:FindWalkablePosition(self.root.Position, targetPosition, partSize, maxRadius)
+    local walkToPos = NavigationUtil:FindWalkablePosition(self.root.Position, targetPosition, partSize, maxRadius)
+    return walkToPos, NavigationUtil:FindRoomFromPosition(self.regions.rooms, walkToPos)
 end
 
 return Navigation

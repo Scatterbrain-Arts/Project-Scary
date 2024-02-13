@@ -153,6 +153,8 @@ function SoundDetection:SetWalkToPosition(soundPosition, walkToPosition)
 
 	self.navSounds.heardPosition.Parent = game.Workspace
 	self.navSounds.heardPosition.PrimaryPart.Position = soundPosition + offset
+
+	return self.navSounds.heardPosition, self.navSounds.walkToPosition
 end
 
 

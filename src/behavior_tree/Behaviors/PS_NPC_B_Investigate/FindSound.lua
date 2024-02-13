@@ -12,20 +12,33 @@ function btTask.start(obj)
 		isForceFail = true
 		return
 	end
-	isForceFail = false
 
+	-- check sound origin
 	if Blackboard.lastSoundHeardInstance == Blackboard.player.Character then
-		print("Sound is from player")
 		Blackboard.lastSoundHeardPosition = Blackboard.lastSoundHeardInstance.RightFoot.Position
 	end
 
-	isForceFail = self:LocateSound(Blackboard.lastSoundHeardPosition) and true or false
+	local soundSourceInstance, soundWalkToInstance, room = self:FindSound(Blackboard.lastSoundHeardPosition)
+	print(soundSourceInstance, soundWalkToInstance, room)
+	if not soundSourceInstance or not soundWalkToInstance then
+		warn("sound is nil...")
+		isForceFail = true
+		return
+	end
+
+	Blackboard.objective.interactObject = soundSourceInstance
+	Blackboard.objective.walkToInstance = soundWalkToInstance.NavStart
+	Blackboard.objective.goalRoom = room
+
+	Blackboard.objective.interactObject.PrimaryPart.Transparency = 0
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+
+	isForceFail = false
 end
 
 

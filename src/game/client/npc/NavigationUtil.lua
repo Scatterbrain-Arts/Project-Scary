@@ -72,26 +72,32 @@ end
 function NavigationUtil:FindRoomFromPosition(regions, position)
     position = Vector3.new(position.X, math.floor(position.Y), position.Z)
 
+    local closestRoom = nil
+    local closestDistance = math.huge
+
     for roomName, regionData in pairs(regions) do
 
         local lowerBound = regionData.lowerbound
         local upperBound = regionData.upperbound
 
-        -- print(roomName)
-
-        -- print(position.X, lowerBound.X, upperBound.X, position.X >= lowerBound.X and position.X <= upperBound.X)
-        -- print(position.Y, lowerBound.Y, upperBound.Y, position.Y >= lowerBound.Y and position.Y <= upperBound.Y)
-        -- print(position.Z, lowerBound.Z, upperBound.Z, position.Z >= lowerBound.Z and position.Z <= upperBound.Z)
-
-
         if position.X >= lowerBound.X and position.X <= upperBound.X and
-           position.Y >= math.floor(lowerBound.Y) and position.Y <= math.floor(upperBound.Y) and
            position.Z >= lowerBound.Z and position.Z <= upperBound.Z then
             return roomName -- The position is within this room's bounds
         end
+
+        -- Calculate the distance to the room's bounds on the X and Z axes
+        local dx = math.max(lowerBound.X - position.X, 0, position.X - upperBound.X)
+        local dz = math.max(lowerBound.Z - position.Z, 0, position.Z - upperBound.Z)
+        local distance = math.sqrt(dx * dx + dz * dz)  -- Pythagorean theorem
+
+        -- Update the closest room if this room is closer
+        if distance < closestDistance then
+            closestRoom = roomName
+            closestDistance = distance
+        end
     end
 
-    return nil
+    return closestRoom
 end
 
 
