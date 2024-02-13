@@ -1,31 +1,37 @@
 local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
+local isForceFail = false
 
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	if Blackboard.objective.goalCondition then
-		Blackboard.objective.goal = ""
-		Blackboard.objective.goalRoom = nil
-		Blackboard.objective.currentRoom = nil
-		Blackboard.objective.reversePathToGoalRoom = {}
-		Blackboard.objective.goalCondition = nil
-		Blackboard.objective.actionObject = nil
-		Blackboard.objective.actionPosition = nil
-
-		Blackboard.isActionPositionAligned = false
-		Blackboard.isActionPositionReached = false
-		Blackboard.isObjectiveRoomReached = false
+	if not Blackboard.objective.isComplete then
+		warn("Objective is not complete...")
+		isForceFail = true
+		return
 	end
+
+	Blackboard.isObjectiveAlignReached = false
+	Blackboard.isObjectivePositionReached = false
+	Blackboard.isObjectiveRoomReached = false
+
+	Blackboard.objective.isComplete = false
+	Blackboard.objective.interactObject = nil
+	Blackboard.objective.walkToInstance = nil
+	Blackboard.objective.goalRoom = nil
+	Blackboard.objective.currentRoom = nil
+	Blackboard.objective.reversePathToGoalRoom = nil
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+
+	isForceFail = false
 end
 
 
@@ -33,7 +39,11 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	return Blackboard.objective.goal == "" and SUCCESS or FAIL
+	if isForceFail then
+		return FAIL
+	end
+
+	return SUCCESS
 end
 
 

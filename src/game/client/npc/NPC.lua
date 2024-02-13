@@ -59,31 +59,37 @@ function NPC.new(npcModel, serviceBag)
 	self.btRoot = BehaviorTreeCreator:Create(ReplicatedStorage.Tree["0_PS_NPC_Start"], self)
 	self.btState = {
 		self = self,
+
 		Blackboard = {
-			defaultWaitTime = 2,
+			-- Junk vars
+			defaultWaitTime = 2, --used in waits
+
+			-- player
 			player = self.player,
-			targetPosition = nil,
-			target = nil,
-			collisionGroupRayLoS = "RayNPCLoS",
-			state = STATE_CALM,
+
+			-- nav
+			targetPosition = nil, 	--position to move
+			target = nil,			--target to chase/update targetPosition
+			collisionGroupRayLoS = "RayNPCLoS",	--ray to see line of sight to target
+			isLineOfSight = nil,
+
+			-- sound
 			isSoundHeard = false,
 			lastSoundHeardPosition = nil,
-			-- isTargetLost = nil,
-			-- lastKnownPosition = nil,
-			-- lastKnownRegion = nil,
+			lastSoundHeardInstance = nil,
+			calmSoundSuspicion = 1,
 
-			isLineOfSight = nil,
-			isActive = false,
+			-- states
+			detectionState = nil, -- states for calm, alert, hostile
+			calmBehaviorState = nil, -- behaviors for calm, used just for ref
+			alertBehaviorState = nil, -- behaviors for alert, used just for ref
 
-
-			--calm behavior
-			detectionState = nil,
-			calmBehaviorState = nil,
-
-			alertBehaviorState = nil,
-
+			-- set behavior will loop through all per state until true or error
 			behaviorConditions = {
 				calm = {
+					[shared.npc.states.behavior.calm.investigate] = function()
+						return self.btState.Blackboard.isSoundHeard == true
+					end,
 					[shared.npc.states.behavior.calm.hungry] = function()
 						return next(self._objectService:GetType("Food")) ~= nil
 					end,
@@ -99,24 +105,23 @@ function NPC.new(npcModel, serviceBag)
 				}
 			},
 
+			isObjectiveAlignReached = false,
+			isObjectivePositionReached = false,
+			isObjectiveRoomReached = false,
 			objective = {
-				goal = "",
+				isComplete = false,
+
+				-- nav for Task PathToObject
+				walkToInstance = nil, -- action position
+				interactObject = nil, --action Object
+
+				-- nav for Task PathToRoom
 				goalRoom = nil,
 				currentRoom = nil,
-				reversePathToGoalRoom = {},
-
-				searchPath = {},
-
-				goalCondition = nil,
-				goalActions = {},
-
-				actionObject = nil,
-				actionPosition = nil,
+				reversePathToGoalRoom = nil,
 			},
 
-			isActionPositionAligned = false,
-			isActionPositionReached = false,
-			isObjectiveRoomReached = false
+			
 		},
 	}
 
@@ -145,6 +150,10 @@ function NPC.new(npcModel, serviceBag)
 	self.talismanLast = nil
 
 	return self
+end
+
+function NPC:InitState()
+	
 end
 
 
@@ -185,6 +194,8 @@ function NPC:LocateSound(lastSoundHeardPosition)
 	end
 
 	self.soundDetection:SetWalkToPosition(lastSoundHeardPosition, walkToPosition)
+
+	return walkToPosition
 end
 
 

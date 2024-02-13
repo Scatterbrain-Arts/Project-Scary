@@ -24,7 +24,7 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	return Blackboard.isActionPositionAligned and SUCCESS or FAIL
+	return Blackboard.isObjectiveAlignReached and SUCCESS or FAIL
 end
 
 

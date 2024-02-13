@@ -24,9 +24,8 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	Blackboard.isActionPositionReached = GeneralUtil:IsDistanceLess(self.root.Position, Blackboard.objective.actionPosition.Position, 1, true)
-
-	return Blackboard.isActionPositionReached and SUCCESS or FAIL
+	Blackboard.isObjectivePositionReached = GeneralUtil:IsDistanceLess(self.root.Position, Blackboard.objective.walkToInstance.Position, 1, true)
+	return Blackboard.isObjectivePositionReached and SUCCESS or FAIL
 end
 
 

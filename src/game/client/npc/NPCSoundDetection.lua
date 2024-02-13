@@ -112,6 +112,8 @@ function SoundDetection:Listen()
 		if self.blackboard.isSoundHeard == false then
 			self.blackboard.isSoundHeard = true
 			print("Sound Heard")
+
+			self.blackboard.lastSoundHeardInstance = self.playerCharacter
 			-- if self.blackboard.state == STATE_CALM and self.soundAwareness >= self.statusCalmThreshold then
 			-- 	self.blackboard.isSoundHeard = true
 			-- 	self.tickLastSoundHeard = tick()

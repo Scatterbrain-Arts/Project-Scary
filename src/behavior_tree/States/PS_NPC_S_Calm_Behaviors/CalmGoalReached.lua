@@ -20,7 +20,7 @@ function btTask.run(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	return (Blackboard.objective.goal == shared.npc.states.behavior.calmNames[Blackboard.calmBehaviorState] and Blackboard.objective.goalCondition) and SUCCESS or FAIL
+	return Blackboard.objective.isComplete and SUCCESS or FAIL
 end
 
 
