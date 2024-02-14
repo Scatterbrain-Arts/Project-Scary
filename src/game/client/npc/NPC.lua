@@ -99,7 +99,7 @@ function NPC.new(npcModel, serviceBag)
 				},
 
 				alert = {
-					[shared.npc.states.behavior.alert.investigate] = function()
+					[shared.npc.states.behavior.alert.search] = function()
 						return true
 					end,
 				}
@@ -119,6 +119,8 @@ function NPC.new(npcModel, serviceBag)
 				goalRoom = nil,
 				currentRoom = nil,
 				reversePathToGoalRoom = nil,
+
+				searchRoutePath = {},
 			},
 
 			
@@ -150,6 +152,11 @@ function NPC.new(npcModel, serviceBag)
 	self.talismanLast = nil
 
 	return self
+end
+
+
+function NPC:FindSearchRoute(room, startPosition)
+	return self.nodeMap:FindSearchRoute(room, startPosition)
 end
 
 

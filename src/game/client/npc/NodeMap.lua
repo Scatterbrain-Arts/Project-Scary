@@ -146,18 +146,23 @@ function NodeMap:FindNearestMap(roomName, startPosition)
 end
 
 
-function NodeMap:FindSearchRoute(nodeMap, startPosition)
-	if (not nodeMap) then
-		error("nodeMap is nil...")
+function NodeMap:FindSearchRoute(roomName, startPosition)
+	local nearestMap, nearestNode = self:FindNearestMap(roomName, startPosition)
+	if not nearestMap or not nearestNode then
+		warn("NearestMap or NearestNode is nil...")
+		return
 	end
 
-	print("searching", #nodeMap)
+	print("searching", #nearestMap)
 
 	local path = {}
+	local humanReadablePath = {}
 	local explored = {}
-
-	local node = FindNearestNode(nodeMap, startPosition)
-	table.insert(path, node.Name)
+	
+	local node = nearestNode
+	table.insert(path, node)
+	table.insert(humanReadablePath, node.Name)
+	
 	explored[node] = 2
 
 	for i = 1, 8 do
@@ -175,11 +180,12 @@ function NodeMap:FindSearchRoute(nodeMap, startPosition)
 
 		node = smallestNeighbor
 		table.insert(path, node)
+		table.insert(humanReadablePath, node.Name)
 
 		explored[node] = not explored[node] and 2 or explored[node]+1
 	end
 
-	return path
+	return path, humanReadablePath
 end
 
 

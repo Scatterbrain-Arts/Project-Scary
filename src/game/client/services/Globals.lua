@@ -39,7 +39,7 @@ function Globals:Init(serviceBag)
 	for i = 1, #shared.npc.states.behavior.calmNames do shared.npc.states.behavior.calm[i] = i end
 
 	shared.npc.states.behavior.alert = {}
-	shared.npc.states.behavior.alertNames = {"investigate"}
+	shared.npc.states.behavior.alertNames = {"search"}
 	for i,v in shared.npc.states.behavior.alertNames do shared.npc.states.behavior.alert[v] = i end
 	for i = 1, #shared.npc.states.behavior.alertNames do shared.npc.states.behavior.alert[i] = i end
 end

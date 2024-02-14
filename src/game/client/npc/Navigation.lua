@@ -64,13 +64,13 @@ function Navigation.new(npc)
         isTargetReached = false,
     }
 
-    self.action = {
-        index = nil,
-        waypoints = {},
-        connection = nil,
-        targetPosition = nil,
-        isTargetReached = false,
-    }
+    -- self.action = {
+    --     index = nil,
+    --     waypoints = {},
+    --     connection = nil,
+    --     targetPosition = nil,
+    --     isTargetReached = false,
+    -- }
 
     self.unstuck = {
         lastPosition = nil,
