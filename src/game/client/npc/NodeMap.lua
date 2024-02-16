@@ -156,131 +156,187 @@ function NodeMap:FindSearchRoute(roomName, startPosition)
 	print("searching", #nearestMap)
 
 	local path = {}
-	local humanReadablePath = {}
+	local readablePath = {}
 	local explored = {}
-	
-	local node = nearestNode
-	table.insert(path, node)
-	table.insert(humanReadablePath, node.Name)
-	
-	explored[node] = 2
 
-	for i = 1, 8 do
-		local smallestValue = math.huge
-		local smallestNeighbor = nil
-		for _, neighbor in ipairs(node.Neighbors) do
-			local mod = explored[neighbor] or 1
-			local rnd = math.random(1,10) * mod
-			if rnd < smallestValue then
-				smallestValue = rnd
-				smallestNeighbor = neighbor
+	table.insert(path, nearestNode)
+	table.insert(readablePath, nearestNode.Name)
+
+	explored[nearestNode] = nearestNode
+
+	local range = 20
+	local currentNode = nearestNode
+	local smallestDistance = math.huge
+	local smallestNode = nil
+
+	repeat
+		smallestNode = nil
+		smallestDistance = math.huge
+
+		for _, node in nearestMap do
+
+			print("checking node:", node.Name)
+			if explored[node] then
+				continue
 			end
-		end
-		smallestValue = math.huge
 
-		node = smallestNeighbor
-		table.insert(path, node)
-		table.insert(humanReadablePath, node.Name)
-
-		explored[node] = not explored[node] and 2 or explored[node]+1
-	end
-
-	return path, humanReadablePath
-end
-
-
-
-
-
-function NodeMap:FindPath(startPosition, goalPosition)
-
-	if (not pathNodes) then
-		self:Init()
-	end
-
-	local path = {}
-	local pathFound = false
-
-	local startNode = FindNearestNode(startPosition)
-	local goalNode = FindNearestNode(goalPosition)
-
-	local open = {[startNode] = true}
-	local closed = {}
-
-	-- Find node with lowest F score within the "open" list:
-	local function FindLowestFNode()
-		local lowestF, node = math.huge, nil
-		for n in pairs(open) do
-			if (n.F < lowestF) then
-				lowestF, node = n.F, n
-			end
-		end
-		return node
-	end
-
-	-- Find path via A* algorithm:
-	while (next(open)) do
-
-		-- Find node with lowest F score in open list.
-		-- Switch that node from open list to closed list.
-		local node = FindLowestFNode()
-		open[node] = nil
-		closed[node] = true
-
-		-- If the node we just got is the goal node, we found the path!
-		if (node == goalNode) then
-			pathFound = true
-			break
-		end
-
-		-- Scan through all neighbors of this node.
-		for _,neighbor in ipairs(node.Neighbors) do
-			-- If it's not closed, let's examine it.
-			if (not closed[neighbor]) then
-				-- If it's not in the open list, let's add it to the list and do some calculations on it.
-				if (not open[neighbor]) then
-					open[neighbor] = true
-					neighbor.Parent = node
-					neighbor.G = node.G + (neighbor.Position - node.Position).Magnitude
-					neighbor.H = (neighbor.Position - goalNode.Position).Magnitude
-					neighbor.F = (neighbor.G + neighbor.H)
-				else
-					-- If it is on the open list and is a good pick for the next path, let's redo some of the calculations
-					if (neighbor.G < node.G) then
-						neighbor.Parent = node
-						neighbor.G = node.G + (neighbor.Position - node.Position).Magnitude
-						neighbor.F = (neighbor.G + neighbor.H)
-					end
+			local isValid = true
+			for _, exploredNode in explored do
+				print("checking explored-node dist:", exploredNode.Name, node.Name, GeneralUtil:GetDistance(exploredNode.Position, node.Position, true))
+				if GeneralUtil:IsDistanceLess(exploredNode.Position, node.Position, range, true) then
+					isValid = false
+					break
 				end
 			end
+
+			if isValid then
+				local dist = GeneralUtil:GetDistance(node.Position, currentNode.Position)
+				print("checking distance for:", node.Name, currentNode.Name, dist)
+				if dist < smallestDistance then
+					smallestDistance = dist
+					smallestNode = node
+				end
+				print("smallest node is:", smallestNode.Name)
+			end
 		end
 
-	end
+		if smallestNode then
+			currentNode = smallestNode
+			explored[smallestNode] = smallestNode
 
-	-- Backtrace path:
-	if (pathFound) then
-		local node = goalNode
-		while (node) do
-			table.insert(path, 1, node.Position)
-			node = node.Parent
+			local part = GeneralUtil:CreatePart(Enum.PartType.Ball, Vector3.new(range, range, range), Color3.fromRGB(0,0,255))
+			part.Position = smallestNode.Position
+			part.Parent = workspace
+			part.Name = "Explored"
+
+			table.insert(path, smallestNode)
+			table.insert(readablePath, smallestNode.Name)
 		end
-	end
 
-	-- Reset nodes:
-	local function ResetNodeDictionary(dict)
-		for node in pairs(dict) do
-			node.F = 0
-			node.G = 0
-			node.H = 0
-			node.Parent = nil
-		end
-	end
-	ResetNodeDictionary(open)
-	ResetNodeDictionary(closed)
+	until smallestNode == nil
 
-	return (pathFound and path or nil)
+	print(readablePath)
 
+	return path, readablePath
 end
+
+
+	-- local part = GeneralUtil:CreatePart(Enum.PartType.Ball, Vector3.new(1,1,1), Color3.fromRGB(255,0,255))
+	-- part.Position = currentNodeRange
+	-- part.Parent = workspace
+	-- part.Name = "RangeFromNode"
+
+	-- for i = 1, 8 do
+	-- 	local smallestValue = math.huge
+	-- 	local smallestNeighbor = nil
+	-- 	for _, neighbor in ipairs(node.Neighbors) do
+	-- 		local mod = explored[neighbor] or 1
+	-- 		local rnd = math.random(1,10) * mod
+	-- 		if rnd < smallestValue then
+	-- 			smallestValue = rnd
+	-- 			smallestNeighbor = neighbor
+	-- 		end
+	-- 	end
+	-- 	smallestValue = math.huge
+
+	-- 	node = smallestNeighbor
+	-- 	table.insert(path, node)
+	-- 	table.insert(readablePath, node.Name)
+
+	-- 	explored[node] = not explored[node] and 2 or explored[node]+1
+	-- end
+
+
+
+-- function NodeMap:FindPath(startPosition, goalPosition)
+
+-- 	if (not pathNodes) then
+-- 		self:Init()
+-- 	end
+
+-- 	local path = {}
+-- 	local pathFound = false
+
+-- 	local startNode = FindNearestNode(startPosition)
+-- 	local goalNode = FindNearestNode(goalPosition)
+
+-- 	local open = {[startNode] = true}
+-- 	local closed = {}
+
+-- 	-- Find node with lowest F score within the "open" list:
+-- 	local function FindLowestFNode()
+-- 		local lowestF, node = math.huge, nil
+-- 		for n in pairs(open) do
+-- 			if (n.F < lowestF) then
+-- 				lowestF, node = n.F, n
+-- 			end
+-- 		end
+-- 		return node
+-- 	end
+
+-- 	-- Find path via A* algorithm:
+-- 	while (next(open)) do
+
+-- 		-- Find node with lowest F score in open list.
+-- 		-- Switch that node from open list to closed list.
+-- 		local node = FindLowestFNode()
+-- 		open[node] = nil
+-- 		closed[node] = true
+
+-- 		-- If the node we just got is the goal node, we found the path!
+-- 		if (node == goalNode) then
+-- 			pathFound = true
+-- 			break
+-- 		end
+
+-- 		-- Scan through all neighbors of this node.
+-- 		for _,neighbor in ipairs(node.Neighbors) do
+-- 			-- If it's not closed, let's examine it.
+-- 			if (not closed[neighbor]) then
+-- 				-- If it's not in the open list, let's add it to the list and do some calculations on it.
+-- 				if (not open[neighbor]) then
+-- 					open[neighbor] = true
+-- 					neighbor.Parent = node
+-- 					neighbor.G = node.G + (neighbor.Position - node.Position).Magnitude
+-- 					neighbor.H = (neighbor.Position - goalNode.Position).Magnitude
+-- 					neighbor.F = (neighbor.G + neighbor.H)
+-- 				else
+-- 					-- If it is on the open list and is a good pick for the next path, let's redo some of the calculations
+-- 					if (neighbor.G < node.G) then
+-- 						neighbor.Parent = node
+-- 						neighbor.G = node.G + (neighbor.Position - node.Position).Magnitude
+-- 						neighbor.F = (neighbor.G + neighbor.H)
+-- 					end
+-- 				end
+-- 			end
+-- 		end
+
+-- 	end
+
+-- 	-- Backtrace path:
+-- 	if (pathFound) then
+-- 		local node = goalNode
+-- 		while (node) do
+-- 			table.insert(path, 1, node.Position)
+-- 			node = node.Parent
+-- 		end
+-- 	end
+
+-- 	-- Reset nodes:
+-- 	local function ResetNodeDictionary(dict)
+-- 		for node in pairs(dict) do
+-- 			node.F = 0
+-- 			node.G = 0
+-- 			node.H = 0
+-- 			node.Parent = nil
+-- 		end
+-- 	end
+-- 	ResetNodeDictionary(open)
+-- 	ResetNodeDictionary(closed)
+
+-- 	return (pathFound and path or nil)
+
+-- end
 
 
 
