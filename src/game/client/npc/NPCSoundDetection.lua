@@ -47,6 +47,12 @@ function SoundDetection.new(npc)
 		GuiNPCStatus = GeneralUtil:GetUI(GuiNPC, "Status"),
 	}
 
+	local soundStorage = game.ReplicatedStorage.NPC:FindFirstChild("SoundDetection")
+	self.navSounds = {
+		walkToPosition = soundStorage:FindFirstChild("SoundWalkToPosition"),
+		heardPosition = soundStorage:FindFirstChild("SoundHeardPosition"),
+	}
+
 	self.tickLastSoundHeard = tick()
 	self.soundAwareness = 0
 	self.soundHeardThreshold = 3
@@ -67,8 +73,7 @@ function SoundDetection.new(npc)
 			-- 	end
 			-- end
 
-			self.guiNPC.GuiNPCBar.Size = UDim2.fromScale(self.soundAwareness / 100, 1)
-			self.guiNPC.GuiNPCPercent.Text = math.floor(self.soundAwareness) .. " pts"
+			self:UpdateState()
 
 			-- if self.blackboard.state == shared.npc.states.detection.alert and self.blackboard.target then
 			-- 	if GeneralUtil:IsDistanceGreater(self.root.Position, self.blackboard.targetPosition, 30) then
@@ -107,6 +112,8 @@ function SoundDetection:Listen()
 		if self.blackboard.isSoundHeard == false then
 			self.blackboard.isSoundHeard = true
 			print("Sound Heard")
+
+			self.blackboard.lastSoundHeardInstance = self.playerCharacter
 			-- if self.blackboard.state == STATE_CALM and self.soundAwareness >= self.statusCalmThreshold then
 			-- 	self.blackboard.isSoundHeard = true
 			-- 	self.tickLastSoundHeard = tick()
@@ -121,18 +128,34 @@ function SoundDetection:Listen()
 end
 
 function SoundDetection:UpdateState()
-	local newState = self.blackboard.state
+	local newState = self.blackboard.detectionState
+	if not newState then
+		return
+	end
+
 	self.guiNPC.GuiNPCIsCalm.Visible = newState == STATE_CALM
 	self.guiNPC.GuiNPCIsAlert.Visible = newState == STATE_ALERT
 	self.guiNPC.GuiNPCIsHostile.Visible = newState == STATE_HOSTILE
 	self.guiNPC.GuiNPCStatus.Text = string.upper( shared.npc.states.detectionNames[newState] )
 
-	if newState == STATE_CALM then
-		self.soundAwareness = 0
-	end
+	self.guiNPC.GuiNPCBar.Size = UDim2.fromScale(self.soundAwareness / 100, 1)
+	self.guiNPC.GuiNPCPercent.Text = math.floor(self.soundAwareness) .. " pts"
+	-- if newState == STATE_CALM then
+	-- 	self.soundAwareness = 0
+	-- end
 end
 
+function SoundDetection:SetWalkToPosition(soundPosition, walkToPosition)
+	local offset = Vector3.new(0,2,0)
 
+	self.navSounds.walkToPosition.Parent = game.Workspace
+	self.navSounds.walkToPosition.PrimaryPart.Position = walkToPosition
+
+	self.navSounds.heardPosition.Parent = game.Workspace
+	self.navSounds.heardPosition.PrimaryPart.Position = soundPosition + offset
+
+	return self.navSounds.heardPosition, self.navSounds.walkToPosition
+end
 
 
 return SoundDetection

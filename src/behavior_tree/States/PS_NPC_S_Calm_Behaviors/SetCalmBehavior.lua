@@ -3,36 +3,33 @@ local btTask = {}
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
 local isForceFail = false
-
+local behaviorState = 1
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-
-	if Blackboard.behaviorConditions.calm[Blackboard.calmBehaviorState]() then
-		Blackboard.objective.goal = shared.npc.states.behavior.calmNames[Blackboard.calmBehaviorState]
-		Blackboard.objective.goalCondition = false
-	else
-		repeat
-			Blackboard.calmBehaviorState += 1
-		until Blackboard.behaviorConditions.calm[Blackboard.calmBehaviorState]() or Blackboard.calmBehaviorState > #shared.npc.states.behavior.calmNames
-
-		if Blackboard.calmBehaviorState > #shared.npc.states.behavior.calmNames then
+	while not Blackboard.behaviorConditions.calm[behaviorState]() do
+		if behaviorState+1 > #shared.npc.states.behavior.calmNames then
+			warn("CalmBehaviors is out of bounds...")
 			isForceFail = true
 			return
 		end
-		isForceFail = false
 
-		Blackboard.objective.goal = shared.npc.states.behavior.calmNames[Blackboard.calmBehaviorState]
-		Blackboard.objective.goalCondition = false
+		behaviorState += 1
 	end
+
+	Blackboard.calmBehaviorState = behaviorState
+	Blackboard.objective.isComplete = false
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+
+	behaviorState = 1
+	isForceFail = false
 end
 
 
@@ -44,7 +41,7 @@ function btTask.run(obj)
 		return FAIL
 	end
 
-	return Blackboard.behaviorConditions.calm[Blackboard.calmBehaviorState] and SUCCESS or FAIL
+	return Blackboard.behaviorConditions.calm[Blackboard.calmBehaviorState]() and SUCCESS or FAIL
 end
 
 

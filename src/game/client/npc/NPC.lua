@@ -12,6 +12,7 @@ local NPCDebug = require("NPCDebug")
 local GeneralUtil = require("GeneralUtil")
 local Navigation = require("Navigation")
 local NPCSoundDetection = require("NPCSoundDetection")
+local NodeMap = require("NodeMap")
 
 local next = next
 
@@ -58,28 +59,41 @@ function NPC.new(npcModel, serviceBag)
 	self.btRoot = BehaviorTreeCreator:Create(ReplicatedStorage.Tree["0_PS_NPC_Start"], self)
 	self.btState = {
 		self = self,
+
 		Blackboard = {
-			defaultWaitTime = 2,
+			-- Junk vars
+			defaultWaitTime = 2, --used in waits
+
+			-- player
 			player = self.player,
-			targetPosition = nil,
-			target = nil,
-			collisionGroupRayLoS = "RayNPCLoS",
-			state = STATE_CALM,
-			isSoundHeard = false,
-			isTargetLost = nil,
-			lastKnownPosition = nil,
-			lastKnownRegion = nil,
 
+			-- nav
+			targetPosition = nil, 	--position to move
+			target = nil,			--target to chase/update targetPosition
+			collisionGroupRayLoS = "RayNPCLoS",	--ray to see line of sight to target
 			isLineOfSight = nil,
-			isActive = false,
 
+			-- sound
+			isSoundHeard = false,
+			lastSoundHeardPosition = nil,
+			lastSoundHeardInstance = nil,
+			calmSoundSuspicion = 1,
 
-			--calm behavior
-			detectionState = nil,
-			calmBehaviorState = nil,
+			-- alert
+			searchAggression = 1, -- not used yet
+			isPlayerFound = false,
 
+			-- states
+			detectionState = nil, -- states for calm, alert, hostile
+			calmBehaviorState = nil, -- behaviors for calm, used just for ref
+			alertBehaviorState = nil, -- behaviors for alert, used just for ref
+
+			-- set behavior will loop through all per state until true or error
 			behaviorConditions = {
 				calm = {
+					[shared.npc.states.behavior.calm.investigate] = function()
+						return self.btState.Blackboard.isSoundHeard == true
+					end,
 					[shared.npc.states.behavior.calm.hungry] = function()
 						return next(self._objectService:GetType("Food")) ~= nil
 					end,
@@ -87,24 +101,35 @@ function NPC.new(npcModel, serviceBag)
 						return true
 					end,
 				},
+
+				alert = {
+					[shared.npc.states.behavior.alert.search] = function()
+						return true
+					end,
+				}
 			},
 
+			isObjectiveAlignReached = false,
+			isObjectivePositionReached = false,
+			isObjectiveRoomReached = false,
 			objective = {
-				goal = "",
+				isComplete = false,
+
+				-- nav for Task PathToObject
+				walkToInstance = nil, -- action position
+				interactObject = nil, --action Object
+
+				-- nav for Task PathToRoom
 				goalRoom = nil,
 				currentRoom = nil,
-				reversePathToGoalRoom = {},
+				reversePathToGoalRoom = nil,
 
-				goalCondition = nil,
-				goalActions = {},
-
-				actionObject = nil,
-				actionPosition = nil,
+				-- nav for Behavior Search
+				searchRoutePath = nil,
+				searchRoutePathReadOnly = nil,
 			},
 
-			isActionPositionAligned = false,
-			isActionPositionReached = false,
-			isObjectiveRoomReached = false
+			
 		},
 	}
 
@@ -112,6 +137,7 @@ function NPC.new(npcModel, serviceBag)
 
 	self.navigation = Navigation.new(self)
 	self.soundDetection = NPCSoundDetection.new(self)
+	self.nodeMap = NodeMap.new(self)
 
     RunService.Heartbeat:Connect(function(time, deltaTime)
 		if not self.config.isOverride.Value then
@@ -132,6 +158,11 @@ function NPC.new(npcModel, serviceBag)
 	self.talismanLast = nil
 
 	return self
+end
+
+
+function NPC:FindSearchRoute(room, startPosition, range)
+	return self.nodeMap:CreateSearchRoute(room, startPosition, range)
 end
 
 
@@ -158,7 +189,23 @@ function NPC:FindTalisman()
 end
 
 
+function NPC:FindPlayer()
+	return nil
+end
 
+
+function NPC:FindSound(lastSoundHeardPosition)
+	local partSize = self.soundDetection.navSounds.walkToPosition.PrimaryPart.Size.X
+	local walkToPosition, room = self.navigation:FindWalkablePosition(lastSoundHeardPosition, partSize, partSize*4)
+	if not walkToPosition then
+		warn("Can't walkable position for sound....")
+		return
+	end
+
+	local heardInstance, walkToInstance = self.soundDetection:SetWalkToPosition(lastSoundHeardPosition, walkToPosition)
+
+	return heardInstance, walkToInstance, room
+end
 
 
 

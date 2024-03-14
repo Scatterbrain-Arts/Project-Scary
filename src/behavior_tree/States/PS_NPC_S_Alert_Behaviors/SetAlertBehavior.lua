@@ -1,24 +1,26 @@
-local Packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
-local GeneralUtil = require(Packages.GeneralUtil)
-
 local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
 local isForceFail = false
-
+local behaviorState = 1
 
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	if not Blackboard.isObjectivePositionReached then
-		warn("Objective Position is not reached...")
-		isForceFail = true
-		return
-	end
-end
+	while not Blackboard.behaviorConditions.alert[behaviorState]() do
+		if behaviorState+1 > #shared.npc.states.behavior.alertNames then
+			isForceFail = true
+			return
+		end
 
+		behaviorState += 1
+	end
+
+	Blackboard.alertBehaviorState = behaviorState
+	Blackboard.objective.isComplete = false
+end
 
 
 function btTask.finish(obj, status)
@@ -36,8 +38,8 @@ function btTask.run(obj)
 	if isForceFail then
 		return FAIL
 	end
-
-	return SUCCESS
+	
+	return Blackboard.behaviorConditions.alert[Blackboard.alertBehaviorState]() and SUCCESS or FAIL
 end
 
 

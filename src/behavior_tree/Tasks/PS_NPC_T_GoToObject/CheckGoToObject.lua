@@ -29,12 +29,12 @@ function btTask.run(obj)
 		return FAIL
 	end
 
-	if not Blackboard.isActionPositionReached then
+	if not Blackboard.isObjectivePositionReached then
 		warn("Position failed...")
 		return FAIL
 	end
 
-	if not Blackboard.isActionPositionAligned then
+	if not Blackboard.isObjectiveAlignReached then
 		warn("Align failed...")
 		return FAIL
 	end

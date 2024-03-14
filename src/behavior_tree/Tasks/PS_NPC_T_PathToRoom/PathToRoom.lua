@@ -24,14 +24,14 @@ function btTask.start(obj)
 
 	self.navigation:PathToTarget(doorOutsideOfNextRoom.Position)
 	table.remove(objective.reversePathToGoalRoom, #objective.reversePathToGoalRoom)
-
-	isForceFail = false
 end
 
 
 function btTask.finish(obj, status)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
+
+	isForceFail = false
 end
 
 
@@ -71,29 +71,6 @@ function btTask.run(obj)
 	end
 
 	return Blackboard.isTargetReached ~= nil and RUNNING or FAIL
-
-
-	-- if Blackboard.target:IsA("Player") and Blackboard.target.Character and Blackboard.target.Character.PrimaryPart then
-	-- 	if GeneralUtil:IsDistanceGreater(Blackboard.target.Character.PrimaryPart.Position, Blackboard.targetPosition, 5) then
-	-- 		return FAIL
-	-- 	end
-
-	-- elseif Blackboard.target:IsA("Model") and Blackboard.target.PrimaryPart then
-	-- 	if GeneralUtil:IsDistanceGreater(Blackboard.target.PrimaryPart.Position, Blackboard.targetPosition, 5) then
-	-- 		return FAIL
-	-- 	end
-
-	-- elseif Blackboard.target:IsA("BasePart") then
-	-- 	if GeneralUtil:IsDistanceGreater(Blackboard.target.Position, Blackboard.targetPosition, 5) then
-	-- 		return FAIL
-	-- 	end
-
-	-- else
-	-- 	warn("unexpcted type", typeof(Blackboard.target))
-	-- 	return FAIL
-	-- end
-
-	--return (Blackboard.isTargetReached == false and RUNNING) or (Blackboard.isTargetReached == true and SUCCESS) or FAIL
 end
 
 

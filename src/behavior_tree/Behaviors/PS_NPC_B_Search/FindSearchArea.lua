@@ -1,24 +1,30 @@
-local Packages = game:GetService("ReplicatedStorage"):WaitForChild("Packages")
-local GeneralUtil = require(Packages.GeneralUtil)
-
 local btTask = {}
 
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
 local isForceFail = false
 
-
 function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
-	if not Blackboard.isObjectivePositionReached then
-		warn("Objective Position is not reached...")
+	if Blackboard.alertBehaviorState ~= shared.npc.states.behavior.alert.search then
+		warn("objective behaviorState is not correct...")
 		isForceFail = true
 		return
 	end
-end
 
+	local playerRoom = self.navigation:FindRegionWithPlayer()
+	if not playerRoom then
+		warn("search area is nil...")
+		isForceFail = true
+		return
+	end
+
+	-- Blackboard.objective.interactObject = talismanObject
+	-- Blackboard.objective.walkToInstance = talismanObject.navStart
+	Blackboard.objective.goalRoom = playerRoom
+end
 
 
 function btTask.finish(obj, status)

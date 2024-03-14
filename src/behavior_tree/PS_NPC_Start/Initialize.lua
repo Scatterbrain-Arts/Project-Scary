@@ -32,7 +32,6 @@ function btTask.finish(obj, status)
 	end
 
 	Blackboard.detectionState = shared.npc.states.detection.calm
-	Blackboard.calmBehaviorState = shared.npc.states.behavior.calm.hungry
 	isInit = true
 end
 

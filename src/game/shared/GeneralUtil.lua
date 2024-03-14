@@ -52,6 +52,25 @@ function GeneralUtil:WeldTo(source, target, weld)
 end
 
 
+function GeneralUtil:CreateBillboardAtPosition(text, position, billboardSize, billboardColor3, textColor3)
+	local block = GeneralUtil:CreatePart(Enum.PartType.Block , Vector3.new(1,1,1), billboardColor3)
+	block.Transparency = 1
+	block.Parent = workspace
+	block.Name = text
+	block.Position = position
+
+	local billboard = GeneralUtil:CreateBillboard(billboardSize, Vector3.new(0,0,0))
+	billboard.Parent = block
+	billboard.Adornee = block
+
+	local textBox = GeneralUtil:CreateTextBox(UDim2.fromScale(1,1), billboardColor3, textColor3)
+	textBox.Parent = billboard
+	textBox.Text = text
+
+	GeneralUtil:WeldTo(block)
+end
+
+
 function GeneralUtil:GetValue(entity, attributeName, isDebug)
 	local attribute = entity:GetAttribute(attributeName)
 
@@ -344,6 +363,16 @@ function GeneralUtil:ShallowCopy(table)
     end
 
     return copy
+end
+
+
+function GeneralUtil:ReverseTable(t)
+	local rt = {}
+	for i = #t, 1, -1 do
+		table.insert(rt, t[i])
+	end
+
+	return rt
 end
 
 

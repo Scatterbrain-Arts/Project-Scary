@@ -64,13 +64,13 @@ function Navigation.new(npc)
         isTargetReached = false,
     }
 
-    self.action = {
-        index = nil,
-        waypoints = {},
-        connection = nil,
-        targetPosition = nil,
-        isTargetReached = false,
-    }
+    -- self.action = {
+    --     index = nil,
+    --     waypoints = {},
+    --     connection = nil,
+    --     targetPosition = nil,
+    --     isTargetReached = false,
+    -- }
 
     self.unstuck = {
         lastPosition = nil,
@@ -290,5 +290,14 @@ function Navigation:FindShortestPath(startRoom, endRoom)
     return NavigationUtil:GraphDijkstra(self.graphRooms, startRoom, endRoom, false)
 end
 
+
+function Navigation:FindRoomFromPosition(position)
+    return NavigationUtil:FindRoomFromPosition(self.regions.rooms, position)
+end
+
+function Navigation:FindWalkablePosition(targetPosition, partSize, maxRadius)
+    local walkToPos = NavigationUtil:FindWalkablePosition(self.root.Position, targetPosition, partSize, maxRadius)
+    return walkToPos, NavigationUtil:FindRoomFromPosition(self.regions.rooms, walkToPos)
+end
 
 return Navigation
