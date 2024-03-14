@@ -366,4 +366,14 @@ function GeneralUtil:ShallowCopy(table)
 end
 
 
+function GeneralUtil:ReverseTable(t)
+	local rt = {}
+	for i = #t, 1, -1 do
+		table.insert(rt, t[i])
+	end
+
+	return rt
+end
+
+
 return GeneralUtil

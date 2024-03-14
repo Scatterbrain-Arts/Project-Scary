@@ -23,7 +23,9 @@ function btTask.finish(obj, status)
 
 	isForceFail = false
 
-	-- if status == SUCCESS then
+	if status == SUCCESS then
+		self.nodeMap:DebugPop()
+	end
 
 	-- elseif status == FAIL then
 	-- 	-- warn("Theres someone here!!!!!!")

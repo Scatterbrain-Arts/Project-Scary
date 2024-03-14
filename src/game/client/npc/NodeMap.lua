@@ -17,10 +17,8 @@ local require = require(script.Parent.loader).load(script)
 local Maid = require("Maid")
 local GeneralUtil = require("GeneralUtil")
 
-local pathNodes = nil
-
-
 local isDebug = true
+local debugParts = {}
 
 local NodeMap = {}
 NodeMap.__index = NodeMap
@@ -87,6 +85,22 @@ local function FindNearestNode(nodeMap, position)
 end
 
 
+local function ClearDebug()
+	for _, part in pairs(debugParts) do
+		part:Destroy()
+	end
+	debugParts = {}
+end
+
+
+local function CreateDebugPart(node, size)
+	local part = GeneralUtil:CreatePart(Enum.PartType.Ball, Vector3.new(size, size, size), Color3.fromRGB(255, 0, 0))
+	part.Position = node.Position
+	part.Parent = workspace
+	part.Name = "Explored"
+	part.Transparency = 0.5
+	table.insert(debugParts, part)
+end
 
 
 function NodeMap.new(npc)
@@ -146,80 +160,104 @@ function NodeMap:FindNearestMap(roomName, startPosition)
 end
 
 
-function NodeMap:FindSearchRoute(roomName, startPosition)
-	local nearestMap, nearestNode = self:FindNearestMap(roomName, startPosition)
-	if not nearestMap or not nearestNode then
-		warn("NearestMap or NearestNode is nil...")
+local function AddNode(path, readablePath, explored, node, range)
+	if isDebug then
+		CreateDebugPart(node, range)
+	end
+
+	table.insert(path, node)
+	table.insert(readablePath, node.Name)
+
+	explored[node] = true
+end
+
+local function CalculateIsValid(explored, node, range)
+	for exploredNode in pairs(explored) do
+		if GeneralUtil:IsDistanceLess(exploredNode.Position, node.Position, range, true) then
+			return false
+		end
+	end
+
+	return true
+end
+
+local function CalculateScore(node, initialNode, currentNode)
+	local weightInit = 0.2
+    local weightCurr = 0.4
+    local distToInitial = GeneralUtil:GetDistance(node.Position, initialNode.Position)
+    local distToCurrent = GeneralUtil:GetDistance(node.Position, currentNode.Position)
+
+	if distToInitial > distToCurrent then
+		distToCurrent *= 1.6
+	end
+
+	-- print("--------", node.Name, "---------")
+	-- print( "init:", distToInitial, "*", weightInit, "=", distToInitial * weightInit)
+	-- print( "curr:", distToCurrent, "*", weightCurr, "=", distToCurrent * weightCurr)
+	-- print( "total:", (distToInitial * weightInit) + (distToCurrent * weightCurr))
+	-- print("-----------------")
+
+    return (distToInitial * weightInit) + (distToCurrent * weightCurr)
+end
+
+function NodeMap:CreateSearchRoute(roomName, startPosition, range)
+	local initalMap, initalNode = self:FindNearestMap(roomName, startPosition)
+	if not initalMap or not initalNode then
+		warn("initalMap or initalNode is nil...")
 		return
 	end
 
-	print("searching", #nearestMap)
+	ClearDebug()
 
 	local path = {}
 	local readablePath = {}
 	local explored = {}
 
-	table.insert(path, nearestNode)
-	table.insert(readablePath, nearestNode.Name)
-
-	explored[nearestNode] = nearestNode
-
-	local range = 20
-	local currentNode = nearestNode
-	local smallestDistance = math.huge
-	local smallestNode = nil
+	AddNode(path, readablePath, explored, initalNode, range)
+	local currentNode = initalNode
 
 	repeat
-		smallestNode = nil
-		smallestDistance = math.huge
+		local nextNode = nil
+		local bestScore = math.huge
 
-		for _, node in nearestMap do
-
-			print("checking node:", node.Name)
-			if explored[node] then
-				continue
-			end
-
-			local isValid = true
-			for _, exploredNode in explored do
-				print("checking explored-node dist:", exploredNode.Name, node.Name, GeneralUtil:GetDistance(exploredNode.Position, node.Position, true))
-				if GeneralUtil:IsDistanceLess(exploredNode.Position, node.Position, range, true) then
-					isValid = false
-					break
+		for _, node in initalMap do
+			if not explored[node] and CalculateIsValid(explored, node, range) then
+				local score = CalculateScore(node, initalNode, currentNode)
+				if score < bestScore then
+					bestScore = score
+					nextNode = node
 				end
-			end
-
-			if isValid then
-				local dist = GeneralUtil:GetDistance(node.Position, currentNode.Position)
-				print("checking distance for:", node.Name, currentNode.Name, dist)
-				if dist < smallestDistance then
-					smallestDistance = dist
-					smallestNode = node
-				end
-				print("smallest node is:", smallestNode.Name)
 			end
 		end
 
-		if smallestNode then
-			currentNode = smallestNode
-			explored[smallestNode] = smallestNode
-
-			local part = GeneralUtil:CreatePart(Enum.PartType.Ball, Vector3.new(range, range, range), Color3.fromRGB(0,0,255))
-			part.Position = smallestNode.Position
-			part.Parent = workspace
-			part.Name = "Explored"
-
-			table.insert(path, smallestNode)
-			table.insert(readablePath, smallestNode.Name)
+		if nextNode then
+			AddNode(path, readablePath, explored, nextNode, range)
+			currentNode = nextNode
 		end
 
-	until smallestNode == nil
+	until nextNode == nil
 
-	print(readablePath)
+	if isDebug then
+		debugParts = GeneralUtil:ReverseTable(debugParts)
+	end
 
-	return path, readablePath
+	return GeneralUtil:ReverseTable(path), GeneralUtil:ReverseTable(readablePath)
 end
 
+
+function NodeMap:DebugPop()
+	if next(debugParts) == nil then
+		warn("debug parts table is empty")
+		return
+	end
+
+	local part = table.remove(debugParts, #debugParts)
+	part:Destroy()
+end
+
+
+
+return NodeMap
 
 	-- local part = GeneralUtil:CreatePart(Enum.PartType.Ball, Vector3.new(1,1,1), Color3.fromRGB(255,0,255))
 	-- part.Position = currentNodeRange
@@ -347,4 +385,3 @@ end
 
 
 
-return NodeMap

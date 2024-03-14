@@ -120,7 +120,9 @@ function NPC.new(npcModel, serviceBag)
 				currentRoom = nil,
 				reversePathToGoalRoom = nil,
 
-				searchRoutePath = {},
+				-- nav for Behavior Search
+				searchRoutePath = nil,
+				searchRoutePathReadOnly = nil,
 			},
 
 			
@@ -155,8 +157,8 @@ function NPC.new(npcModel, serviceBag)
 end
 
 
-function NPC:FindSearchRoute(room, startPosition)
-	return self.nodeMap:FindSearchRoute(room, startPosition)
+function NPC:FindSearchRoute(room, startPosition, range)
+	return self.nodeMap:CreateSearchRoute(room, startPosition, range)
 end
 
 

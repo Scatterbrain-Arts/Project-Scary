@@ -7,8 +7,6 @@ local btTask = {}
 local SUCCESS,FAIL,RUNNING = 1,2,3
 
 local isForceFail = false
-local count = 0
-local countMax = nil
 
 
 function btTask.start(obj)
@@ -22,17 +20,6 @@ function btTask.start(obj)
 		return
 	end
 
-	print("starting follow", #objective.searchRoutePath)
-
-	local max = 4
-	local min = 1
-	local rnd = math.random(min, max)
-	while #objective.searchRoutePath - rnd < 0 do
-		max -= 1
-		rnd = math.random(min, max)
-	end
-	countMax = rnd
-
 	local target = objective.searchRoutePath[#objective.searchRoutePath]
 	self.navigation:PathToTarget(target.Position)
 	table.remove(objective.searchRoutePath, #objective.searchRoutePath)
@@ -44,7 +31,6 @@ function btTask.finish(obj, status)
 	local self = obj.self
 
 	isForceFail = false
-	count = 0
 end
 
 
@@ -58,16 +44,7 @@ function btTask.run(obj)
 	end
 
 	if Blackboard.isTargetReached then
-		count += 1
-		if count < countMax and next(objective.searchRoutePath) ~= nil then
-			local target = objective.searchRoutePath[#objective.searchRoutePath]
-			self.navigation:PathToTarget(target.Position)
-			table.remove(objective.searchRoutePath, #objective.searchRoutePath)
-			return RUNNING
-
-		else
-			return SUCCESS
-		end
+		return SUCCESS
 	end
 
 	return Blackboard.isTargetReached ~= nil and RUNNING or FAIL

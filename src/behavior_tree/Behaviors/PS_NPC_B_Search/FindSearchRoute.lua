@@ -8,17 +8,19 @@ function btTask.start(obj)
 	local Blackboard = obj.Blackboard
 	local self = obj.self
 
+	local range = 22
 	local startPosition = Blackboard.player.Character.RightFoot.Position
-	local path, readPath = self:FindSearchRoute(Blackboard.objective.goalRoom, startPosition)
+	local path, readPath = self:FindSearchRoute(Blackboard.objective.goalRoom, startPosition, range)
 	if not path then
 		warn("Search route not found..")
 		isForceFail = true
 		return
 	end
 
-	for i = #path, 1, -1 do
-		table.insert(Blackboard.objective.searchRoutePath, path[i])
-	end
+	Blackboard.objective.searchRoutePath = path
+	Blackboard.objective.searchRoutePathReadOnly = readPath
+
+	print("path:", Blackboard.objective.searchRoutePathReadOnly)
 end
 
 
