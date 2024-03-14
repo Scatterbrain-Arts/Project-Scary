@@ -81,12 +81,13 @@ function NPC.new(npcModel, serviceBag)
 
 			-- alert
 			searchAggression = 1, -- not used yet
-			isPlayerFound = false,
+			isPlayerFound = false, --used in search
 
 			-- states
 			detectionState = nil, -- states for calm, alert, hostile
 			calmBehaviorState = nil, -- behaviors for calm, used just for ref
 			alertBehaviorState = nil, -- behaviors for alert, used just for ref
+			hostileBehaviorState = nil, -- behaviors for hostile, used just for ref
 
 			-- set behavior will loop through all per state until true or error
 			behaviorConditions = {
@@ -106,6 +107,12 @@ function NPC.new(npcModel, serviceBag)
 					[shared.npc.states.behavior.alert.search] = function()
 						return true
 					end,
+				},
+
+				hostile = {
+					[shared.npc.states.behavior.hostile.kill] = function()
+						return true
+					end
 				}
 			},
 

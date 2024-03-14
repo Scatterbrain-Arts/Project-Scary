@@ -42,6 +42,11 @@ function Globals:Init(serviceBag)
 	shared.npc.states.behavior.alertNames = {"search"}
 	for i,v in shared.npc.states.behavior.alertNames do shared.npc.states.behavior.alert[v] = i end
 	for i = 1, #shared.npc.states.behavior.alertNames do shared.npc.states.behavior.alert[i] = i end
+
+	shared.npc.states.behavior.hostile = {}
+	shared.npc.states.behavior.hostileNames = {"kill"}
+	for i,v in shared.npc.states.behavior.hostileNames do shared.npc.states.behavior.hostile[v] = i end
+	for i = 1, #shared.npc.states.behavior.hostileNames do shared.npc.states.behavior.hostile[i] = i end
 end
 
 

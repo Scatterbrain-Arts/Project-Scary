@@ -30,7 +30,7 @@ function btTask.finish(obj, status)
 	elseif status == FAIL then
 		Blackboard.isPlayerFound = true
 		Blackboard.objective.isComplete = true
-		-- Blackboard.detectionState = shared.npc.states.detection.alert
+		Blackboard.detectionState = shared.npc.states.detection.hostile
 	end
 end
 
