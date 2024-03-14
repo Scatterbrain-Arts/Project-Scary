@@ -25,13 +25,13 @@ function btTask.finish(obj, status)
 
 	if status == SUCCESS then
 		self.nodeMap:DebugPop()
-	end
+		Blackboard.isPlayerFound = false
 
-	-- elseif status == FAIL then
-	-- 	-- warn("Theres someone here!!!!!!")
-	-- 	-- Blackboard.isSoundHeard = false
-	-- 	-- Blackboard.detectionState = shared.npc.states.detection.alert
-	-- end
+	elseif status == FAIL then
+		Blackboard.isPlayerFound = true
+		Blackboard.objective.isComplete = true
+		-- Blackboard.detectionState = shared.npc.states.detection.alert
+	end
 end
 
 

@@ -79,6 +79,10 @@ function NPC.new(npcModel, serviceBag)
 			lastSoundHeardInstance = nil,
 			calmSoundSuspicion = 1,
 
+			-- alert
+			searchAggression = 1, -- not used yet
+			isPlayerFound = false,
+
 			-- states
 			detectionState = nil, -- states for calm, alert, hostile
 			calmBehaviorState = nil, -- behaviors for calm, used just for ref
